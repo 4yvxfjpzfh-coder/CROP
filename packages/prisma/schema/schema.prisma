@@ -27,33 +27,133 @@ model Business {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  phone     String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  // email es opcional porque "Sign in with Apple" solo lo entrega en la primera
+  // autorización; el adapter de Auth.js resuelve logins posteriores por Account.
+  email         String?   @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  phone         String?
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+  // Consentimiento de Política de Privacidad + Términos aceptado en el registro.
+  consentedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  orders    Order[]
+  orders        Order[]
+  accounts      Account[]
+  sessions      Session[]
+  auditLogs     AdminAuditLog[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// --- Auth.js (NextAuth v5) — esquema estándar de @auth/prisma-adapter ---
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Product {
-  id                 String   @id @default(cuid())
-  businessId         String
-  business           Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  id                 String       @id @default(cuid())
+  // businessId es opcional: el admin puede publicar excedente antes de tener
+  // registrado al agricultor como Business.
+  businessId         String?
+  business           Business?    @relation(fields: [businessId], references: [id], onDelete: SetNull)
+  // Punto de recogida asignado a este producto (feria del agricultor).
+  pickupPointId      String?
+  pickupPoint        PickupPoint? @relation(fields: [pickupPointId], references: [id], onDelete: SetNull)
   name               String
   description        String?
-  originalPriceCents Int      // Precio normal
-  discountPriceCents Int      // Precio de excedente
-  quantity           Int      @default(0) // Unidades disponibles para apartar
-  isActive           Boolean  @default(true)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  photoUrl           String?      // Foto del producto (o la imagen editada exportada por ProductPhotoEditor)
+  originalPriceCents Int          // Precio de referencia
+  discountPriceCents Int          // Precio de excedente
+  quantity           Int          @default(0) // Unidades disponibles para apartar
+  isActive           Boolean      @default(true)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 
   orderItems         OrderItem[]
 
   @@index([businessId, isActive])
+  @@index([pickupPointId, isActive])
+}
+
+model PickupPoint {
+  id        String   @id @default(cuid())
+  name      String   // "Feria del Agricultor de Santa Ana"
+  shortName String   // "Santa Ana"
+  address   String
+  latitude  Float?
+  longitude Float?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+}
+
+model AdminAuditLog {
+  id         String           @id @default(cuid())
+  actorId    String?
+  actor      User?            @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorEmail String           // snapshot: sobrevive aunque se borre el usuario
+  action     AdminAuditAction
+  entityType String           // "Product"
+  entityId   String?
+  summary    String?          // descripción legible de lo que cambió
+  metadata   Json?
+  createdAt  DateTime         @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+enum AdminAuditAction {
+  PRODUCT_CREATE
+  PRODUCT_UPDATE
+  PRODUCT_DELETE
 }
 
 model DiscountCode {
