@@ -1,5 +1,5 @@
 {
-  "name": "meguru",
+  "name": "crop",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",

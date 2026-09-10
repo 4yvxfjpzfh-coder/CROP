@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { prisma, OrderStatus } from "@meguru/prisma";
-import type { Product } from "@meguru/prisma";
+import { prisma, OrderStatus } from "@crop/prisma";
+import type { Product } from "@crop/prisma";
 import { router, publicProcedure } from "../../index";
 
 // Ventana por defecto para pasar a recoger un apartado.

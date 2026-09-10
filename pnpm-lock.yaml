@@ -14,10 +14,10 @@ importers:
 
   apps/api:
     dependencies:
-      '@meguru/prisma':
+      '@crop/prisma':
         specifier: workspace:*
         version: link:../../packages/prisma
-      '@meguru/trpc':
+      '@crop/trpc':
         specifier: workspace:*
         version: link:../../packages/trpc
       next:
@@ -88,7 +88,7 @@ importers:
 
   packages/payments:
     dependencies:
-      '@meguru/shared':
+      '@crop/shared':
         specifier: workspace:*
         version: link:../shared
       stripe:
@@ -113,13 +113,13 @@ importers:
 
   packages/trpc:
     dependencies:
-      '@meguru/payments':
+      '@crop/payments':
         specifier: workspace:*
         version: link:../payments
-      '@meguru/prisma':
+      '@crop/prisma':
         specifier: workspace:*
         version: link:../prisma
-      '@meguru/shared':
+      '@crop/shared':
         specifier: workspace:*
         version: link:../shared
       '@trpc/server':

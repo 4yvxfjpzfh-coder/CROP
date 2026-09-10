@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { releaseExpiredOrders } from "@meguru/trpc/src/service/orders";
+import { releaseExpiredOrders } from "@crop/trpc/src/service/orders";
 
 // Prisma necesita el runtime de Node, y la ruta nunca debe cachearse.
 export const runtime = "nodejs";

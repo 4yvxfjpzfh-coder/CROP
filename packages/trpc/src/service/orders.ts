@@ -1,4 +1,4 @@
-import { prisma, OrderStatus } from "@meguru/prisma";
+import { prisma, OrderStatus } from "@crop/prisma";
 
 const DEFAULT_LIMIT = 100;
 

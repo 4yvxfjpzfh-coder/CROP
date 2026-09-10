@@ -1,5 +1,5 @@
 {
-  "name": "@meguru/shared",
+  "name": "@crop/shared",
   "version": "0.0.0",
   "private": true,
   "main": "index.ts",

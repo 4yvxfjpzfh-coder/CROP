@@ -1,12 +1,12 @@
 {
-  "name": "@meguru/payments",
+  "name": "@crop/payments",
   "version": "0.0.0",
   "private": true,
   "main": "index.ts",
   "types": "index.ts",
   "dependencies": {
     "stripe": "^17.0.0",
-    "@meguru/shared": "workspace:*"
+    "@crop/shared": "workspace:*"
   }
 }
  
