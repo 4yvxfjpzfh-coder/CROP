@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Paquetes del workspace publicados como TypeScript sin compilar.
+  transpilePackages: ["@crop/prisma", "@crop/trpc", "@crop/shared"],
 };
 
 export default nextConfig;

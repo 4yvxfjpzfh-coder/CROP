@@ -10,6 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Panel de administración de Crop — feria del agricultor */
+  --color-olive: #1f2a22; /* fondo lateral */
+  --color-olive-700: #2c3a30;
+  --color-cream: #f6f1e7; /* fondo principal */
+  --color-cream-200: #ece3d2;
+  --color-gold: #c89b3c; /* precios / estado */
+  --color-sienna: #b5562b; /* alertas / descuentos */
+  --color-stone: #8b8378; /* texto secundario */
+
+  --font-display: var(--font-fraunces); /* nombres de producto y totales */
+  --font-form: var(--font-inter); /* formularios y listas */
 }
 
 @media (prefers-color-scheme: dark) {

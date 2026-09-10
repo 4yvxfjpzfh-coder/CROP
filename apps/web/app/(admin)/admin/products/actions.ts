@@ -1,0 +1,169 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { prisma } from "@crop/prisma";
+import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
+import { recordAdminAudit } from "@/lib/audit";
+
+const productInput = z.object({
+  name: z.string().trim().min(1, "El nombre es obligatorio"),
+  description: z.string().trim().max(2000).optional().or(z.literal("")),
+  photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
+  quantity: z.coerce.number().int().min(0, "La cantidad no puede ser negativa"),
+  originalPriceCents: z.coerce.number().int().min(0),
+  discountPriceCents: z.coerce.number().int().min(0),
+  pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
+  isActive: z.coerce.boolean().optional().default(true),
+});
+
+export type ProductActionResult =
+  | { ok: true; productId: string }
+  | { ok: false; error: string };
+
+function parse(formData: FormData) {
+  return productInput.safeParse({
+    name: formData.get("name"),
+    description: formData.get("description") ?? "",
+    photoUrl: formData.get("photoUrl") ?? "",
+    quantity: formData.get("quantity"),
+    originalPriceCents: formData.get("originalPriceCents"),
+    discountPriceCents: formData.get("discountPriceCents"),
+    pickupPointId: formData.get("pickupPointId"),
+    isActive: formData.get("isActive") === "on" || formData.get("isActive") === "true",
+  });
+}
+
+async function guard(): Promise<
+  { ok: true; actor: Awaited<ReturnType<typeof requireAdmin>> } | { ok: false; error: string }
+> {
+  try {
+    // "throw": una acción de escritura debe fallar sin efectos, no redirigir.
+    const actor = await requireAdmin("throw");
+    return { ok: true, actor };
+  } catch (err) {
+    if (err instanceof AdminAccessError) return { ok: false, error: "Acceso denegado" };
+    throw err;
+  }
+}
+
+export async function createProduct(
+  _prev: ProductActionResult | null,
+  formData: FormData,
+): Promise<ProductActionResult> {
+  const g = await guard();
+  if (!g.ok) return g;
+
+  const parsed = parse(formData);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  const data = parsed.data;
+
+  const pickupPoint = await prisma.pickupPoint.findUnique({
+    where: { id: data.pickupPointId },
+    select: { id: true, name: true },
+  });
+  if (!pickupPoint) return { ok: false, error: "El punto de recogida no existe" };
+
+  const product = await prisma.product.create({
+    data: {
+      name: data.name,
+      description: data.description || null,
+      photoUrl: data.photoUrl || null,
+      quantity: data.quantity,
+      originalPriceCents: data.originalPriceCents,
+      discountPriceCents: data.discountPriceCents,
+      pickupPointId: pickupPoint.id,
+      isActive: data.isActive,
+    },
+  });
+
+  await recordAdminAudit({
+    actor: g.actor,
+    action: "PRODUCT_CREATE",
+    entityType: "Product",
+    entityId: product.id,
+    summary: `Creó "${product.name}" (${pickupPoint.name})`,
+    metadata: { quantity: data.quantity, discountPriceCents: data.discountPriceCents },
+  });
+
+  revalidatePath("/admin/products");
+  return { ok: true, productId: product.id };
+}
+
+export async function updateProduct(
+  _prev: ProductActionResult | null,
+  formData: FormData,
+): Promise<ProductActionResult> {
+  const g = await guard();
+  if (!g.ok) return g;
+
+  const id = String(formData.get("id") ?? "");
+  if (!id) return { ok: false, error: "Falta el id del producto" };
+
+  const parsed = parse(formData);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  const data = parsed.data;
+
+  const existing = await prisma.product.findUnique({ where: { id } });
+  if (!existing) return { ok: false, error: "El producto no existe" };
+
+  const product = await prisma.product.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description || null,
+      photoUrl: data.photoUrl || null,
+      quantity: data.quantity,
+      originalPriceCents: data.originalPriceCents,
+      discountPriceCents: data.discountPriceCents,
+      pickupPointId: data.pickupPointId,
+      isActive: data.isActive,
+    },
+  });
+
+  await recordAdminAudit({
+    actor: g.actor,
+    action: "PRODUCT_UPDATE",
+    entityType: "Product",
+    entityId: product.id,
+    summary: `Editó "${product.name}"`,
+    metadata: {
+      before: { quantity: existing.quantity, discountPriceCents: existing.discountPriceCents },
+      after: { quantity: data.quantity, discountPriceCents: data.discountPriceCents },
+    },
+  });
+
+  revalidatePath("/admin/products");
+  return { ok: true, productId: product.id };
+}
+
+export async function deleteProduct(
+  _prev: ProductActionResult | null,
+  formData: FormData,
+): Promise<ProductActionResult> {
+  const g = await guard();
+  if (!g.ok) return g;
+
+  const id = String(formData.get("id") ?? "");
+  if (!id) return { ok: false, error: "Falta el id del producto" };
+
+  const existing = await prisma.product.findUnique({ where: { id } });
+  if (!existing) return { ok: false, error: "El producto no existe" };
+
+  await prisma.product.delete({ where: { id } });
+
+  await recordAdminAudit({
+    actor: g.actor,
+    action: "PRODUCT_DELETE",
+    entityType: "Product",
+    entityId: id,
+    summary: `Eliminó "${existing.name}"`,
+  });
+
+  revalidatePath("/admin/products");
+  return { ok: true, productId: id };
+}
