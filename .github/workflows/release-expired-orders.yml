@@ -1,0 +1,23 @@
+name: Liberar apartados vencidos
+
+on:
+  schedule:
+    # Cada 15 minutos. GitHub puede retrasar las corridas programadas cuando
+    # hay carga alta, así que la cadencia real es "al menos cada 15 min".
+    - cron: "*/15 * * * *"
+  # Permite dispararlo a mano desde la pestaña Actions.
+  workflow_dispatch:
+
+jobs:
+  release-expired:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar al endpoint de expiración
+        env:
+          ENDPOINT: ${{ secrets.RELEASE_EXPIRED_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+               --retry 3 --retry-delay 10 --max-time 60 \
+               --header "Authorization: Bearer ${CRON_SECRET}" \
+               "${ENDPOINT}"
