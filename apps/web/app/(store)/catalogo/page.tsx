@@ -12,8 +12,10 @@ export const metadata = {
 
 export default async function CatalogoPage() {
   const products = await prisma.product.findMany({
-    where: { isActive: true, quantity: { gt: 0 } },
-    orderBy: { createdAt: "desc" },
+    // Curado a mano desde /admin/catalogo: solo entra lo que un admin agregó
+    // explícitamente, en el orden que eligió.
+    where: { isActive: true, quantity: { gt: 0 }, catalogPosition: { not: null } },
+    orderBy: { catalogPosition: "asc" },
     include: { pickupPoint: { select: { shortName: true } } },
     take: 60,
   });
@@ -34,7 +36,7 @@ export default async function CatalogoPage() {
       <main className="mx-auto flex min-h-dvh max-w-lg flex-col items-center justify-center gap-4 px-6 text-center">
         <h1 className="text-2xl font-semibold text-neutral-900">Catálogo</h1>
         <p className="text-sm text-neutral-600">
-          Todavía no hay excedente publicado. Volvé pronto.
+          Todavía no hay excedente en el catálogo. Volvé pronto.
         </p>
         <Link href="/" className="text-sm text-neutral-700 underline underline-offset-2">
           Inicio

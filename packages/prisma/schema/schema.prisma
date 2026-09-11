@@ -111,6 +111,9 @@ model Product {
   discountPriceCents Int          // Precio de excedente
   quantity           Int          @default(0) // Unidades disponibles para apartar
   isActive           Boolean      @default(true)
+  // Posición en el carrusel 3D de /catalogo. null = no se muestra ahí.
+  // Curado a mano desde /admin/catalogo; no se asigna automáticamente.
+  catalogPosition    Int?
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
@@ -118,6 +121,7 @@ model Product {
 
   @@index([businessId, isActive])
   @@index([pickupPointId, isActive])
+  @@index([catalogPosition])
 }
 
 model PickupPoint {
