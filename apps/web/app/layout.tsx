@@ -12,10 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.AUTH_URL ?? "http://localhost:3000";
+const title = "Crop — Rescate de comida y excedentes agrícolas";
+const description =
+  "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Sin pagos en línea.";
+
 export const metadata: Metadata = {
-  title: "Crop — Rescate de comida y excedentes agrícolas",
-  description:
-    "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Sin pagos en línea.",
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  openGraph: { title, description, url: siteUrl, siteName: "Crop", locale: "es_CR" },
+  twitter: { card: "summary", title, description },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
