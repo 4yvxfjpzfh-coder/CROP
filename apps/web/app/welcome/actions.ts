@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { prisma } from "@crop/prisma";
-import { auth } from "@/auth";
+import { auth, unstable_update } from "@/auth";
 
 /**
  * Persiste el consentimiento (Política de Privacidad + Términos) tras el primer
@@ -17,6 +17,11 @@ export async function confirmConsent() {
     where: { id: session.user.id },
     data: { consentedAt: new Date() },
   });
+
+  // Refresca el JWT (dispara trigger:"update" -> vuelve a leer consentedAt de
+  // la DB). Sin esto, proxy.ts seguiría viendo el token viejo con
+  // consented:false y mandaría de vuelta a /welcome en loop.
+  await unstable_update({});
 
   redirect("/");
 }

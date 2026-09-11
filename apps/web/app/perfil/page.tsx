@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { DeleteAccount } from "./delete-account";
+import { signOutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,15 @@ export default async function ProfilePage() {
           </Link>
         )}
       </div>
+
+      <form action={signOutAction} className="mt-6">
+        <button
+          type="submit"
+          className="border border-neutral-300 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+        >
+          Cerrar sesión
+        </button>
+      </form>
 
       <div className="mt-10">
         <DeleteAccount />

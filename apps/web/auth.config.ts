@@ -29,6 +29,7 @@ export default {
       if (session.user) {
         session.user.id = (token.id as string) ?? session.user.id;
         session.user.role = (token.role as "USER" | "ADMIN") ?? "USER";
+        session.user.consented = Boolean(token.consented);
       }
       return session;
     },
