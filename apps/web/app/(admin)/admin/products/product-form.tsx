@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { type AdminPickupPoint, type AdminProduct } from "./types";
 import { PickupPointField } from "./pickup-point-field";
 import { PhotoEditorLauncher } from "./photo-editor-launcher";
+import { PhotoUpload } from "./photo-upload";
 import {
   createProduct,
   updateProduct,
@@ -77,22 +78,28 @@ export function ProductForm({
         </div>
 
         <div>
-          <label className={label} htmlFor="photoUrl">
-            Foto (URL)
-          </label>
-          <input
-            id="photoUrl"
-            name="photoUrl"
-            value={photoUrl}
-            onChange={(e) => setPhotoUrl(e.target.value)}
-            placeholder="https://…"
-            className={field}
-          />
-          <PhotoEditorLauncher
-            productName={product?.name ?? "Producto"}
-            sourceUrl={photoUrl || product?.photoUrl || null}
-            onSaved={(url) => setPhotoUrl(url)}
-          />
+          <label className={label}>Foto</label>
+          <PhotoUpload onPhotoUrl={setPhotoUrl} />
+          <div className="mt-3 flex flex-col gap-2">
+            <label className={label} htmlFor="photoUrl">
+              O pegá una URL
+            </label>
+            <input
+              id="photoUrl"
+              name="photoUrl"
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
+              placeholder="https://…"
+              className={field}
+            />
+          </div>
+          {photoUrl && (
+            <PhotoEditorLauncher
+              productName={product?.name ?? "Producto"}
+              sourceUrl={photoUrl}
+              onSaved={(url) => setPhotoUrl(url)}
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-3">
