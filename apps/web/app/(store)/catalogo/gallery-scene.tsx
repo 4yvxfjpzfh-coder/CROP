@@ -13,6 +13,7 @@ import * as THREE from "three";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Image, ScrollControls, Scroll, useScroll, Text, useCursor } from "@react-three/drei";
 import { type CatalogProduct, colones } from "./catalog-types";
+import { ReserveButton } from "./reserve-button";
 
 const SPACING = 4;
 const CARD_W = 3;
@@ -259,14 +260,7 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
                   {selected.pickupShortName ? ` · ${selected.pickupShortName}` : ""}
                 </span>
               </p>
-              {/* TODO(apartado): enlazar al flujo de reserva real (necesita sesión
-                  + endpoint tRPC de `reserve` expuesto en apps/web). */}
-              <Link
-                href={`/signin?callbackUrl=/catalogo`}
-                className="mt-3 inline-block bg-[#1F2A22] px-4 py-2 text-sm text-[#F6F1E7]"
-              >
-                Apartar
-              </Link>
+              <ReserveButton productId={selected.id} />
             </div>
             <button
               type="button"

@@ -197,8 +197,10 @@ model Order {
   id          String      @id @default(cuid())
   userId      String
   user        User        @relation(fields: [userId], references: [id])
-  businessId  String
-  business    Business    @relation(fields: [businessId], references: [id])
+  // Opcional: el excedente puede apartarse aunque el agricultor todavía no
+  // esté registrado como Business.
+  businessId  String?
+  business    Business?   @relation(fields: [businessId], references: [id], onDelete: SetNull)
   status      OrderStatus @default(RESERVED)
   pickupBy    DateTime    // Fecha límite para recoger antes de liberar el apartado
   createdAt   DateTime    @default(now())

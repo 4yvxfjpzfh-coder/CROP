@@ -38,14 +38,19 @@ export default async function ProfilePage() {
         </div>
       </dl>
 
-      {user.role === "ADMIN" && (
-        <Link
-          href="/admin"
-          className="mt-6 inline-block text-sm text-neutral-700 underline underline-offset-2"
-        >
-          Ir al panel de administración
+      <div className="mt-6 flex flex-col gap-2 text-sm">
+        <Link href="/mis-apartados" className="text-neutral-700 underline underline-offset-2">
+          Mis apartados
         </Link>
-      )}
+        <Link href="/catalogo" className="text-neutral-700 underline underline-offset-2">
+          Ver catálogo
+        </Link>
+        {user.role === "ADMIN" && (
+          <Link href="/admin" className="text-neutral-700 underline underline-offset-2">
+            Panel de administración
+          </Link>
+        )}
+      </div>
 
       <div className="mt-10">
         <DeleteAccount />
