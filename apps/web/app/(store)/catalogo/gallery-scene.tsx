@@ -1,0 +1,283 @@
+"use client";
+
+import {
+  Component,
+  type ReactNode,
+  Suspense,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import Link from "next/link";
+import * as THREE from "three";
+import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { Image, ScrollControls, Scroll, useScroll, Text, useCursor } from "@react-three/drei";
+import { type CatalogProduct, colones } from "./catalog-types";
+
+const SPACING = 4;
+const CARD_W = 3;
+const CARD_H = 3.6;
+const OLIVE = "#1F2A22";
+const CREAM = "#F6F1E7";
+const GOLD = "#C89B3C";
+const SIENNA = "#B5562B";
+const STONE = "#8B8378";
+
+/* -------------------------------------------------------------------------- */
+
+function Card({
+  product,
+  x,
+  onSelect,
+}: {
+  product: CatalogProduct;
+  x: number;
+  onSelect: (p: CatalogProduct) => void;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered);
+
+  useFrame((_, delta) => {
+    if (!group.current) return;
+    const target = hovered ? 1.07 : 1;
+    const s = THREE.MathUtils.damp(group.current.scale.x, target, 8, delta);
+    group.current.scale.setScalar(s);
+    // gira levemente hacia el centro de la escena
+    group.current.rotation.y = THREE.MathUtils.damp(
+      group.current.rotation.y,
+      -x * 0.03,
+      6,
+      delta,
+    );
+  });
+
+  const discounted = product.discountPriceCents < product.originalPriceCents;
+
+  return (
+    <group
+      ref={group}
+      position={[x, 0, 0]}
+      onPointerOver={(e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation();
+        setHovered(true);
+      }}
+      onPointerOut={() => setHovered(false)}
+      onClick={(e: ThreeEvent<MouseEvent>) => {
+        e.stopPropagation();
+        onSelect(product);
+      }}
+    >
+      {product.photoUrl ? (
+        <Image
+          url={product.photoUrl}
+          scale={[CARD_W, CARD_H]}
+          radius={0.12}
+          transparent
+        />
+      ) : (
+        <mesh>
+          <planeGeometry args={[CARD_W, CARD_H]} />
+          <meshBasicMaterial color={OLIVE} />
+        </mesh>
+      )}
+
+      {!product.photoUrl && (
+        <Text
+          position={[0, 0, 0.01]}
+          fontSize={0.28}
+          maxWidth={CARD_W * 0.8}
+          textAlign="center"
+          color={CREAM}
+          anchorX="center"
+          anchorY="middle"
+        >
+          {product.name}
+        </Text>
+      )}
+
+      <Text
+        position={[0, -CARD_H / 2 - 0.35, 0]}
+        fontSize={0.26}
+        maxWidth={CARD_W * 1.2}
+        textAlign="center"
+        color={OLIVE}
+        anchorX="center"
+        anchorY="top"
+      >
+        {product.name}
+      </Text>
+      <Text
+        position={[0, -CARD_H / 2 - 0.78, 0]}
+        fontSize={0.2}
+        color={discounted ? SIENNA : GOLD}
+        anchorX="center"
+        anchorY="top"
+      >
+        {colones(product.discountPriceCents)}
+        {product.pickupShortName ? `  ·  ${product.pickupShortName}` : ""}
+      </Text>
+    </group>
+  );
+}
+
+function Row({
+  products,
+  onSelect,
+}: {
+  products: CatalogProduct[];
+  onSelect: (p: CatalogProduct) => void;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const scroll = useScroll();
+  const travel = (products.length - 1) * SPACING;
+
+  useFrame((state, delta) => {
+    if (!group.current) return;
+    const targetX = SPACING - scroll.offset * travel;
+    group.current.position.x = THREE.MathUtils.damp(
+      group.current.position.x,
+      targetX,
+      6,
+      delta,
+    );
+    // parallax con el puntero
+    group.current.rotation.y = THREE.MathUtils.damp(
+      group.current.rotation.y,
+      state.pointer.x * 0.12,
+      4,
+      delta,
+    );
+    state.camera.position.y = THREE.MathUtils.damp(
+      state.camera.position.y,
+      state.pointer.y * 0.4,
+      4,
+      delta,
+    );
+    state.camera.lookAt(0, 0, 0);
+  });
+
+  return (
+    <group ref={group}>
+      {products.map((p, i) => (
+        <Card key={p.id} product={p} x={i * SPACING} onSelect={onSelect} />
+      ))}
+    </group>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+
+class SceneErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+function DomFallbackGrid({ products }: { products: CatalogProduct[] }) {
+  return (
+    <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 px-6 py-16 sm:grid-cols-3">
+      {products.map((p) => (
+        <div key={p.id} className="border border-[#ece3d2] p-3">
+          <p className="font-serif text-lg text-[#1F2A22]">{p.name}</p>
+          <p className="text-sm text-[#C89B3C]">{colones(p.discountPriceCents)}</p>
+          {p.pickupShortName && (
+            <p className="text-xs text-[#8B8378]">{p.pickupShortName}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+
+export default function GalleryScene({ products }: { products: CatalogProduct[] }) {
+  const [selected, setSelected] = useState<CatalogProduct | null>(null);
+  const pages = useMemo(() => Math.max(2, products.length * 0.55), [products.length]);
+
+  return (
+    <div className="relative min-h-dvh w-full bg-[#F6F1E7]">
+      <SceneErrorBoundary fallback={<DomFallbackGrid products={products} />}>
+        <div className="h-dvh w-full">
+          <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+            <color attach="background" args={[CREAM]} />
+            <Suspense fallback={null}>
+              <ScrollControls horizontal pages={pages} damping={0.18}>
+                <Scroll>
+                  <Row products={products} onSelect={setSelected} />
+                </Scroll>
+              </ScrollControls>
+            </Suspense>
+          </Canvas>
+        </div>
+      </SceneErrorBoundary>
+
+      {/* Instrucciones */}
+      <div className="pointer-events-none absolute left-0 top-0 p-6">
+        <Link
+          href="/"
+          className="pointer-events-auto font-serif text-xl text-[#1F2A22]"
+        >
+          Crop
+        </Link>
+        <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#8B8378]">
+          Scrolleá para recorrer el excedente · mové el mouse para mirar alrededor
+          · clic en un producto para ver el detalle.
+        </p>
+      </div>
+
+      {/* Panel de detalle */}
+      {selected && (
+        <div className="absolute inset-x-0 bottom-0 border-t border-[#ece3d2] bg-[#F6F1E7]/95 p-6 backdrop-blur">
+          <div className="mx-auto flex max-w-3xl items-start justify-between gap-6">
+            <div>
+              <h2 className="font-serif text-2xl text-[#1F2A22]">{selected.name}</h2>
+              {selected.description && (
+                <p className="mt-1 max-w-xl text-sm text-[#8B8378]">
+                  {selected.description}
+                </p>
+              )}
+              <p className="mt-2 text-sm text-[#1F2A22]">
+                <span className="text-[#C89B3C]">
+                  {colones(selected.discountPriceCents)}
+                </span>
+                {selected.discountPriceCents < selected.originalPriceCents && (
+                  <span className="ml-2 text-[#B5562B] line-through">
+                    {colones(selected.originalPriceCents)}
+                  </span>
+                )}
+                <span className="ml-3 text-[#8B8378]">
+                  {selected.quantity} disponibles
+                  {selected.pickupShortName ? ` · ${selected.pickupShortName}` : ""}
+                </span>
+              </p>
+              {/* TODO(apartado): enlazar al flujo de reserva real (necesita sesión
+                  + endpoint tRPC de `reserve` expuesto en apps/web). */}
+              <Link
+                href={`/signin?callbackUrl=/catalogo`}
+                className="mt-3 inline-block bg-[#1F2A22] px-4 py-2 text-sm text-[#F6F1E7]"
+              >
+                Apartar
+              </Link>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelected(null)}
+              className="text-sm text-[#8B8378] underline underline-offset-4"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
