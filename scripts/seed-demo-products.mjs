@@ -39,8 +39,8 @@ const prisma = new PrismaClient();
 
 const DEMO = [
   {
-    name: "Cacao en baba (excedente)",
-    description: "Cacao fresco recién cosechado, excedente de la última recolección.",
+    name: "Cacao molido (excedente)",
+    description: "Cacao molido, excedente de la última recolección.",
     photoUrl: "https://picsum.photos/seed/crop-cacao/900/900",
     quantity: 18,
     originalPriceCents: 350000,
