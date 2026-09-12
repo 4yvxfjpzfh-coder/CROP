@@ -135,7 +135,10 @@ function Row({
 
   useFrame((state, delta) => {
     if (!group.current) return;
-    const targetX = SPACING - scroll.offset * travel;
+    // offset 0 -> primera tarjeta centrada bajo la cámara; offset 1 -> la
+    // última. (Antes arrancaba desplazado +SPACING y la primera tarjeta
+    // quedaba casi entera fuera de cuadro al cargar la página.)
+    const targetX = -scroll.offset * travel;
     group.current.position.x = THREE.MathUtils.damp(
       group.current.position.x,
       targetX,
