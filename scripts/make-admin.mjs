@@ -9,19 +9,30 @@
  *
  * Usa DATABASE_URL de packages/prisma/.env.
  */
-import { PrismaClient } from "../node_modules/@prisma/client/index.js";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { createRequire } from "node:module";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const prismaPkgDir = join(here, "../packages/prisma/");
+
+// pnpm resuelve @prisma/client dentro del node_modules propio de
+// packages/prisma, no en la raíz del monorepo.
+const { PrismaClient } = createRequire(join(prismaPkgDir, "package.json"))("@prisma/client");
 
 // Carga DATABASE_URL desde packages/prisma/.env si no está en el entorno.
 if (!process.env.DATABASE_URL) {
   try {
-    const env = readFileSync(join(here, "../packages/prisma/.env"), "utf8");
-    const m = env.match(/^DATABASE_URL="?(.+?)"?\s*$/m);
-    if (m) process.env.DATABASE_URL = m[1];
+    // .replace(/^﻿/, "") por si el .env quedó guardado con BOM (pasa con
+    // Out-File/Set-Content de PowerShell).
+    const line = readFileSync(join(prismaPkgDir, ".env"), "utf8")
+      .replace(/^﻿/, "")
+      .split(/\r?\n/)
+      .find((l) => l.startsWith("DATABASE_URL="));
+    if (line) {
+      process.env.DATABASE_URL = line.slice("DATABASE_URL=".length).trim().replace(/^"|"$/g, "");
+    }
   } catch {}
 }
 

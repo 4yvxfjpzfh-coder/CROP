@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { SignInWithAppleButton } from "@/components/SignInWithAppleButton";
+
+// process.env.NODE_ENV se reemplaza en build time; en el bundle de producción
+// (next build/start, lo que corre Vercel) esta rama nunca se incluye.
+const DEV_LOGIN_ENABLED = process.env.NODE_ENV !== "production";
 
 export default function SignInPage() {
   const [accepted, setAccepted] = useState(false);
@@ -53,6 +58,22 @@ export default function SignInPage() {
           </p>
         )}
       </div>
+
+      {DEV_LOGIN_ENABLED && (
+        <div className="border-t border-dashed border-neutral-300 pt-4">
+          <button
+            type="button"
+            onClick={() => signIn("dev-admin", { callbackUrl: "/admin" })}
+            className="h-11 w-full rounded-md border border-neutral-300 bg-neutral-50 text-sm text-neutral-700 hover:bg-neutral-100"
+          >
+            Entrar como admin (solo desarrollo)
+          </button>
+          <p className="mt-1 text-center text-xs text-neutral-400">
+            Atajo local mientras no hay Sign in with Apple configurado. No
+            existe en producción.
+          </p>
+        </div>
+      )}
     </main>
   );
 }
