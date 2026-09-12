@@ -263,6 +263,11 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
                   {selected.pickupShortName ? ` · ${selected.pickupShortName}` : ""}
                 </span>
               </p>
+              {selected.providerName && (
+                <p className="mt-1 text-xs text-[#8B8378]">
+                  Cultivado por {selected.providerName}
+                </p>
+              )}
               <ReserveButton productId={selected.id} />
             </div>
             <button

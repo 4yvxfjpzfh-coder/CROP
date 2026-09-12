@@ -9,6 +9,7 @@ import { recordAdminAudit } from "@/lib/audit";
 const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
+  providerName: z.string().trim().max(120).optional().or(z.literal("")),
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
   quantity: z.coerce.number().int().min(0, "La cantidad no puede ser negativa"),
   originalPriceCents: z.coerce.number().int().min(0),
@@ -25,6 +26,7 @@ function parse(formData: FormData) {
   return productInput.safeParse({
     name: formData.get("name"),
     description: formData.get("description") ?? "",
+    providerName: formData.get("providerName") ?? "",
     photoUrl: formData.get("photoUrl") ?? "",
     quantity: formData.get("quantity"),
     originalPriceCents: formData.get("originalPriceCents"),
@@ -70,6 +72,7 @@ export async function createProduct(
     data: {
       name: data.name,
       description: data.description || null,
+      providerName: data.providerName || null,
       photoUrl: data.photoUrl || null,
       quantity: data.quantity,
       originalPriceCents: data.originalPriceCents,
@@ -116,6 +119,7 @@ export async function updateProduct(
     data: {
       name: data.name,
       description: data.description || null,
+      providerName: data.providerName || null,
       photoUrl: data.photoUrl || null,
       quantity: data.quantity,
       originalPriceCents: data.originalPriceCents,

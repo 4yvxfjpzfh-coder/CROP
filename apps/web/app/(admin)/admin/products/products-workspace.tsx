@@ -82,6 +82,7 @@ export function ProductsWorkspace({
                       <span className="mt-0.5 block font-[family-name:var(--font-form)] text-xs text-stone">
                         {p.quantity} disponibles
                         {p.pickupShortName ? ` · ${p.pickupShortName}` : " · sin punto de recogida"}
+                        {p.providerName ? ` · ${p.providerName}` : ""}
                         {!p.isActive && " · oculto"}
                       </span>
                     </span>

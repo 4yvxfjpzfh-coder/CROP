@@ -78,6 +78,19 @@ export function ProductForm({
         </div>
 
         <div>
+          <label className={label} htmlFor="providerName">
+            Agricultor / proveedor (opcional)
+          </label>
+          <input
+            id="providerName"
+            name="providerName"
+            placeholder="ej. María Elena, Finca La Esperanza"
+            defaultValue={product?.providerName ?? ""}
+            className={field}
+          />
+        </div>
+
+        <div>
           <label className={label}>Foto</label>
           <PhotoUpload onPhotoUrl={setPhotoUrl} />
           <div className="mt-3 flex flex-col gap-2">

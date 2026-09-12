@@ -106,6 +106,10 @@ model Product {
   pickupPoint        PickupPoint? @relation(fields: [pickupPointId], references: [id], onDelete: SetNull)
   name               String
   description        String?
+  // Nombre del agricultor/emprendedor que lo cultivó, a mano, sin cuenta
+  // propia (el piloto centraliza la publicación en el admin). Solo texto
+  // libre para mostrarlo en el catálogo, no crea un Business.
+  providerName       String?
   photoUrl           String?      // Foto del producto (o la imagen editada exportada por ProductPhotoEditor)
   originalPriceCents Int          // Precio de referencia
   discountPriceCents Int          // Precio de excedente

@@ -2,6 +2,7 @@ export type CatalogProduct = {
   id: string;
   name: string;
   description: string | null;
+  providerName: string | null;
   photoUrl: string | null;
   quantity: number;
   originalPriceCents: number;
