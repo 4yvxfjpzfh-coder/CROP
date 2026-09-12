@@ -1,0 +1,34 @@
+<svg width="900" height="600" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="600" fill="#F6F1E7"/>
+  <rect width="900" height="600" fill="#8B3A1E" fill-opacity="0.04"/>
+  <!-- rama con cerezas de café -->
+  <path d="M60,300 C260,260 380,320 520,290 C660,262 760,300 860,270"
+        fill="none" stroke="#5C4A32" stroke-width="10" stroke-linecap="round"/>
+  <g>
+    <!-- hojas -->
+    <g fill="#3F5A3F">
+      <path d="M180,290 C150,250 150,210 190,190 C210,230 210,270 180,290 Z"/>
+      <path d="M420,300 C390,340 350,350 320,320 C350,290 390,280 420,300 Z"/>
+      <path d="M620,280 C590,240 590,200 630,180 C650,220 650,260 620,280 Z"/>
+    </g>
+    <!-- cerezas -->
+    <g>
+      <circle cx="230" cy="270" r="30" fill="#B5562B"/>
+      <circle cx="230" cy="270" r="30" fill="#1F2A22" opacity="0.12"/>
+      <circle cx="230" cy="270" r="8" fill="#F6F1E7" opacity="0.6"/>
+
+      <circle cx="300" cy="310" r="26" fill="#8B3A1E"/>
+      <circle cx="300" cy="310" r="7" fill="#F6F1E7" opacity="0.5"/>
+
+      <circle cx="500" cy="250" r="30" fill="#B5562B"/>
+      <circle cx="500" cy="250" r="8" fill="#F6F1E7" opacity="0.6"/>
+
+      <circle cx="570" cy="300" r="24" fill="#8B3A1E"/>
+      <circle cx="570" cy="300" r="7" fill="#F6F1E7" opacity="0.5"/>
+
+      <circle cx="740" cy="250" r="28" fill="#B5562B"/>
+      <circle cx="740" cy="250" r="8" fill="#F6F1E7" opacity="0.6"/>
+    </g>
+  </g>
+  <text x="450" y="565" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#1F2A22" opacity="0.55">Café pergamino</text>
+</svg>

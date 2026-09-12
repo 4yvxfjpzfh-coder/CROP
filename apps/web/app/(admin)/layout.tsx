@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-guard";
-import { fraunces, inter } from "./admin/fonts";
 import { AdminNav } from "./admin/admin-nav";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
@@ -10,9 +9,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const actor = await requireAdmin("redirect");
 
   return (
-    <div
-      className={`${fraunces.variable} ${inter.variable} flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive`}
-    >
+    <div className="flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive">
       <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream">
         <div>
           <Link href="/admin" className="block">

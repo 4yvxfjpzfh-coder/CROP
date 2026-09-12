@@ -1,0 +1,61 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#F6F1E7"/>
+      <stop offset="100%" stop-color="#ECE3D2"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+
+  <!-- sol -->
+  <circle cx="600" cy="150" r="90" fill="#C89B3C" opacity="0.18"/>
+  <circle cx="600" cy="150" r="55" fill="#C89B3C" opacity="0.3"/>
+
+  <!-- canasta -->
+  <g transform="translate(400 560)">
+    <path d="M-220,-20 L220,-20 L180,140 C180,170 100,190 0,190 C-100,190 -180,170 -180,140 Z" fill="#8B6A3A"/>
+    <path d="M-220,-20 L220,-20 L200,40 L-200,40 Z" fill="#6E5228"/>
+    <g stroke="#5C4420" stroke-width="4" opacity="0.5">
+      <path d="M-170,20 L-140,160" fill="none"/>
+      <path d="M-90,25 L-75,175" fill="none"/>
+      <path d="M0,26 L0,188" fill="none"/>
+      <path d="M90,25 L75,175" fill="none"/>
+      <path d="M170,20 L140,160" fill="none"/>
+    </g>
+  </g>
+
+  <!-- piña -->
+  <g transform="translate(280 430) scale(0.55)">
+    <g fill="#3F5A3F">
+      <path d="M0,-150 L-40,-260 L-8,-160 Z"/>
+      <path d="M0,-150 L0,-270 L18,-160 Z"/>
+      <path d="M0,-150 L40,-260 L8,-158 Z"/>
+    </g>
+    <ellipse cx="0" cy="10" rx="130" ry="165" fill="#C89B3C"/>
+    <g stroke="#8B6A22" stroke-width="5" fill="none" opacity="0.5">
+      <path d="M0,-130 L52,-75 L0,-20 L-52,-75 Z"/>
+      <path d="M0,-20 L52,35 L0,90 L-52,35 Z"/>
+      <path d="M-52,-75 L0,-20 L-52,35 L-104,-20 Z"/>
+      <path d="M52,-75 L104,-20 L52,35 L0,-20 Z"/>
+    </g>
+  </g>
+
+  <!-- cacao -->
+  <g transform="translate(500 420) scale(0.5)">
+    <path d="M0,-190 C90,-160 120,-70 100,0 C120,70 90,160 0,190 C-90,160 -120,70 -100,0 C-120,-70 -90,-160 0,-190 Z" fill="#B5562B"/>
+    <path d="M0,-190 L0,190" stroke="#8B3A1E" stroke-width="6" fill="none" opacity="0.6"/>
+  </g>
+
+  <!-- granos de café -->
+  <g fill="#6B4226">
+    <ellipse cx="330" cy="500" rx="26" ry="18" transform="rotate(-15 330 500)"/>
+    <ellipse cx="470" cy="510" rx="24" ry="17" transform="rotate(20 470 510)"/>
+    <ellipse cx="400" cy="470" rx="24" ry="17" transform="rotate(5 400 470)"/>
+  </g>
+
+  <!-- hojas decorativas -->
+  <g fill="#3F5A3F" opacity="0.85">
+    <path d="M150,300 C110,260 110,210 160,180 C185,225 185,275 150,300 Z"/>
+    <path d="M650,320 C690,280 690,230 640,200 C615,245 615,295 650,320 Z"/>
+  </g>
+</svg>

@@ -41,7 +41,7 @@ const DEMO = [
   {
     name: "Cacao molido (excedente)",
     description: "Cacao molido, excedente de la última recolección.",
-    photoUrl: "https://picsum.photos/seed/crop-cacao/900/900",
+    photoUrl: "/demo/cacao.svg",
     quantity: 18,
     originalPriceCents: 350000,
     discountPriceCents: 210000,
@@ -50,7 +50,7 @@ const DEMO = [
   {
     name: "Café pergamino",
     description: "Café de altura, lote pequeño que sobró del último despacho.",
-    photoUrl: "https://picsum.photos/seed/crop-cafe/900/900",
+    photoUrl: "/demo/cafe.svg",
     quantity: 12,
     originalPriceCents: 500000,
     discountPriceCents: 320000,
@@ -59,7 +59,7 @@ const DEMO = [
   {
     name: "Piñas extra maduras",
     description: "Piñas listas para consumir hoy — precio de excedente.",
-    photoUrl: "https://picsum.photos/seed/crop-pina/900/900",
+    photoUrl: "/demo/pina.svg",
     quantity: 25,
     originalPriceCents: 150000,
     discountPriceCents: 80000,

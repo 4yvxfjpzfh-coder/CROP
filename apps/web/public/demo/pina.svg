@@ -1,0 +1,28 @@
+<svg width="900" height="600" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="600" fill="#F6F1E7"/>
+  <rect width="900" height="600" fill="#C89B3C" fill-opacity="0.05"/>
+  <g transform="translate(450 320)">
+    <!-- corona -->
+    <g fill="#3F5A3F">
+      <path d="M0,-150 L-40,-260 L-8,-160 Z"/>
+      <path d="M0,-150 L0,-270 L18,-160 Z"/>
+      <path d="M0,-150 L40,-260 L8,-158 Z"/>
+      <path d="M0,-150 L-70,-230 L-22,-155 Z"/>
+      <path d="M0,-150 L70,-232 L22,-155 Z"/>
+    </g>
+    <!-- cuerpo -->
+    <ellipse cx="0" cy="30" rx="150" ry="190" fill="#C89B3C"/>
+    <ellipse cx="0" cy="30" rx="150" ry="190" fill="#B5562B" opacity="0.10"/>
+    <!-- patron de rombos -->
+    <g stroke="#8B6A22" stroke-width="4" fill="none" opacity="0.55">
+      <path d="M0,-160 L60,-100 L0,-40 L-60,-100 Z"/>
+      <path d="M0,-40 L60,20 L0,80 L-60,20 Z"/>
+      <path d="M0,80 L60,140 L0,200 L-60,140 Z"/>
+      <path d="M-60,-100 L0,-40 L-60,20 L-120,-40 Z"/>
+      <path d="M60,-100 L120,-40 L60,20 L0,-40 Z"/>
+      <path d="M-60,20 L0,80 L-60,140 L-120,80 Z"/>
+      <path d="M60,20 L120,80 L60,140 L0,80 Z"/>
+    </g>
+  </g>
+  <text x="450" y="565" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#1F2A22" opacity="0.55">Piña extra madura</text>
+</svg>

@@ -15,9 +15,10 @@ import { Image, ScrollControls, Scroll, useScroll, Text, useCursor } from "@reac
 import { type CatalogProduct, colones } from "./catalog-types";
 import { ReserveButton } from "./reserve-button";
 
-const SPACING = 4;
-const CARD_W = 3;
-const CARD_H = 3.6;
+const SPACING = 5.2; // deja aire entre tarjetas, ahora más anchas (CARD_W)
+// Formato horizontal (3:2, igual que las fotos de producto), no vertical.
+const CARD_W = 3.9;
+const CARD_H = 2.6;
 const OLIVE = "#1F2A22";
 const CREAM = "#F6F1E7";
 const GOLD = "#C89B3C";

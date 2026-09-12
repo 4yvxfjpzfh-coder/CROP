@@ -8,10 +8,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
 
-  /* Panel de administración de Crop — feria del agricultor */
+  /* Paleta e identidad de Crop — feria del agricultor */
   --color-olive: #1f2a22; /* fondo lateral */
   --color-olive-700: #2c3a30;
   --color-cream: #f6f1e7; /* fondo principal */

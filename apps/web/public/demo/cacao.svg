@@ -1,0 +1,26 @@
+<svg width="900" height="600" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="600" fill="#F6F1E7"/>
+  <rect width="900" height="600" fill="#1F2A22" fill-opacity="0.03"/>
+  <!-- vaina de cacao central -->
+  <g transform="translate(450 300)">
+    <path d="M0,-190 C90,-160 120,-70 100,0 C120,70 90,160 0,190 C-90,160 -120,70 -100,0 C-120,-70 -90,-160 0,-190 Z"
+          fill="#B5562B"/>
+    <path d="M0,-190 C90,-160 120,-70 100,0 C120,70 90,160 0,190"
+          fill="none" stroke="#8B3A1E" stroke-width="6"/>
+    <path d="M0,-190 L0,190 M-55,-150 C-65,-70 -65,70 -55,150 M55,-150 C65,-70 65,70 55,150"
+          fill="none" stroke="#8B3A1E" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+  </g>
+  <!-- granos de cacao esparcidos -->
+  <g fill="#6B4226">
+    <ellipse cx="180" cy="150" rx="34" ry="24" transform="rotate(-18 180 150)"/>
+    <ellipse cx="230" cy="200" rx="30" ry="21" transform="rotate(10 230 200)"/>
+    <ellipse cx="150" cy="420" rx="32" ry="22" transform="rotate(25 150 420)"/>
+    <ellipse cx="700" cy="440" rx="34" ry="24" transform="rotate(-12 700 440)"/>
+    <ellipse cx="740" cy="160" rx="30" ry="21" transform="rotate(20 740 160)"/>
+  </g>
+  <g fill="#C89B3C" opacity="0.7">
+    <ellipse cx="190" cy="145" rx="14" ry="8" transform="rotate(-18 190 145)"/>
+    <ellipse cx="710" cy="435" rx="14" ry="8" transform="rotate(-12 710 435)"/>
+  </g>
+  <text x="450" y="565" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#1F2A22" opacity="0.55">Cacao molido</text>
+</svg>
