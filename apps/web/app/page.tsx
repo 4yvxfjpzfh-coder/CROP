@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
+import { FruitCarousel } from "@/components/fruit-carousel";
 
 const steps = [
   {
@@ -20,10 +21,27 @@ const steps = [
   },
 ];
 
-const products = [
-  { name: "Cacao", img: "/demo/cacao.svg" },
-  { name: "Café", img: "/demo/cafe.svg" },
-  { name: "Piña", img: "/demo/pina.svg" },
+const fruits = [
+  {
+    name: "Cacao",
+    img: "/demo/cacao.svg",
+    blurb: "Cacao molido, recién procesado en la finca — excedente de la última recolección.",
+  },
+  {
+    name: "Café",
+    img: "/demo/cafe.svg",
+    blurb: "Café de altura, lotes pequeños que sobraron del último despacho.",
+  },
+  {
+    name: "Banano",
+    img: "/demo/banano.svg",
+    blurb: "Banano maduro, listo para consumir hoy — precio de excedente.",
+  },
+  {
+    name: "Piña",
+    img: "/demo/pina.svg",
+    blurb: "Piñas extra dulces de la cosecha de esta semana.",
+  },
 ];
 
 export default function Home() {
@@ -116,35 +134,17 @@ export default function Home() {
 
         {/* Qué vas a encontrar */}
         <section className="mx-auto w-full max-w-5xl px-6 py-14">
-          <Reveal>
+          <Reveal className="text-center">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-olive">
               Lo que encontrás hoy
             </h2>
+            <p className="mt-1 font-[family-name:var(--font-form)] text-sm text-stone">
+              Recorré las frutas con las flechas.
+            </p>
           </Reveal>
-          <div className="mt-6 grid gap-6 sm:grid-cols-3">
-            {products.map((p, i) => (
-              <Reveal key={p.name} delay={i * 0.1}>
-                <Press>
-                  <Link
-                    href="/catalogo"
-                    className="group block overflow-hidden border border-cream-200 bg-white"
-                  >
-                    <div className="aspect-[3/2] w-full overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={p.img}
-                        alt={p.name}
-                        className="size-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                    <p className="px-4 py-3 font-[family-name:var(--font-display)] text-base text-olive">
-                      {p.name}
-                    </p>
-                  </Link>
-                </Press>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal delay={0.1} className="mt-8">
+            <FruitCarousel items={fruits} />
+          </Reveal>
         </section>
       </main>
 

@@ -1,0 +1,19 @@
+<svg width="900" height="600" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="600" fill="#F6F1E7"/>
+  <rect width="900" height="600" fill="#C89B3C" fill-opacity="0.04"/>
+  <!-- racimo de bananos -->
+  <g transform="translate(450 320)">
+    <path d="M-260,60 C-220,-80 -80,-170 60,-160 C90,-158 100,-130 75,-118 C-40,-105 -150,-30 -190,90 C-205,135 -250,110 -260,60 Z" fill="#C89B3C"/>
+    <path d="M-260,60 C-220,-80 -80,-170 60,-160" fill="none" stroke="#8B6A22" stroke-width="6" opacity="0.5"/>
+
+    <path d="M-140,140 C-90,10 40,-70 170,-55 C200,-50 208,-22 182,-12 C70,10 -30,80 -70,175 C-88,218 -132,190 -140,140 Z" fill="#D8AE4F"/>
+    <path d="M-140,140 C-90,10 40,-70 170,-55" fill="none" stroke="#8B6A22" stroke-width="6" opacity="0.4"/>
+
+    <path d="M-20,190 C25,65 150,-10 275,10 C302,15 308,42 282,50 C175,68 85,132 55,222 C42,262 0,238 -20,190 Z" fill="#C89B3C"/>
+    <path d="M-20,190 C25,65 150,-10 275,10" fill="none" stroke="#8B6A22" stroke-width="6" opacity="0.5"/>
+
+    <!-- tallo -->
+    <ellipse cx="-255" cy="35" rx="18" ry="30" fill="#3F5A3F"/>
+  </g>
+  <text x="450" y="565" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#1F2A22" opacity="0.55">Banano</text>
+</svg>
