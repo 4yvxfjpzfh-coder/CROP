@@ -22,9 +22,11 @@ const CARD_W = 3.9;
 const CARD_H = 2.6;
 const OLIVE = "#1F2A22";
 const CREAM = "#F6F1E7";
-const GOLD = "#C89B3C";
+// #C89B3C (dorado de marca) sobre crema da ~2.3:1, falla WCAG AA como texto;
+// esta versión oscurecida sí pasa, se usa en vez del dorado plano para texto.
+const GOLD_TEXT = "#8A6E24";
 const SIENNA = "#B5562B";
-const STONE = "#8B8378";
+const STONE = "#6B6459"; // antes #6B6459 (~3.3:1 sobre crema, falla WCAG AA)
 
 /* -------------------------------------------------------------------------- */
 
@@ -113,7 +115,7 @@ function Card({
       <Text
         position={[0, -CARD_H / 2 - 0.78, 0]}
         fontSize={0.2}
-        color={discounted ? SIENNA : GOLD}
+        color={discounted ? SIENNA : GOLD_TEXT}
         anchorX="center"
         anchorY="top"
       >
@@ -193,9 +195,9 @@ function DomFallbackGrid({ products }: { products: CatalogProduct[] }) {
       {products.map((p) => (
         <div key={p.id} className="border border-[#ece3d2] p-3">
           <p className="font-serif text-lg text-[#1F2A22]">{p.name}</p>
-          <p className="text-sm text-[#C89B3C]">{colones(p.discountPriceCents)}</p>
+          <p className="text-sm text-[#8A6E24]">{colones(p.discountPriceCents)}</p>
           {p.pickupShortName && (
-            <p className="text-xs text-[#8B8378]">{p.pickupShortName}</p>
+            <p className="text-xs text-[#6B6459]">{p.pickupShortName}</p>
           )}
         </div>
       ))}
@@ -234,7 +236,7 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
         >
           Crop
         </Link>
-        <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#8B8378]">
+        <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#6B6459]">
           Scrolleá para recorrer el excedente · mové el mouse para mirar alrededor
           · clic en un producto para ver el detalle.
         </p>
@@ -255,12 +257,12 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
             <div>
               <h2 className="font-serif text-2xl text-[#1F2A22]">{selected.name}</h2>
               {selected.description && (
-                <p className="mt-1 max-w-xl text-sm text-[#8B8378]">
+                <p className="mt-1 max-w-xl text-sm text-[#6B6459]">
                   {selected.description}
                 </p>
               )}
               <p className="mt-2 text-sm text-[#1F2A22]">
-                <span className="text-[#C89B3C]">
+                <span className="text-[#8A6E24]">
                   {colones(selected.discountPriceCents)}
                 </span>
                 {selected.discountPriceCents < selected.originalPriceCents && (
@@ -268,13 +270,13 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
                     {colones(selected.originalPriceCents)}
                   </span>
                 )}
-                <span className="ml-3 text-[#8B8378]">
+                <span className="ml-3 text-[#6B6459]">
                   {selected.quantity} disponibles
                   {selected.pickupShortName ? ` · ${selected.pickupShortName}` : ""}
                 </span>
               </p>
               {selected.providerName && (
-                <p className="mt-1 text-xs text-[#8B8378]">
+                <p className="mt-1 text-xs text-[#6B6459]">
                   Cultivado por {selected.providerName}
                 </p>
               )}
@@ -283,7 +285,7 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
             <button
               type="button"
               onClick={() => setSelected(null)}
-              className="text-sm text-[#8B8378] underline underline-offset-4"
+              className="text-sm text-[#6B6459] underline underline-offset-4"
             >
               Cerrar
             </button>

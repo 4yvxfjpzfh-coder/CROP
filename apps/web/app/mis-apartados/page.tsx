@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { colones } from "../(store)/catalogo/catalog-types";
+import { CancelButton } from "./cancel-button";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +78,11 @@ export default async function MyReservationsPage() {
                       })}`
                     : ""}
                 </div>
+                {order.status === "RESERVED" && !expired && (
+                  <div className="mt-2">
+                    <CancelButton orderId={order.id} />
+                  </div>
+                )}
               </li>
             );
           })}

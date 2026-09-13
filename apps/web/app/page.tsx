@@ -118,7 +118,7 @@ export default function Home() {
           <div className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-14 sm:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
-                <span className="font-[family-name:var(--font-display)] text-3xl text-gold">
+                <span className="font-[family-name:var(--font-display)] text-3xl text-gold-text">
                   {s.n}
                 </span>
                 <h2 className="mt-2 font-[family-name:var(--font-display)] text-xl text-olive">
@@ -157,6 +157,9 @@ export default function Home() {
             </Link>
             <Link href="/terms" className="hover:text-olive">
               Términos
+            </Link>
+            <Link href="/reembolsos" className="hover:text-olive">
+              Cancelaciones
             </Link>
           </div>
         </div>

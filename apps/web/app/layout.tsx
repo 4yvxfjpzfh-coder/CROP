@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { CookieConsent } from "@/components/cookie-consent";
 import "./globals.css";
 
 // Identidad de Crop, cargada acá una sola vez para toda la app (antes solo
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="flex min-h-full flex-col bg-cream font-[family-name:var(--font-form)] text-olive"
       >
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

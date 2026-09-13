@@ -15,9 +15,10 @@
   --color-olive-700: #2c3a30;
   --color-cream: #f6f1e7; /* fondo principal */
   --color-cream-200: #ece3d2;
-  --color-gold: #c89b3c; /* precios / estado */
+  --color-gold: #c89b3c; /* fondos/badges (con texto oscuro encima) */
+  --color-gold-text: #8a6e24; /* mismo dorado, oscurecido para usarlo como texto — #C89B3C sobre crema da ~2.3:1, falla WCAG AA (4.5:1) */
   --color-sienna: #b5562b; /* alertas / descuentos */
-  --color-stone: #8b8378; /* texto secundario */
+  --color-stone: #6b6459; /* texto secundario — antes #8B8378 daba ~3.3:1 sobre crema, falla AA */
 
   --font-display: var(--font-fraunces); /* nombres de producto y totales */
   --font-form: var(--font-inter); /* formularios y listas */

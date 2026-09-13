@@ -87,7 +87,7 @@ export function ProductsWorkspace({
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
-                      <span className="font-[family-name:var(--font-display)] text-base text-gold">
+                      <span className="font-[family-name:var(--font-display)] text-base text-gold-text">
                         {colones(p.discountPriceCents)}
                       </span>
                       {p.discountPriceCents < p.originalPriceCents && (
