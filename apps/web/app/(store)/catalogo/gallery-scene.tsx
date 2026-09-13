@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from "three";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Image, ScrollControls, Scroll, useScroll, Text, useCursor } from "@react-three/drei";
@@ -240,8 +241,16 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
       </div>
 
       {/* Panel de detalle */}
-      {selected && (
-        <div className="absolute inset-x-0 bottom-0 border-t border-[#ece3d2] bg-[#F6F1E7]/95 p-6 backdrop-blur">
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            key={selected.id}
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 32 }}
+            className="absolute inset-x-0 bottom-0 border-t border-[#ece3d2] bg-[#F6F1E7]/95 p-6 backdrop-blur"
+          >
           <div className="mx-auto flex max-w-3xl items-start justify-between gap-6">
             <div>
               <h2 className="font-serif text-2xl text-[#1F2A22]">{selected.name}</h2>
@@ -279,8 +288,9 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
               Cerrar
             </button>
           </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
