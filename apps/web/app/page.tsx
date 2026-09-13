@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel } from "@/components/fruit-carousel";
+import { TiltOnScroll } from "@/components/motion/tilt-on-scroll";
 
 const steps = [
   {
@@ -104,12 +105,14 @@ export default function Home() {
             </Reveal>
           </div>
           <Reveal delay={0.15} y={24} className="w-full max-w-md justify-self-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/demo/hero-cosecha.svg"
-              alt="Canasta con cacao, café y piña"
-              className="aspect-square w-full object-contain"
-            />
+            <TiltOnScroll>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/demo/hero-cosecha.svg"
+                alt="Canasta con cacao, café y piña"
+                className="aspect-square w-full object-contain"
+              />
+            </TiltOnScroll>
           </Reveal>
         </section>
 
