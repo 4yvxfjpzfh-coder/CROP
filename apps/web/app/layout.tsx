@@ -37,7 +37,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-cream font-[family-name:var(--font-form)] text-olive">
+      {/* suppressHydrationWarning: extensiones como Grammarly inyectan sus
+          propios atributos data-gr-* en <body> antes de que React hidrate;
+          no es un problema real de la app, solo ruido en consola. */}
+      <body
+        suppressHydrationWarning
+        className="flex min-h-full flex-col bg-cream font-[family-name:var(--font-form)] text-olive"
+      >
         {children}
       </body>
     </html>
