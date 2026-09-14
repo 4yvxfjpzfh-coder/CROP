@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type AdminPickupPoint, type AdminProduct } from "./types";
 import { PickupPointField } from "./pickup-point-field";
@@ -37,10 +37,12 @@ export function ProductForm({
   );
   const [photoUrl, setPhotoUrl] = useState<string>(product?.photoUrl ?? "");
 
-  if (state?.ok) {
-    // Refresca la lista del server component tras crear/editar.
-    router.refresh();
-  }
+  useEffect(() => {
+    // Refresca la lista del server component tras crear/editar. Tiene que ir
+    // en un efecto: llamar router.refresh() directo en el render dispara
+    // "Cannot update a component while rendering a different component".
+    if (state?.ok) router.refresh();
+  }, [state, router]);
 
   return (
     <div>
@@ -218,7 +220,9 @@ function DeleteButton({
   );
   const [confirming, setConfirming] = useState(false);
 
-  if (state?.ok) onDone();
+  useEffect(() => {
+    if (state?.ok) onDone();
+  }, [state, onDone]);
 
   if (!confirming) {
     return (

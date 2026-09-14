@@ -26,7 +26,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <div className="border-t border-olive-700 pt-4 text-xs leading-relaxed text-stone">
           <p className="text-cream">{actor.name ?? "Administración"}</p>
           <p>{actor.email}</p>
-          <Link href="/api/auth/signout" className="mt-2 inline-block text-cream underline underline-offset-4">
+          <Link href="/" className="mt-2 block text-cream underline underline-offset-4">
+            Salir del panel
+          </Link>
+          <Link href="/api/auth/signout" className="mt-1 block text-cream underline underline-offset-4">
             Cerrar sesión
           </Link>
         </div>
