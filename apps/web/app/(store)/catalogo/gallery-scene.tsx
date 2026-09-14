@@ -232,9 +232,9 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
       <div className="pointer-events-none absolute left-0 top-0 p-6">
         <Link
           href="/"
-          className="pointer-events-auto font-serif text-xl text-[#1F2A22]"
+          className="pointer-events-auto inline-flex items-center gap-2 font-serif text-xl text-[#1F2A22] hover:opacity-80"
         >
-          Crop
+          <span aria-hidden>←</span> Crop
         </Link>
         <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#6B6459]">
           Scrolleá para recorrer el excedente · mové el mouse para mirar alrededor
