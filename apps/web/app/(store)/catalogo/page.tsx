@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { Catalog3D } from "./catalog-3d";
 import type { CatalogProduct } from "./catalog-types";
+import { getHomeBackgroundUrl } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export const metadata = {
 };
 
 export default async function CatalogoPage() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  const backgroundUrl = await getHomeBackgroundUrl();
 
   const products = await prisma.product.findMany({
     // Curado a mano desde /admin/catalogo: solo entra lo que un admin agregó
@@ -48,5 +49,5 @@ export default async function CatalogoPage() {
     );
   }
 
-  return <Catalog3D products={items} backgroundUrl={settings?.homeBackgroundUrl ?? null} />;
+  return <Catalog3D products={items} backgroundUrl={backgroundUrl} />;
 }

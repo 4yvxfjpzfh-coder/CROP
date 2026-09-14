@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@crop/prisma";
+import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel } from "@/components/fruit-carousel";
@@ -52,11 +52,11 @@ const fruits = [
 ];
 
 export default async function Home() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  const backgroundUrl = await getHomeBackgroundUrl();
 
   return (
     <div className="min-h-dvh text-paper">
-      <SiteBackground url={settings?.homeBackgroundUrl ?? null} />
+      <SiteBackground url={backgroundUrl} />
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
         <span className="font-[family-name:var(--font-display)] text-2xl text-paper">
           Crop
