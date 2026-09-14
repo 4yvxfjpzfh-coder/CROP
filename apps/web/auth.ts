@@ -25,12 +25,20 @@ const devProviders =
           async authorize() {
             if (process.env.NODE_ENV === "production") return null;
             const email = process.env.ADMIN_EMAILS?.split(",")[0]?.trim() || "dev-admin@crop.local";
-            const user = await prisma.user.upsert({
-              where: { email },
-              update: {},
-              create: { email, name: "Admin (dev)", role: "ADMIN", consentedAt: new Date() },
-            });
-            return { id: user.id, email: user.email, name: user.name };
+            try {
+              const user = await prisma.user.upsert({
+                where: { email },
+                update: {},
+                create: { email, name: "Admin (dev)", role: "ADMIN", consentedAt: new Date() },
+              });
+              return { id: user.id, email: user.email, name: user.name };
+            } catch (err) {
+              // Si la DB está caída/despertando, que falle SOLO este login
+              // (NextAuth lo muestra como credenciales inválidas) en vez de
+              // dejar que la excepción se propague sin controlar.
+              console.error("[dev-admin] no se pudo crear/leer el usuario:", err);
+              return null;
+            }
           },
         }),
       ]
@@ -58,15 +66,21 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       // session.update() (llamado desde confirmConsent y desde la promoción a
       // ADMIN), para que esos cambios no exijan recrear la sesión.
       if (user?.id || trigger === "update") {
-        const dbUser = token.id
-          ? await prisma.user.findUnique({
-              where: { id: token.id as string },
-              select: { role: true, email: true, consentedAt: true },
-            })
-          : null;
-        token.role = dbUser?.role ?? "USER";
-        token.consented = Boolean(dbUser?.consentedAt);
-        if (dbUser?.email) token.email = dbUser.email;
+        try {
+          const dbUser = token.id
+            ? await prisma.user.findUnique({
+                where: { id: token.id as string },
+                select: { role: true, email: true, consentedAt: true },
+              })
+            : null;
+          token.role = dbUser?.role ?? "USER";
+          token.consented = Boolean(dbUser?.consentedAt);
+          if (dbUser?.email) token.email = dbUser.email;
+        } catch (err) {
+          // DB caída/despertando: mantené lo que ya había en el token en vez
+          // de tirar la sesión entera por un error transitorio.
+          console.error("[auth] no se pudo releer el usuario desde la DB:", err);
+        }
       }
       return token;
     },
