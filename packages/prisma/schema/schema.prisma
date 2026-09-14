@@ -241,3 +241,11 @@ enum OrderStatus {
   CANCELLED
   EXPIRED
 }
+
+// Fila única (id fijo "default") con preferencias visuales editables desde
+// /admin/settings. Por ahora solo la foto de fondo del home/catálogo.
+model SiteSettings {
+  id                String   @id @default("default")
+  homeBackgroundUrl String?
+  updatedAt         DateTime @updatedAt
+}

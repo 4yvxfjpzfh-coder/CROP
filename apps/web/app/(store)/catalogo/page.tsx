@@ -11,6 +11,8 @@ export const metadata = {
 };
 
 export default async function CatalogoPage() {
+  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+
   const products = await prisma.product.findMany({
     // Curado a mano desde /admin/catalogo: solo entra lo que un admin agregó
     // explícitamente, en el orden que eligió.
@@ -46,5 +48,5 @@ export default async function CatalogoPage() {
     );
   }
 
-  return <Catalog3D products={items} />;
+  return <Catalog3D products={items} backgroundUrl={settings?.homeBackgroundUrl ?? null} />;
 }

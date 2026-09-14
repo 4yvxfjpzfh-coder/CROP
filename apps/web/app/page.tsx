@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { prisma } from "@crop/prisma";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel } from "@/components/fruit-carousel";
 import { TiltOnScroll } from "@/components/motion/tilt-on-scroll";
 import { ParallaxDrift } from "@/components/motion/parallax-drift";
 import { FlipReveal } from "@/components/motion/flip-reveal";
+import { SiteBackground } from "@/components/site-background";
+
+export const dynamic = "force-dynamic";
 
 const steps = [
   {
@@ -47,12 +51,12 @@ const fruits = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+
   return (
-    <div
-      className="min-h-dvh bg-ink bg-[length:700px_700px] text-paper"
-      style={{ backgroundImage: "url(/demo/pattern-hojas.svg)" }}
-    >
+    <div className="min-h-dvh text-paper">
+      <SiteBackground url={settings?.homeBackgroundUrl ?? null} />
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
         <span className="font-[family-name:var(--font-display)] text-2xl text-paper">
           Crop

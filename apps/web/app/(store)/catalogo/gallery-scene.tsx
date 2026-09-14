@@ -15,6 +15,7 @@ import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Image, ScrollControls, Scroll, useScroll, Text, useCursor } from "@react-three/drei";
 import { type CatalogProduct, colones } from "./catalog-types";
 import { ReserveButton } from "./reserve-button";
+import { SiteBackground } from "@/components/site-background";
 
 const SPACING = 5.2; // deja aire entre tarjetas, ahora más anchas (CARD_W)
 // Formato horizontal (3:2, igual que las fotos de producto), no vertical.
@@ -240,16 +241,27 @@ function DomFallbackGrid({ products }: { products: CatalogProduct[] }) {
 
 /* -------------------------------------------------------------------------- */
 
-export default function GalleryScene({ products }: { products: CatalogProduct[] }) {
+export default function GalleryScene({
+  products,
+  backgroundUrl,
+}: {
+  products: CatalogProduct[];
+  backgroundUrl: string | null;
+}) {
   const [selected, setSelected] = useState<CatalogProduct | null>(null);
   const pages = useMemo(() => Math.max(2, products.length * 0.55), [products.length]);
 
   return (
-    <div className="relative min-h-dvh w-full bg-[#F6F1E7]">
+    <div className="relative min-h-dvh w-full">
+      {backgroundUrl && <SiteBackground url={backgroundUrl} />}
       <SceneErrorBoundary fallback={<DomFallbackGrid products={products} />}>
         <div className="h-dvh w-full">
-          <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
-            <color attach="background" args={[CREAM]} />
+          <Canvas
+            camera={{ position: [0, 0, 6], fov: 45 }}
+            dpr={[1, 2]}
+            gl={{ alpha: true }}
+          >
+            {!backgroundUrl && <color attach="background" args={[CREAM]} />}
             <Suspense fallback={null}>
               <ScrollControls horizontal pages={pages} damping={0.18}>
                 <Scroll>
@@ -265,11 +277,19 @@ export default function GalleryScene({ products }: { products: CatalogProduct[] 
       <div className="pointer-events-none absolute left-0 top-0 p-6">
         <Link
           href="/"
-          className="pointer-events-auto inline-flex items-center gap-2 font-serif text-xl text-[#1F2A22] hover:opacity-80"
+          className={
+            "pointer-events-auto inline-flex items-center gap-2 font-serif text-xl hover:opacity-80 " +
+            (backgroundUrl ? "text-[#F6F1E7]" : "text-[#1F2A22]")
+          }
         >
           <span aria-hidden>←</span> Crop
         </Link>
-        <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#6B6459]">
+        <p
+          className={
+            "mt-1 max-w-xs text-xs leading-relaxed " +
+            (backgroundUrl ? "text-[#D8D3C8]" : "text-[#6B6459]")
+          }
+        >
           Scrolleá para recorrer el excedente · mové el mouse para mirar alrededor
           · clic en un producto para ver el detalle.
         </p>

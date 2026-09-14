@@ -13,6 +13,12 @@ const GalleryScene = dynamic(() => import("./gallery-scene"), {
   ),
 });
 
-export function Catalog3D({ products }: { products: CatalogProduct[] }) {
-  return <GalleryScene products={products} />;
+export function Catalog3D({
+  products,
+  backgroundUrl,
+}: {
+  products: CatalogProduct[];
+  backgroundUrl: string | null;
+}) {
+  return <GalleryScene products={products} backgroundUrl={backgroundUrl} />;
 }
