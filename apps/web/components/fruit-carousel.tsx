@@ -14,6 +14,10 @@ export type FruitSlide = {
  * Galería tipo carrusel: una imagen grande por vez, flechas para avanzar/
  * retroceder, y la información (nombre + descripción) cambia junto con la
  * imagen, como una presentación paso a paso.
+ *
+ * Tema oscuro (uso exclusivo del home): las ilustraciones SVG traen su
+ * propio fondo crema, así que se ven como tarjetas claras flotando sobre el
+ * fondo oscuro — efecto intencional, no hace falta recortarlas.
  */
 export function FruitCarousel({ items }: { items: FruitSlide[] }) {
   const [index, setIndex] = useState(0);
@@ -28,7 +32,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <div className="relative aspect-[3/2] w-full overflow-hidden border border-cream-200 bg-white">
+      <div className="relative aspect-[3/2] w-full overflow-hidden border border-ink-200 bg-ink-200 shadow-[0_0_40px_-15px_rgba(45,122,74,0.4)]">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.img
             key={current.name}
@@ -47,7 +51,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
           type="button"
           aria-label="Anterior"
           onClick={() => go(-1)}
-          className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-cream/90 text-olive shadow hover:bg-cream"
+          className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-ink/90 text-paper shadow hover:bg-emerald"
         >
           ←
         </button>
@@ -55,7 +59,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
           type="button"
           aria-label="Siguiente"
           onClick={() => go(1)}
-          className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-cream/90 text-olive shadow hover:bg-cream"
+          className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-ink/90 text-paper shadow hover:bg-emerald"
         >
           →
         </button>
@@ -70,10 +74,10 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
           transition={{ duration: 0.25 }}
           className="mt-5 text-center"
         >
-          <h3 className="font-[family-name:var(--font-display)] text-2xl text-olive">
+          <h3 className="font-[family-name:var(--font-display)] text-2xl text-paper">
             {current.name}
           </h3>
-          <p className="mx-auto mt-1 max-w-md font-[family-name:var(--font-form)] text-sm text-stone">
+          <p className="mx-auto mt-1 max-w-md font-[family-name:var(--font-form)] text-sm text-metal">
             {current.blurb}
           </p>
         </motion.div>
@@ -92,13 +96,13 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
               }}
               className={
                 i === index
-                  ? "size-2 rounded-full bg-olive"
-                  : "size-2 rounded-full bg-cream-200"
+                  ? "size-2 rounded-full bg-emerald"
+                  : "size-2 rounded-full bg-ink-200 ring-1 ring-metal/40"
               }
             />
           ))}
         </div>
-        <span className="font-[family-name:var(--font-form)] text-xs text-stone">
+        <span className="font-[family-name:var(--font-form)] text-xs text-metal">
           {index + 1} / {items.length}
         </span>
       </div>
@@ -106,7 +110,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
       <div className="mt-6 text-center">
         <Link
           href="/catalogo"
-          className="inline-block bg-olive px-6 py-3 font-[family-name:var(--font-form)] text-sm text-cream hover:opacity-90"
+          className="inline-block bg-emerald px-6 py-3 font-[family-name:var(--font-form)] text-sm text-paper hover:opacity-90"
         >
           Ver en el catálogo
         </Link>

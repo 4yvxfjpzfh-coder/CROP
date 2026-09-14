@@ -47,19 +47,19 @@ const fruits = [
 
 export default function Home() {
   return (
-    <>
+    <div className="min-h-dvh bg-ink text-paper">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="font-[family-name:var(--font-display)] text-2xl text-olive">
+        <span className="font-[family-name:var(--font-display)] text-2xl text-paper">
           Crop
         </span>
         <nav className="flex items-center gap-5 font-[family-name:var(--font-form)] text-sm">
-          <Link href="/catalogo" className="text-olive hover:text-stone">
+          <Link href="/catalogo" className="text-metal hover:text-paper">
             Catálogo
           </Link>
           <Press>
             <Link
               href="/signin"
-              className="block bg-olive px-4 py-2 text-cream hover:opacity-90"
+              className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
             >
               Entrar
             </Link>
@@ -72,12 +72,12 @@ export default function Home() {
         <section className="mx-auto grid w-full max-w-5xl items-center gap-10 px-6 py-10 md:grid-cols-2 md:py-20">
           <div>
             <Reveal>
-              <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-olive md:text-5xl">
+              <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-paper md:text-5xl">
                 El excedente de la feria, antes de que se pierda.
               </h1>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="mt-5 font-[family-name:var(--font-form)] text-base leading-relaxed text-stone">
+              <p className="mt-5 font-[family-name:var(--font-form)] text-base leading-relaxed text-metal">
                 Cacao, café, banano, piña y más — directo de agricultores de
                 Costa Rica. Apartás lo que necesitás en línea y lo recogés en
                 la feria del agricultor. Sin pagos en línea.
@@ -88,7 +88,7 @@ export default function Home() {
                 <Press>
                   <Link
                     href="/catalogo"
-                    className="block bg-olive px-6 py-3 text-cream hover:opacity-90"
+                    className="block bg-emerald px-6 py-3 text-paper hover:opacity-90"
                   >
                     Ver catálogo
                   </Link>
@@ -96,7 +96,7 @@ export default function Home() {
                 <Press>
                   <Link
                     href="/signin"
-                    className="block border border-olive px-6 py-3 text-olive hover:bg-cream-200"
+                    className="block border border-metal px-6 py-3 text-paper hover:bg-ink-200"
                   >
                     Crear cuenta
                   </Link>
@@ -106,28 +106,30 @@ export default function Home() {
           </div>
           <Reveal delay={0.15} y={24} className="w-full max-w-md justify-self-center">
             <TiltOnScroll>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/demo/hero-cosecha.svg"
-                alt="Canasta con cacao, café y piña"
-                className="aspect-square w-full object-contain"
-              />
+              <div className="rounded-sm bg-ink-200 p-6 shadow-[0_0_60px_-15px_rgba(45,122,74,0.5)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/demo/hero-cosecha.svg"
+                  alt="Canasta con cacao, café y piña"
+                  className="aspect-square w-full object-contain"
+                />
+              </div>
             </TiltOnScroll>
           </Reveal>
         </section>
 
         {/* Cómo funciona */}
-        <section className="border-y border-cream-200 bg-white">
+        <section className="border-y border-ink-200 bg-ink-200/40">
           <div className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-14 sm:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
-                <span className="font-[family-name:var(--font-display)] text-3xl text-gold-text">
+                <span className="font-[family-name:var(--font-display)] text-3xl text-emerald">
                   {s.n}
                 </span>
-                <h2 className="mt-2 font-[family-name:var(--font-display)] text-xl text-olive">
+                <h2 className="mt-2 font-[family-name:var(--font-display)] text-xl text-paper">
                   {s.title}
                 </h2>
-                <p className="mt-2 font-[family-name:var(--font-form)] text-sm leading-relaxed text-stone">
+                <p className="mt-2 font-[family-name:var(--font-form)] text-sm leading-relaxed text-metal">
                   {s.text}
                 </p>
               </Reveal>
@@ -138,10 +140,10 @@ export default function Home() {
         {/* Qué vas a encontrar */}
         <section className="mx-auto w-full max-w-5xl px-6 py-14">
           <Reveal className="text-center">
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-olive">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-paper">
               Lo que encontrás hoy
             </h2>
-            <p className="mt-1 font-[family-name:var(--font-form)] text-sm text-stone">
+            <p className="mt-1 font-[family-name:var(--font-form)] text-sm text-metal">
               Recorré las frutas con las flechas.
             </p>
           </Reveal>
@@ -151,22 +153,22 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-cream-200">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 font-[family-name:var(--font-form)] text-xs text-stone">
+      <footer className="border-t border-ink-200">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 font-[family-name:var(--font-form)] text-xs text-metal">
           <span>© {new Date().getFullYear()} Crop — Costa Rica</span>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-olive">
+            <Link href="/privacy" className="hover:text-paper">
               Privacidad
             </Link>
-            <Link href="/terms" className="hover:text-olive">
+            <Link href="/terms" className="hover:text-paper">
               Términos
             </Link>
-            <Link href="/reembolsos" className="hover:text-olive">
+            <Link href="/reembolsos" className="hover:text-paper">
               Cancelaciones
             </Link>
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
