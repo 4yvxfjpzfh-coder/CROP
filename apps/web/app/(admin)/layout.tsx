@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream">
         <div>
           <Link href="/admin" className="block">
-            <span className="font-[family-name:var(--font-display)] text-2xl tracking-tight">
+            <span className="font-[family-name:var(--font-display)] text-2xl uppercase tracking-tight">
               Crop
             </span>
             <span className="mt-1 block text-xs text-stone">

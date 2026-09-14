@@ -58,7 +58,7 @@ export default async function Home() {
     <div className="min-h-dvh text-paper">
       <SiteBackground url={backgroundUrl} />
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="font-[family-name:var(--font-display)] text-2xl text-paper">
+        <span className="font-[family-name:var(--font-display)] text-2xl uppercase text-paper">
           Crop
         </span>
         <nav className="flex items-center gap-5 font-[family-name:var(--font-form)] text-sm">
@@ -164,7 +164,7 @@ export default async function Home() {
 
       <footer className="border-t border-ink-200">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 font-[family-name:var(--font-form)] text-xs text-metal">
-          <span>© {new Date().getFullYear()} Crop — Costa Rica</span>
+          <span>© {new Date().getFullYear()} <span className="uppercase">Crop</span> — Costa Rica</span>
           <div className="flex gap-4">
             <Link href="/privacy" className="hover:text-paper">
               Privacidad

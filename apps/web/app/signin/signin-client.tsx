@@ -16,7 +16,7 @@ export function SignInClient({ appleConfigured }: { appleConfigured: boolean }) 
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-8 px-6 py-16">
       <div>
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
-          Entrar a Crop
+          Entrar a <span className="uppercase">Crop</span>
         </h1>
         <p className="mt-2 font-[family-name:var(--font-form)] text-sm leading-relaxed text-stone">
           Apartá productos de excedente agrícola y recogelos en la feria del

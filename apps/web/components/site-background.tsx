@@ -25,7 +25,7 @@ export function SiteBackground({ url }: { url: string | null }) {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(13,15,13,0.78) 0%, rgba(13,15,13,0.88) 100%)",
+            "linear-gradient(180deg, rgba(13,15,13,0.4) 0%, rgba(13,15,13,0.6) 100%)",
         }}
       />
     </div>

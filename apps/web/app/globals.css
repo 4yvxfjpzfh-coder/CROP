@@ -26,8 +26,8 @@
   /* Tema oscuro/premium — por ahora solo para el home (marketing). El resto
      de la app (admin, catálogo) sigue con la identidad olivo/crema/dorado;
      mezclarlos sin revisar contraste en cada pantalla es riesgoso. */
-  --color-ink: #0d0f0d; /* fondo oscuro */
-  --color-ink-200: #191c19; /* paneles/tarjetas sobre el fondo oscuro */
+  --color-ink: #14211a; /* fondo oscuro, un poco más iluminado que antes */
+  --color-ink-200: #23342a; /* paneles/tarjetas sobre el fondo oscuro */
   --color-paper: #f5f5f0; /* texto claro sobre el fondo oscuro */
   --color-emerald: #2d7a4a; /* acento verde */
   --color-metal: #9aa39c; /* gris metálico, texto secundario sobre oscuro */

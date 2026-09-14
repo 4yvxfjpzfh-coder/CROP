@@ -278,7 +278,7 @@ export default function GalleryScene({
         <Link
           href="/"
           className={
-            "pointer-events-auto inline-flex items-center gap-2 font-serif text-xl hover:opacity-80 " +
+            "pointer-events-auto inline-flex items-center gap-2 font-serif text-xl uppercase hover:opacity-80 " +
             (backgroundUrl ? "text-[#F6F1E7]" : "text-[#1F2A22]")
           }
         >
