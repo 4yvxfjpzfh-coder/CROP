@@ -30,6 +30,52 @@ const STONE = "#6B6459"; // antes #6B6459 (~3.3:1 sobre crema, falla WCAG AA)
 
 /* -------------------------------------------------------------------------- */
 
+/** Plano olivo + nombre — se usa cuando no hay foto o cuando la foto falló al cargar. */
+function CardPlaceholder({ name }: { name: string }) {
+  return (
+    <>
+      <mesh>
+        <planeGeometry args={[CARD_W, CARD_H]} />
+        <meshBasicMaterial color={OLIVE} />
+      </mesh>
+      <Text
+        position={[0, 0, 0.01]}
+        fontSize={0.28}
+        maxWidth={CARD_W * 0.8}
+        textAlign="center"
+        color={CREAM}
+        anchorX="center"
+        anchorY="middle"
+      >
+        {name}
+      </Text>
+    </>
+  );
+}
+
+/**
+ * Aísla el fallo de UNA foto para que no tire abajo el catálogo entero.
+ * Pasa esto con imágenes externas pegadas a mano en el admin: algunos sitios
+ * (Freepik, Pinterest, etc.) bloquean el uso de sus fotos en un <canvas> por
+ * protección anti-hotlink, y el loader de texturas de Three.js tira error.
+ */
+class CardImageBoundary extends Component<
+  { name: string; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? (
+      <CardPlaceholder name={this.props.name} />
+    ) : (
+      this.props.children
+    );
+  }
+}
+
 function Card({
   product,
   x,
@@ -74,31 +120,18 @@ function Card({
       }}
     >
       {product.photoUrl ? (
-        <Image
-          url={product.photoUrl}
-          scale={[CARD_W, CARD_H]}
-          radius={0.12}
-          transparent
-        />
+        <CardImageBoundary name={product.name}>
+          <Suspense fallback={<CardPlaceholder name={product.name} />}>
+            <Image
+              url={product.photoUrl}
+              scale={[CARD_W, CARD_H]}
+              radius={0.12}
+              transparent
+            />
+          </Suspense>
+        </CardImageBoundary>
       ) : (
-        <mesh>
-          <planeGeometry args={[CARD_W, CARD_H]} />
-          <meshBasicMaterial color={OLIVE} />
-        </mesh>
-      )}
-
-      {!product.photoUrl && (
-        <Text
-          position={[0, 0, 0.01]}
-          fontSize={0.28}
-          maxWidth={CARD_W * 0.8}
-          textAlign="center"
-          color={CREAM}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {product.name}
-        </Text>
+        <CardPlaceholder name={product.name} />
       )}
 
       <Text
