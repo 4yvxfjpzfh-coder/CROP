@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
+import { getSiteSettings } from "@/lib/site-settings";
 
-const PICKUP_WINDOW_HOURS = 24;
 const MAX_QUANTITY_PER_RESERVATION = 10;
 // Sin cobro de por medio, sin este tope una sola cuenta podría acaparar todo
 // el excedente publicado. Los apartados vencidos (liberados por el cron de
@@ -57,7 +57,8 @@ export async function reserveProduct(
     return { ok: false, error: `Solo quedan ${product.quantity} unidades` };
   }
 
-  const pickupBy = new Date(Date.now() + PICKUP_WINDOW_HOURS * 3600 * 1000);
+  const { pickupWindowHours } = await getSiteSettings();
+  const pickupBy = new Date(Date.now() + pickupWindowHours * 3600 * 1000);
 
   try {
     const order = await prisma.$transaction(async (tx) => {

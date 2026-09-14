@@ -2,21 +2,76 @@
 
 import { useActionState, useState } from "react";
 import { PhotoUpload } from "../products/photo-upload";
-import { saveHomeBackground, type SettingsResult } from "./actions";
+import { saveHomeSettings, type SettingsResult } from "./actions";
 
 const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
 const label = "mb-1 block font-[family-name:var(--font-form)] text-sm text-stone";
 
-export function SettingsForm({ initialUrl }: { initialUrl: string }) {
+export function SettingsForm({
+  initialUrl,
+  initialHeadline,
+  initialSubtext,
+  initialPickupHours,
+}: {
+  initialUrl: string;
+  initialHeadline: string;
+  initialSubtext: string;
+  initialPickupHours: number;
+}) {
   const [url, setUrl] = useState(initialUrl);
   const [state, formAction, pending] = useActionState<SettingsResult | null, FormData>(
-    saveHomeBackground,
+    saveHomeSettings,
     null,
   );
 
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4">
+      <div>
+        <label className={label} htmlFor="homeHeadline">
+          Título principal del home
+        </label>
+        <input
+          id="homeHeadline"
+          name="homeHeadline"
+          defaultValue={initialHeadline}
+          placeholder="El excedente de la feria, antes de que se pierda."
+          className={field}
+        />
+      </div>
+
+      <div>
+        <label className={label} htmlFor="homeSubtext">
+          Texto debajo del título
+        </label>
+        <textarea
+          id="homeSubtext"
+          name="homeSubtext"
+          rows={3}
+          defaultValue={initialSubtext}
+          placeholder="Cacao, café, banano, piña y más — directo de agricultores de Costa Rica…"
+          className={field}
+        />
+      </div>
+
+      <div>
+        <label className={label} htmlFor="pickupWindowHours">
+          Horas para recoger un apartado
+        </label>
+        <input
+          id="pickupWindowHours"
+          name="pickupWindowHours"
+          type="number"
+          min={1}
+          defaultValue={initialPickupHours}
+          className={field}
+        />
+        <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
+          Cuando alguien aparta un producto, tiene esta cantidad de horas
+          desde ese momento para recogerlo antes de que se libere solo.
+        </p>
+      </div>
+
       <div>
         <label className={label}>Foto de fondo (inicio y catálogo)</label>
         <PhotoUpload onPhotoUrl={setUrl} />

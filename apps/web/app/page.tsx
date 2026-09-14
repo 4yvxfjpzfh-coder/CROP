@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { getHomeBackgroundUrl } from "@/lib/site-settings";
+import { auth } from "@/auth";
+import { getSiteSettings, getHomeFruits } from "@/lib/site-settings";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
-import { FruitCarousel } from "@/components/fruit-carousel";
+import { FruitCarousel, type FruitSlide } from "@/components/fruit-carousel";
 import { TiltOnScroll } from "@/components/motion/tilt-on-scroll";
 import { ParallaxDrift } from "@/components/motion/parallax-drift";
 import { FlipReveal } from "@/components/motion/flip-reveal";
@@ -28,7 +29,11 @@ const steps = [
   },
 ];
 
-const fruits = [
+const DEFAULT_HEADLINE = "El excedente de la feria, antes de que se pierda.";
+const DEFAULT_SUBTEXT =
+  "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en la feria del agricultor. Sin pagos en línea.";
+
+const DEFAULT_FRUITS: FruitSlide[] = [
   {
     name: "Cacao",
     img: "/demo/cacao.svg",
@@ -52,11 +57,22 @@ const fruits = [
 ];
 
 export default async function Home() {
-  const backgroundUrl = await getHomeBackgroundUrl();
+  const [session, settings, dbFruits] = await Promise.all([
+    auth(),
+    getSiteSettings(),
+    getHomeFruits(),
+  ]);
+
+  const headline = settings.homeHeadline || DEFAULT_HEADLINE;
+  const subtext = settings.homeSubtext || DEFAULT_SUBTEXT;
+  const fruits: FruitSlide[] =
+    dbFruits.length > 0
+      ? dbFruits.map((f) => ({ name: f.name, img: f.imageUrl, blurb: f.blurb }))
+      : DEFAULT_FRUITS;
 
   return (
     <div className="min-h-dvh text-paper">
-      <SiteBackground url={backgroundUrl} />
+      <SiteBackground url={settings.homeBackgroundUrl} />
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
         <span className="font-[family-name:var(--font-display)] text-2xl uppercase text-paper">
           Crop
@@ -65,14 +81,30 @@ export default async function Home() {
           <Link href="/catalogo" className="text-metal hover:text-paper">
             Catálogo
           </Link>
-          <Press>
-            <Link
-              href="/signin"
-              className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
-            >
-              Entrar
-            </Link>
-          </Press>
+          {session?.user ? (
+            <>
+              <Link href="/mis-apartados" className="text-metal hover:text-paper">
+                Mis apartados
+              </Link>
+              <Press>
+                <Link
+                  href="/perfil"
+                  className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
+                >
+                  Mi perfil
+                </Link>
+              </Press>
+            </>
+          ) : (
+            <Press>
+              <Link
+                href="/signin"
+                className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
+              >
+                Entrar
+              </Link>
+            </Press>
+          )}
         </nav>
       </header>
 
@@ -82,14 +114,12 @@ export default async function Home() {
           <div>
             <Reveal>
               <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-paper md:text-5xl">
-                El excedente de la feria, antes de que se pierda.
+                {headline}
               </h1>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-5 font-[family-name:var(--font-form)] text-base leading-relaxed text-metal">
-                Cacao, café, banano, piña y más — directo de agricultores de
-                Costa Rica. Apartás lo que necesitás en línea y lo recogés en
-                la feria del agricultor. Sin pagos en línea.
+                {subtext}
               </p>
             </Reveal>
             <Reveal delay={0.2}>
@@ -102,14 +132,16 @@ export default async function Home() {
                     Ver catálogo
                   </Link>
                 </Press>
-                <Press>
-                  <Link
-                    href="/signin"
-                    className="block border border-metal px-6 py-3 text-paper hover:bg-ink-200"
-                  >
-                    Crear cuenta
-                  </Link>
-                </Press>
+                {!session?.user && (
+                  <Press>
+                    <Link
+                      href="/signin"
+                      className="block border border-metal px-6 py-3 text-paper hover:bg-ink-200"
+                    >
+                      Crear cuenta
+                    </Link>
+                  </Press>
+                )}
               </div>
             </Reveal>
           </div>

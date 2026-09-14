@@ -253,10 +253,32 @@ enum OrderStatus {
   EXPIRED
 }
 
-// Fila única (id fijo "default") con preferencias visuales editables desde
-// /admin/settings. Por ahora solo la foto de fondo del home/catálogo.
+// Fila única (id fijo "default") con preferencias editables desde
+// /admin/settings: fondo, texto del home y ventana de recogida.
 model SiteSettings {
   id                String   @id @default("default")
   homeBackgroundUrl String?
+  // Titular y bajada del hero del home. Si están vacíos, se usa el texto
+  // por defecto (hardcodeado en app/page.tsx) para que el home nunca quede
+  // en blanco por un settings sin configurar.
+  homeHeadline      String?
+  homeSubtext       String?
+  // Horas entre que se aparta un producto y se vence el apartado. Antes era
+  // una constante fija (24h) en catalogo/actions.ts; ahora la define el admin.
+  pickupWindowHours Int      @default(24)
   updatedAt         DateTime @updatedAt
+}
+
+// Frutas del carrusel del home ("Lo que encontrás hoy"), editables desde
+// /admin/settings. Si no hay ninguna, el home cae al set fijo por defecto.
+model HomeFruit {
+  id        String   @id @default(cuid())
+  name      String
+  imageUrl  String
+  blurb     String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([position])
 }
