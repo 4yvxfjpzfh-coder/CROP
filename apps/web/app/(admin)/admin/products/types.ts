@@ -3,6 +3,7 @@ export type AdminProduct = {
   name: string;
   description: string | null;
   providerName: string | null;
+  farmerId: string | null;
   photoUrl: string | null;
   quantity: number;
   originalPriceCents: number;
@@ -10,6 +11,12 @@ export type AdminProduct = {
   pickupPointId: string | null;
   pickupShortName: string | null;
   isActive: boolean;
+};
+
+export type AdminFarmer = {
+  id: string;
+  name: string | null;
+  email: string | null;
 };
 
 export type AdminPickupPoint = {

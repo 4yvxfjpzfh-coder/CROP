@@ -49,6 +49,17 @@ export default auth((req) => {
     }
   }
 
+  if (pathname.startsWith("/agricultor")) {
+    if (!session) {
+      const signInUrl = new URL("/signin", nextUrl);
+      signInUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+    if (session.user?.role !== "FARMER" && session.user?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", nextUrl));
+    }
+  }
+
   return NextResponse.next();
 });
 

@@ -1,22 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { type AdminFarmer, type AdminPickupPoint, type AdminProduct, colones } from "./types";
-import { ProductForm } from "./product-form";
+import { type FarmerPickupPoint, type FarmerProduct, colones } from "./types";
+import { FarmerProductForm } from "./form";
 
-/**
- * Layout de dos columnas del panel de productos:
- *  - izquierda: listado editorial (renglones con filete, no tarjetas)
- *  - derecha: formulario de edición del producto seleccionado (o alta nueva)
- */
-export function ProductsWorkspace({
+export function FarmerProductsWorkspace({
   products,
   pickupPoints,
-  farmers,
 }: {
-  products: AdminProduct[];
-  pickupPoints: AdminPickupPoint[];
-  farmers: AdminFarmer[];
+  products: FarmerProduct[];
+  pickupPoints: FarmerPickupPoint[];
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -30,7 +23,7 @@ export function ProductsWorkspace({
       <section>
         <header className="mb-6 flex items-end justify-between">
           <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
-            Productos de excedente
+            Mis productos
           </h1>
           <button
             type="button"
@@ -47,7 +40,7 @@ export function ProductsWorkspace({
 
         {products.length === 0 ? (
           <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-            Todavía no hay productos publicados.
+            Todavía no publicaste ningún producto.
           </p>
         ) : (
           <ul className="divide-y divide-cream-200 border-y border-cream-200">
@@ -84,7 +77,6 @@ export function ProductsWorkspace({
                       <span className="mt-0.5 block font-[family-name:var(--font-form)] text-xs text-stone">
                         {p.quantity} disponibles
                         {p.pickupShortName ? ` · ${p.pickupShortName}` : " · sin punto de recogida"}
-                        {p.providerName ? ` · ${p.providerName}` : ""}
                         {!p.isActive && " · oculto"}
                       </span>
                     </span>
@@ -107,11 +99,10 @@ export function ProductsWorkspace({
       </section>
 
       <aside className="lg:border-l lg:border-cream-200 lg:pl-10">
-        <ProductForm
+        <FarmerProductForm
           key={selected?.id ?? "new"}
           product={selected}
           pickupPoints={pickupPoints}
-          farmers={farmers}
         />
       </aside>
     </div>

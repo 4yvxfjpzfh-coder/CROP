@@ -46,6 +46,11 @@ export default async function ProfilePage() {
         <Link href="/catalogo" className="text-neutral-700 underline underline-offset-2">
           Ver catálogo
         </Link>
+        {(user.role === "FARMER" || user.role === "ADMIN") && (
+          <Link href="/agricultor" className="text-neutral-700 underline underline-offset-2">
+            Panel de agricultor
+          </Link>
+        )}
         {user.role === "ADMIN" && (
           <Link href="/admin" className="text-neutral-700 underline underline-offset-2">
             Panel de administración

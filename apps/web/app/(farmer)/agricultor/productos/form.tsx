@@ -2,35 +2,33 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { type AdminFarmer, type AdminPickupPoint, type AdminProduct } from "./types";
-import { PickupPointField } from "./pickup-point-field";
-import { PhotoEditorLauncher } from "./photo-editor-launcher";
-import { PhotoUpload } from "./photo-upload";
+import { type FarmerPickupPoint, type FarmerProduct } from "./types";
+import { PickupPointField } from "@/app/(admin)/admin/products/pickup-point-field";
+import { PhotoUpload } from "@/app/(admin)/admin/products/photo-upload";
+import { PhotoEditorLauncher } from "@/app/(admin)/admin/products/photo-editor-launcher";
 import {
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  type ProductActionResult,
+  createOwnProduct,
+  updateOwnProduct,
+  deleteOwnProduct,
+  type FarmerProductResult,
 } from "./actions";
 
 const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
 const label = "mb-1 block font-[family-name:var(--font-form)] text-sm text-stone";
 
-export function ProductForm({
+export function FarmerProductForm({
   product,
   pickupPoints,
-  farmers,
 }: {
-  product: AdminProduct | null;
-  pickupPoints: AdminPickupPoint[];
-  farmers: AdminFarmer[];
+  product: FarmerProduct | null;
+  pickupPoints: FarmerPickupPoint[];
 }) {
   const router = useRouter();
   const isEdit = Boolean(product);
 
-  const [state, formAction, pending] = useActionState<ProductActionResult | null, FormData>(
-    isEdit ? updateProduct : createProduct,
+  const [state, formAction, pending] = useActionState<FarmerProductResult | null, FormData>(
+    isEdit ? updateOwnProduct : createOwnProduct,
     null,
   );
 
@@ -40,9 +38,6 @@ export function ProductForm({
   const [photoUrl, setPhotoUrl] = useState<string>(product?.photoUrl ?? "");
 
   useEffect(() => {
-    // Refresca la lista del server component tras crear/editar. Tiene que ir
-    // en un efecto: llamar router.refresh() directo en el render dispara
-    // "Cannot update a component while rendering a different component".
     if (state?.ok) router.refresh();
   }, [state, router]);
 
@@ -51,6 +46,10 @@ export function ProductForm({
       <h2 className="mb-5 font-[family-name:var(--font-display)] text-2xl text-olive">
         {isEdit ? "Editar producto" : "Nuevo producto"}
       </h2>
+      <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">
+        Publicarlo acá no lo muestra automáticamente en el catálogo público —
+        el administrador todavía tiene que agregarlo desde su panel.
+      </p>
 
       <form action={formAction} className="flex flex-col gap-4">
         {isEdit && <input type="hidden" name="id" value={product!.id} />}
@@ -79,42 +78,6 @@ export function ProductForm({
             defaultValue={product?.description ?? ""}
             className={field}
           />
-        </div>
-
-        <div>
-          <label className={label} htmlFor="providerName">
-            Agricultor / proveedor (opcional)
-          </label>
-          <input
-            id="providerName"
-            name="providerName"
-            placeholder="ej. María Elena, Finca La Esperanza"
-            defaultValue={product?.providerName ?? ""}
-            className={field}
-          />
-        </div>
-
-        <div>
-          <label className={label} htmlFor="farmerId">
-            Cuenta de agricultor vinculada (opcional)
-          </label>
-          <select
-            id="farmerId"
-            name="farmerId"
-            defaultValue={product?.farmerId ?? ""}
-            className={field}
-          >
-            <option value="">Sin vincular</option>
-            {farmers.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name ?? f.email ?? f.id}
-              </option>
-            ))}
-          </select>
-          <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
-            Si el agricultor tiene su propia cuenta, vinculalo acá para que
-            pueda ver y editar este producto desde /agricultor.
-          </p>
         </div>
 
         <div>
@@ -232,15 +195,9 @@ export function ProductForm({
   );
 }
 
-function DeleteButton({
-  productId,
-  onDone,
-}: {
-  productId: string;
-  onDone: () => void;
-}) {
-  const [state, action, pending] = useActionState<ProductActionResult | null, FormData>(
-    deleteProduct,
+function DeleteButton({ productId, onDone }: { productId: string; onDone: () => void }) {
+  const [state, action, pending] = useActionState<FarmerProductResult | null, FormData>(
+    deleteOwnProduct,
     null,
   );
   const [confirming, setConfirming] = useState(false);
@@ -264,9 +221,7 @@ function DeleteButton({
   return (
     <form action={action} className="flex items-center gap-2">
       <input type="hidden" name="id" value={productId} />
-      <span className="font-[family-name:var(--font-form)] text-sm text-sienna">
-        ¿Seguro?
-      </span>
+      <span className="font-[family-name:var(--font-form)] text-sm text-sienna">¿Seguro?</span>
       <button
         type="submit"
         disabled={pending}

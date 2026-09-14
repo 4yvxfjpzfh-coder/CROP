@@ -42,14 +42,19 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  orders        Order[]
-  accounts      Account[]
-  sessions      Session[]
-  auditLogs     AdminAuditLog[]
+  orders          Order[]
+  accounts        Account[]
+  sessions        Session[]
+  auditLogs       AdminAuditLog[]
+  // Productos que le pertenecen (rol FARMER). El admin asigna el rol y
+  // vincula cada producto con /admin/agricultores; sin eso, un usuario común
+  // no tiene ningún producto asociado.
+  farmerProducts  Product[]       @relation("FarmerProducts")
 }
 
 enum Role {
   USER
+  FARMER
   ADMIN
 }
 
@@ -110,6 +115,11 @@ model Product {
   // propia (el piloto centraliza la publicación en el admin). Solo texto
   // libre para mostrarlo en el catálogo, no crea un Business.
   providerName       String?
+  // Cuenta real del agricultor (rol FARMER) dueño del producto, si la tiene.
+  // Le permite entrar a /agricultor y ver/editar solo lo suyo. Opcional:
+  // conviven productos con y sin agricultor vinculado.
+  farmerId           String?
+  farmer             User?        @relation("FarmerProducts", fields: [farmerId], references: [id], onDelete: SetNull)
   photoUrl           String?      // Foto del producto (o la imagen editada exportada por ProductPhotoEditor)
   originalPriceCents Int          // Precio de referencia
   discountPriceCents Int          // Precio de excedente
@@ -126,6 +136,7 @@ model Product {
   @@index([businessId, isActive])
   @@index([pickupPointId, isActive])
   @@index([catalogPosition])
+  @@index([farmerId])
 }
 
 model PickupPoint {

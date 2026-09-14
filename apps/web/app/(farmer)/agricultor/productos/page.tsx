@@ -1,36 +1,27 @@
 import { prisma } from "@crop/prisma";
-import { requireAdmin } from "@/lib/admin-guard";
-import { ProductsWorkspace } from "./products-workspace";
+import { requireFarmer } from "@/lib/farmer-guard";
+import { FarmerProductsWorkspace } from "./workspace";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductsPage() {
-  await requireAdmin("redirect");
+export default async function FarmerProductsPage() {
+  const actor = await requireFarmer("redirect");
 
-  const [products, pickupPoints, farmers] = await Promise.all([
+  const [products, pickupPoints] = await Promise.all([
     prisma.product.findMany({
+      where: { farmerId: actor.id },
       orderBy: { createdAt: "desc" },
       include: { pickupPoint: { select: { id: true, shortName: true } } },
     }),
-    prisma.pickupPoint.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-    }),
-    prisma.user.findMany({
-      where: { role: "FARMER" },
-      orderBy: { createdAt: "desc" },
-      select: { id: true, name: true, email: true },
-    }),
+    prisma.pickupPoint.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
   ]);
 
   return (
-    <ProductsWorkspace
+    <FarmerProductsWorkspace
       products={products.map((p) => ({
         id: p.id,
         name: p.name,
         description: p.description,
-        providerName: p.providerName,
-        farmerId: p.farmerId,
         photoUrl: p.photoUrl,
         quantity: p.quantity,
         originalPriceCents: p.originalPriceCents,
@@ -47,7 +38,6 @@ export default async function ProductsPage() {
         latitude: pp.latitude,
         longitude: pp.longitude,
       }))}
-      farmers={farmers}
     />
   );
 }
