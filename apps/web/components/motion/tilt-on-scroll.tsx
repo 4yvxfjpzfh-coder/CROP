@@ -19,8 +19,11 @@ export function TiltOnScroll({ children, className }: { children: ReactNode; cla
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1, 0.92]);
 
   return (
-    <div ref={ref} style={{ perspective: 1200 }} className={className}>
-      <motion.div style={{ rotateX, rotateY, scale, transformStyle: "preserve-3d" }}>
+    <div ref={ref} style={{ perspective: 1200 }}>
+      <motion.div
+        className={className}
+        style={{ rotateX, rotateY, scale, transformStyle: "preserve-3d" }}
+      >
         {children}
       </motion.div>
     </div>

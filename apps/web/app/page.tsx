@@ -3,6 +3,8 @@ import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel } from "@/components/fruit-carousel";
 import { TiltOnScroll } from "@/components/motion/tilt-on-scroll";
+import { ParallaxDrift } from "@/components/motion/parallax-drift";
+import { FlipReveal } from "@/components/motion/flip-reveal";
 
 const steps = [
   {
@@ -118,9 +120,9 @@ export default function Home() {
           </Reveal>
         </section>
 
-        {/* Cómo funciona */}
+        {/* Cómo funciona — variante B de scroll-3D: flip en eje Y */}
         <section className="border-y border-ink-200 bg-ink-200/40">
-          <div className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-14 sm:grid-cols-3">
+          <FlipReveal className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-14 sm:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
                 <span className="font-[family-name:var(--font-display)] text-3xl text-emerald">
@@ -134,10 +136,10 @@ export default function Home() {
                 </p>
               </Reveal>
             ))}
-          </div>
+          </FlipReveal>
         </section>
 
-        {/* Qué vas a encontrar */}
+        {/* Qué vas a encontrar — variante C de scroll-3D: parallax vertical */}
         <section className="mx-auto w-full max-w-5xl px-6 py-14">
           <Reveal className="text-center">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-paper">
@@ -147,9 +149,9 @@ export default function Home() {
               Recorré las frutas con las flechas.
             </p>
           </Reveal>
-          <Reveal delay={0.1} className="mt-8">
+          <ParallaxDrift className="mt-8">
             <FruitCarousel items={fruits} />
-          </Reveal>
+          </ParallaxDrift>
         </section>
       </main>
 
