@@ -49,7 +49,10 @@ const fruits = [
 
 export default function Home() {
   return (
-    <div className="min-h-dvh bg-ink text-paper">
+    <div
+      className="min-h-dvh bg-ink bg-[length:700px_700px] text-paper"
+      style={{ backgroundImage: "url(/demo/pattern-hojas.svg)" }}
+    >
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
         <span className="font-[family-name:var(--font-display)] text-2xl text-paper">
           Crop
