@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   // Permite abrir el dev server desde otro dispositivo en la misma red
   // (ej. el celular, usando la IP que muestra "pnpm dev" como "Network").
   // Sin esto, Next bloquea el HMR y el catálogo 3D no llega a hidratarse.
-  allowedDevOrigins: ["192.168.0.145"],
+  allowedDevOrigins: ["192.168.0.145", "192.168.41.2"],
 };
 
 export default nextConfig;
