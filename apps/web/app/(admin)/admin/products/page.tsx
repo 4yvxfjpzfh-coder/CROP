@@ -32,6 +32,8 @@ export default async function ProductsPage() {
         providerName: p.providerName,
         farmerId: p.farmerId,
         photoUrl: p.photoUrl,
+        harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString().slice(0, 10) : null,
+        ripenessNote: p.ripenessNote,
         quantity: p.quantity,
         originalPriceCents: p.originalPriceCents,
         discountPriceCents: p.discountPriceCents,

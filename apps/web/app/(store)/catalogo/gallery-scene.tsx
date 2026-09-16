@@ -233,6 +233,9 @@ function DomFallbackGrid({ products }: { products: CatalogProduct[] }) {
           {p.pickupShortName && (
             <p className="text-xs text-[#6B6459]">{p.pickupShortName}</p>
           )}
+          {p.ripenessNote && (
+            <p className="text-xs text-[#8A6E24]">{p.ripenessNote}</p>
+          )}
         </div>
       ))}
     </div>
@@ -244,9 +247,13 @@ function DomFallbackGrid({ products }: { products: CatalogProduct[] }) {
 export default function GalleryScene({
   products,
   backgroundUrl,
+  feriaName,
+  backHref = "/",
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
+  feriaName?: string;
+  backHref?: string;
 }) {
   const [selected, setSelected] = useState<CatalogProduct | null>(null);
   const pages = useMemo(() => Math.max(2, products.length * 0.55), [products.length]);
@@ -276,13 +283,13 @@ export default function GalleryScene({
       {/* Instrucciones */}
       <div className="pointer-events-none absolute left-0 top-0 p-6">
         <Link
-          href="/"
+          href={backHref}
           className={
             "pointer-events-auto inline-flex items-center gap-2 font-serif text-xl uppercase hover:opacity-80 " +
             (backgroundUrl ? "text-[#F6F1E7]" : "text-[#1F2A22]")
           }
         >
-          <span aria-hidden>←</span> Crop
+          <span aria-hidden>←</span> {feriaName ?? "Crop"}
         </Link>
         <p
           className={
@@ -332,6 +339,24 @@ export default function GalleryScene({
                 <p className="mt-1 text-xs text-[#6B6459]">
                   Cultivado por {selected.providerName}
                 </p>
+              )}
+              {(selected.harvestedAt || selected.ripenessNote) && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selected.harvestedAt && (
+                    <span className="border border-[#ece3d2] bg-white px-2 py-0.5 text-[11px] text-[#6B6459]">
+                      Cosechado el{" "}
+                      {new Date(selected.harvestedAt).toLocaleDateString("es-CR", {
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </span>
+                  )}
+                  {selected.ripenessNote && (
+                    <span className="border border-[#C89B3C]/40 bg-[#C89B3C]/10 px-2 py-0.5 text-[11px] text-[#8A6E24]">
+                      {selected.ripenessNote}
+                    </span>
+                  )}
+                </div>
               )}
               <ReserveButton productId={selected.id} />
             </div>

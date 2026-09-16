@@ -121,6 +121,10 @@ model Product {
   farmerId           String?
   farmer             User?        @relation("FarmerProducts", fields: [farmerId], references: [id], onDelete: SetNull)
   photoUrl           String?      // Foto del producto (o la imagen editada exportada por ProductPhotoEditor)
+  // Fecha de la última cosecha, para mostrar "cosechado el ..." en el catálogo.
+  harvestedAt        DateTime?
+  // Nota corta libre para el catálogo: "Extra dulce", "No madura todavía", etc.
+  ripenessNote       String?
   originalPriceCents Int          // Precio de referencia
   discountPriceCents Int          // Precio de excedente
   quantity           Int          @default(0) // Unidades disponibles para apartar

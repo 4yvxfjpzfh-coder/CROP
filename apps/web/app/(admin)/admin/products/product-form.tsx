@@ -142,6 +142,34 @@ export function ProductForm({
           )}
         </div>
 
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={label} htmlFor="harvestedAt">
+              Última cosecha
+            </label>
+            <input
+              id="harvestedAt"
+              name="harvestedAt"
+              type="date"
+              defaultValue={product?.harvestedAt ?? ""}
+              className={field}
+            />
+          </div>
+          <div>
+            <label className={label} htmlFor="ripenessNote">
+              Nota (ej. Extra dulce, No madura)
+            </label>
+            <input
+              id="ripenessNote"
+              name="ripenessNote"
+              maxLength={80}
+              placeholder="Extra dulce"
+              defaultValue={product?.ripenessNote ?? ""}
+              className={field}
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className={label} htmlFor="quantity">

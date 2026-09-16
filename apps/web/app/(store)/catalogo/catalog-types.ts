@@ -4,6 +4,8 @@ export type CatalogProduct = {
   description: string | null;
   providerName: string | null;
   photoUrl: string | null;
+  harvestedAt: string | null;
+  ripenessNote: string | null;
   quantity: number;
   originalPriceCents: number;
   discountPriceCents: number;

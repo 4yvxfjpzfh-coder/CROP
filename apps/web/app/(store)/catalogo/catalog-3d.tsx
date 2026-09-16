@@ -16,9 +16,20 @@ const GalleryScene = dynamic(() => import("./gallery-scene"), {
 export function Catalog3D({
   products,
   backgroundUrl,
+  feriaName,
+  backHref = "/",
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
+  feriaName?: string;
+  backHref?: string;
 }) {
-  return <GalleryScene products={products} backgroundUrl={backgroundUrl} />;
+  return (
+    <GalleryScene
+      products={products}
+      backgroundUrl={backgroundUrl}
+      feriaName={feriaName}
+      backHref={backHref}
+    />
+  );
 }

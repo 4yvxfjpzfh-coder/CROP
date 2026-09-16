@@ -5,6 +5,9 @@ export type AdminProduct = {
   providerName: string | null;
   farmerId: string | null;
   photoUrl: string | null;
+  // ISO date (yyyy-mm-dd) o null; formato listo para <input type="date">.
+  harvestedAt: string | null;
+  ripenessNote: string | null;
   quantity: number;
   originalPriceCents: number;
   discountPriceCents: number;
