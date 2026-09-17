@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteSettings } from "@/lib/site-settings";
+import { getSiteTexts } from "@/lib/site-text";
 
 const MAX_QUANTITY_PER_RESERVATION = 10;
 // Sin cobro de por medio, sin este tope una sola cuenta podría acaparar todo
@@ -31,13 +32,14 @@ export async function reserveProduct(
     redirect("/signin?callbackUrl=/catalogo");
   }
   const userId = session.user.id;
+  const t = await getSiteTexts();
 
   const productId = String(formData.get("productId") ?? "");
   const quantity = Math.min(
     MAX_QUANTITY_PER_RESERVATION,
     Math.max(1, Math.trunc(Number(formData.get("quantity") ?? 1)) || 1),
   );
-  if (!productId) return { ok: false, error: "Producto inválido" };
+  if (!productId) return { ok: false, error: t["catalogo.error.invalid_product"] };
 
   const activeReservations = await prisma.order.count({
     where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } },
@@ -45,16 +47,19 @@ export async function reserveProduct(
   if (activeReservations >= MAX_ACTIVE_RESERVATIONS_PER_USER) {
     return {
       ok: false,
-      error: `Ya tenés ${MAX_ACTIVE_RESERVATIONS_PER_USER} apartados activos. Recogé alguno o esperá a que venza antes de apartar más.`,
+      error: `${t["catalogo.error.too_many_active_prefix"]} ${MAX_ACTIVE_RESERVATIONS_PER_USER} ${t["catalogo.error.too_many_active_suffix"]}`,
     };
   }
 
   const product = await prisma.product.findUnique({ where: { id: productId } });
   if (!product || !product.isActive) {
-    return { ok: false, error: "El producto ya no está disponible" };
+    return { ok: false, error: t["catalogo.error.product_unavailable"] };
   }
   if (product.quantity < quantity) {
-    return { ok: false, error: `Solo quedan ${product.quantity} unidades` };
+    return {
+      ok: false,
+      error: `${t["catalogo.error.insufficient_stock_prefix"]} ${product.quantity} ${t["catalogo.error.insufficient_stock_suffix"]}`,
+    };
   }
 
   const { pickupWindowHours } = await getSiteSettings();
@@ -90,6 +95,6 @@ export async function reserveProduct(
     revalidatePath("/mis-apartados");
     return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString() };
   } catch {
-    return { ok: false, error: "No se pudo apartar. Probá de nuevo." };
+    return { ok: false, error: t["catalogo.error.generic"] };
   }
 }

@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { deleteMyAccount, type DeleteAccountResult } from "./actions";
 
-export function DeleteAccount() {
+export function DeleteAccount({ texts }: { texts: Record<string, string> }) {
   const [confirming, setConfirming] = useState(false);
   const [state, action, pending] = useActionState<DeleteAccountResult | null, FormData>(
     () => deleteMyAccount(null),
@@ -12,10 +12,9 @@ export function DeleteAccount() {
 
   return (
     <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-      <h2 className="text-base font-medium text-red-900">Eliminar mi cuenta</h2>
+      <h2 className="text-base font-medium text-red-900">{texts["cuenta.delete.heading"]}</h2>
       <p className="mt-1 text-sm leading-relaxed text-red-800">
-        Borra de forma permanente tu nombre, correo, credenciales de acceso y tus
-        apartados. Esta acción no se puede deshacer.
+        {texts["cuenta.delete.warning"]}
       </p>
 
       {!confirming ? (
@@ -24,7 +23,7 @@ export function DeleteAccount() {
           onClick={() => setConfirming(true)}
           className="mt-3 rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100"
         >
-          Eliminar mi cuenta
+          {texts["cuenta.delete.heading"]}
         </button>
       ) : (
         <form action={action} className="mt-3 flex items-center gap-3">
@@ -33,14 +32,14 @@ export function DeleteAccount() {
             disabled={pending}
             className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
           >
-            {pending ? "Eliminando…" : "Sí, eliminar todo"}
+            {pending ? texts["cuenta.delete.button_pending"] : texts["cuenta.delete.button_confirm"]}
           </button>
           <button
             type="button"
             onClick={() => setConfirming(false)}
             className="text-sm text-red-700"
           >
-            Cancelar
+            {texts["cuenta.delete.button_cancel"]}
           </button>
         </form>
       )}

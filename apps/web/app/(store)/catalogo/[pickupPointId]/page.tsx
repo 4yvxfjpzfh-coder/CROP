@@ -4,6 +4,7 @@ import { prisma } from "@crop/prisma";
 import { Catalog3D } from "../catalog-3d";
 import type { CatalogProduct } from "../catalog-types";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
+import { getSiteTexts } from "@/lib/site-text";
 
 export const dynamic = "force-dynamic";
 
@@ -13,10 +14,15 @@ export async function generateMetadata({
   params: Promise<{ pickupPointId: string }>;
 }) {
   const { pickupPointId } = await params;
-  const pickupPoint = await prisma.pickupPoint.findUnique({ where: { id: pickupPointId } });
+  const [pickupPoint, t] = await Promise.all([
+    prisma.pickupPoint.findUnique({ where: { id: pickupPointId } }),
+    getSiteTexts(),
+  ]);
   return {
-    title: pickupPoint ? `${pickupPoint.shortName} — Catálogo — Crop` : "Catálogo — Crop",
-    description: "Recorré el excedente disponible en esta feria.",
+    title: pickupPoint
+      ? `${pickupPoint.shortName} — ${t["nav.catalogo"]} — ${t["brand.name"]}`
+      : `${t["nav.catalogo"]} — ${t["brand.name"]}`,
+    description: t["catalogo.feria.meta_description"],
   };
 }
 
@@ -26,7 +32,7 @@ export default async function CatalogoFeriaPage({
   params: Promise<{ pickupPointId: string }>;
 }) {
   const { pickupPointId } = await params;
-  const backgroundUrl = await getHomeBackgroundUrl();
+  const [backgroundUrl, t] = await Promise.all([getHomeBackgroundUrl(), getSiteTexts()]);
 
   const pickupPoint = await prisma.pickupPoint.findUnique({ where: { id: pickupPointId } });
   if (!pickupPoint) notFound();
@@ -66,10 +72,10 @@ export default async function CatalogoFeriaPage({
           {pickupPoint.shortName}
         </h1>
         <p className="text-sm text-neutral-600">
-          Todavía no hay excedente en esta feria. Volvé pronto.
+          {t["catalogo.feria.empty"]}
         </p>
         <Link href="/catalogo" className="text-sm text-neutral-700 underline underline-offset-2">
-          Ver otras ferias
+          {t["catalogo.feria.volver"]}
         </Link>
       </main>
     );
@@ -81,6 +87,7 @@ export default async function CatalogoFeriaPage({
       backgroundUrl={backgroundUrl}
       feriaName={pickupPoint.shortName}
       backHref="/catalogo"
+      texts={t}
     />
   );
 }

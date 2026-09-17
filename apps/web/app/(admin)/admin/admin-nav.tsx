@@ -9,6 +9,7 @@ const links = [
   { href: "/admin/catalogo", label: "Catálogo 3D" },
   { href: "/admin/pedidos", label: "Apartados" },
   { href: "/admin/settings", label: "Apariencia" },
+  { href: "/admin/textos", label: "Textos" },
   { href: "/admin/audit", label: "Registro de cambios" },
 ];
 

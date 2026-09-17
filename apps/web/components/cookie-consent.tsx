@@ -14,7 +14,15 @@ const STORAGE_KEY = "crop-cookie-consent";
  * No se muestra en /admin ni /agricultor: son paneles internos para gente ya
  * logueada trabajando, y el banner fijo abajo tapaba botones de formularios.
  */
-export function CookieConsent() {
+export function CookieConsent({
+  body = "Usamos únicamente las cookies necesarias para mantener tu sesión iniciada. No usamos cookies de publicidad ni de analítica de terceros.",
+  acceptLabel = "Entendido",
+  privacyLabel = "Política de Privacidad",
+}: {
+  body?: string;
+  acceptLabel?: string;
+  privacyLabel?: string;
+}) {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
 
@@ -34,11 +42,9 @@ export function CookieConsent() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-cream-200 bg-olive px-6 py-4 text-cream">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 font-[family-name:var(--font-form)] text-sm">
         <p className="max-w-2xl leading-relaxed">
-          Usamos únicamente las cookies necesarias para mantener tu sesión
-          iniciada. No usamos cookies de publicidad ni de analítica de
-          terceros.{" "}
+          {body}{" "}
           <Link href="/privacy" className="underline underline-offset-2">
-            Política de Privacidad
+            {privacyLabel}
           </Link>
           .
         </p>
@@ -47,7 +53,7 @@ export function CookieConsent() {
           onClick={accept}
           className="shrink-0 bg-cream px-4 py-2 text-sm text-olive hover:opacity-90"
         >
-          Entendido
+          {acceptLabel}
         </button>
       </div>
     </div>

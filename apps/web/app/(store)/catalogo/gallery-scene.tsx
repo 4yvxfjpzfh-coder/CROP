@@ -249,11 +249,13 @@ export default function GalleryScene({
   backgroundUrl,
   feriaName,
   backHref = "/",
+  texts,
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
   feriaName?: string;
   backHref?: string;
+  texts: Record<string, string>;
 }) {
   const [selected, setSelected] = useState<CatalogProduct | null>(null);
   const pages = useMemo(() => Math.max(2, products.length * 0.55), [products.length]);
@@ -289,7 +291,7 @@ export default function GalleryScene({
             (backgroundUrl ? "text-[#F6F1E7]" : "text-[#1F2A22]")
           }
         >
-          <span aria-hidden>←</span> {feriaName ?? "Crop"}
+          <span aria-hidden>←</span> {feriaName ?? texts["brand.name"]}
         </Link>
         <p
           className={
@@ -297,8 +299,7 @@ export default function GalleryScene({
             (backgroundUrl ? "text-[#D8D3C8]" : "text-[#6B6459]")
           }
         >
-          Scrolleá para recorrer el excedente · mové el mouse para mirar alrededor
-          · clic en un producto para ver el detalle.
+          {texts["catalogo.gallery.instructions"]}
         </p>
       </div>
 
@@ -331,20 +332,20 @@ export default function GalleryScene({
                   </span>
                 )}
                 <span className="ml-3 text-[#6B6459]">
-                  {selected.quantity} disponibles
+                  {selected.quantity} {texts["catalogo.gallery.disponibles_suffix"]}
                   {selected.pickupShortName ? ` · ${selected.pickupShortName}` : ""}
                 </span>
               </p>
               {selected.providerName && (
                 <p className="mt-1 text-xs text-[#6B6459]">
-                  Cultivado por {selected.providerName}
+                  {texts["catalogo.gallery.cultivado_por_prefix"]} {selected.providerName}
                 </p>
               )}
               {(selected.harvestedAt || selected.ripenessNote) && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selected.harvestedAt && (
                     <span className="border border-[#ece3d2] bg-white px-2 py-0.5 text-[11px] text-[#6B6459]">
-                      Cosechado el{" "}
+                      {texts["catalogo.gallery.cosechado_el_prefix"]}{" "}
                       {new Date(selected.harvestedAt).toLocaleDateString("es-CR", {
                         day: "numeric",
                         month: "short",
@@ -358,14 +359,14 @@ export default function GalleryScene({
                   )}
                 </div>
               )}
-              <ReserveButton productId={selected.id} />
+              <ReserveButton productId={selected.id} texts={texts} />
             </div>
             <button
               type="button"
               onClick={() => setSelected(null)}
               className="text-sm text-[#6B6459] underline underline-offset-4"
             >
-              Cerrar
+              {texts["catalogo.gallery.cerrar"]}
             </button>
           </div>
           </motion.div>

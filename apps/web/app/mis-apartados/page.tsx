@@ -2,47 +2,54 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
+import { getSiteTexts } from "@/lib/site-text";
 import { colones } from "../(store)/catalogo/catalog-types";
 import { CancelButton } from "./cancel-button";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Mis apartados — Crop" };
-
-const statusLabel: Record<string, string> = {
-  RESERVED: "Apartado",
-  PICKED_UP: "Recogido",
-  CANCELLED: "Cancelado",
-  EXPIRED: "Vencido",
-};
+export async function generateMetadata() {
+  const t = await getSiteTexts();
+  return { title: `${t["apartados.heading"]} — ${t["brand.name"]}` };
+}
 
 export default async function MyReservationsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin?callbackUrl=/mis-apartados");
 
-  const orders = await prisma.order.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      business: { select: { name: true } },
-      items: { include: { product: { select: { name: true, pickupPoint: { select: { name: true } } } } } },
-    },
-  });
+  const [orders, t] = await Promise.all([
+    prisma.order.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        business: { select: { name: true } },
+        items: { include: { product: { select: { name: true, pickupPoint: { select: { name: true } } } } } },
+      },
+    }),
+    getSiteTexts(),
+  ]);
+
+  const statusLabel: Record<string, string> = {
+    RESERVED: t["apartados.status_reserved"],
+    PICKED_UP: t["apartados.status_picked_up"],
+    CANCELLED: t["apartados.status_cancelled"],
+    EXPIRED: t["apartados.status_expired"],
+  };
 
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-16">
       <div className="flex items-end justify-between">
-        <h1 className="text-2xl font-semibold text-neutral-900">Mis apartados</h1>
+        <h1 className="text-2xl font-semibold text-neutral-900">{t["apartados.heading"]}</h1>
         <Link href="/catalogo" className="text-sm text-neutral-700 underline underline-offset-2">
-          Ver catálogo
+          {t["nav.ver_catalogo"]}
         </Link>
       </div>
 
       {orders.length === 0 ? (
         <p className="mt-8 text-sm text-neutral-600">
-          Todavía no apartaste nada.{" "}
+          {t["apartados.empty_text"]}{" "}
           <Link href="/catalogo" className="underline underline-offset-2">
-            Explorá el excedente disponible.
+            {t["apartados.empty_link"]}
           </Link>
         </p>
       ) : (
@@ -60,7 +67,7 @@ export default async function MyReservationsPage() {
                       .join(", ")}
                   </span>
                   <span className="text-xs text-neutral-500">
-                    {expired ? "Vencido" : statusLabel[order.status] ?? order.status}
+                    {expired ? t["apartados.status_expired"] : statusLabel[order.status] ?? order.status}
                   </span>
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
@@ -70,9 +77,9 @@ export default async function MyReservationsPage() {
                       0,
                     ),
                   )}
-                  {pickup ? ` · Recogé en ${pickup}` : ""}
+                  {pickup ? ` · ${t["apartados.recoge_en_prefix"]} ${pickup}` : ""}
                   {order.status === "RESERVED" && !expired
-                    ? ` · antes del ${order.pickupBy.toLocaleString("es-CR", {
+                    ? ` · ${t["apartados.antes_del_prefix"]} ${order.pickupBy.toLocaleString("es-CR", {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}`
@@ -80,7 +87,7 @@ export default async function MyReservationsPage() {
                 </div>
                 {order.status === "RESERVED" && !expired && (
                   <div className="mt-2">
-                    <CancelButton orderId={order.id} />
+                    <CancelButton orderId={order.id} texts={t} />
                   </div>
                 )}
               </li>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
+import { getSiteTexts } from "@/lib/site-text";
 
 export type CancelResult = { ok: boolean; error?: string };
 
@@ -13,7 +14,8 @@ export type CancelResult = { ok: boolean; error?: string };
  */
 export async function cancelOrder(orderId: string): Promise<CancelResult> {
   const session = await auth();
-  if (!session?.user?.id) return { ok: false, error: "No autenticado" };
+  const t = await getSiteTexts();
+  if (!session?.user?.id) return { ok: false, error: t["apartados.error.not_authenticated"] };
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -21,10 +23,10 @@ export async function cancelOrder(orderId: string): Promise<CancelResult> {
   });
 
   if (!order || order.userId !== session.user.id) {
-    return { ok: false, error: "Apartado no encontrado" };
+    return { ok: false, error: t["apartados.error.not_found"] };
   }
   if (order.status !== "RESERVED") {
-    return { ok: false, error: "Este apartado ya no se puede cancelar" };
+    return { ok: false, error: t["apartados.error.not_cancellable"] };
   }
 
   await prisma.$transaction(async (tx) => {

@@ -3,7 +3,13 @@
 import { useActionState } from "react";
 import { reserveProduct, type ReserveResult } from "./actions";
 
-export function ReserveButton({ productId }: { productId: string }) {
+export function ReserveButton({
+  productId,
+  texts,
+}: {
+  productId: string;
+  texts: Record<string, string>;
+}) {
   const [state, action, pending] = useActionState<ReserveResult | null, FormData>(
     reserveProduct,
     null,
@@ -12,14 +18,14 @@ export function ReserveButton({ productId }: { productId: string }) {
   if (state?.ok) {
     return (
       <p className="mt-3 border-l-2 border-[#C89B3C] bg-[#C89B3C]/10 px-3 py-2 text-sm text-[#1F2A22]">
-        Apartado listo. Recogé antes del{" "}
+        {texts["catalogo.reserve.success_prefix"]}{" "}
         {new Date(state.pickupBy).toLocaleString("es-CR", {
           dateStyle: "medium",
           timeStyle: "short",
         })}
         {" · "}
         <a href="/mis-apartados" className="underline underline-offset-2">
-          Mis apartados
+          {texts["nav.mis_apartados"]}
         </a>
       </p>
     );
@@ -34,7 +40,7 @@ export function ReserveButton({ productId }: { productId: string }) {
         disabled={pending}
         className="bg-[#1F2A22] px-4 py-2 text-sm text-[#F6F1E7] disabled:opacity-60"
       >
-        {pending ? "Apartando…" : "Apartar 1 unidad"}
+        {pending ? texts["catalogo.reserve.pending"] : texts["catalogo.reserve.idle"]}
       </button>
       {state && !state.ok && (
         <span className="ml-3 text-sm text-[#B5562B]">{state.error}</span>

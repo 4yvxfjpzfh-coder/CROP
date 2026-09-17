@@ -19,7 +19,19 @@ export type FruitSlide = {
  * propio fondo crema, así que se ven como tarjetas claras flotando sobre el
  * fondo oscuro — efecto intencional, no hace falta recortarlas.
  */
-export function FruitCarousel({ items }: { items: FruitSlide[] }) {
+export function FruitCarousel({
+  items,
+  prevLabel = "Anterior",
+  nextLabel = "Siguiente",
+  goToLabel = "Ir a",
+  ctaLabel = "Ver en el catálogo",
+}: {
+  items: FruitSlide[];
+  prevLabel?: string;
+  nextLabel?: string;
+  goToLabel?: string;
+  ctaLabel?: string;
+}) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -49,7 +61,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
 
         <button
           type="button"
-          aria-label="Anterior"
+          aria-label={prevLabel}
           onClick={() => go(-1)}
           className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-ink/90 text-paper shadow hover:bg-emerald"
         >
@@ -57,7 +69,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
         </button>
         <button
           type="button"
-          aria-label="Siguiente"
+          aria-label={nextLabel}
           onClick={() => go(1)}
           className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-ink/90 text-paper shadow hover:bg-emerald"
         >
@@ -89,7 +101,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
             <button
               key={item.name}
               type="button"
-              aria-label={`Ir a ${item.name}`}
+              aria-label={`${goToLabel} ${item.name}`}
               onClick={() => {
                 setDirection(i > index ? 1 : -1);
                 setIndex(i);
@@ -112,7 +124,7 @@ export function FruitCarousel({ items }: { items: FruitSlide[] }) {
           href="/catalogo"
           className="inline-block bg-emerald px-6 py-3 font-[family-name:var(--font-form)] text-sm text-paper hover:opacity-90"
         >
-          Ver en el catálogo
+          {ctaLabel}
         </Link>
       </div>
     </div>

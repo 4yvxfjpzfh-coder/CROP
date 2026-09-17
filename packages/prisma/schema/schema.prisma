@@ -286,3 +286,14 @@ model HomeFruit {
 
   @@index([position])
 }
+
+// Textos sueltos de la app pública (menús, botones, páginas legales, etc.),
+// editables desde /admin/textos. Tabla dispersa: solo existe una fila por
+// texto que el admin efectivamente cambió; el resto usa el valor por defecto
+// definido en código (apps/web/lib/site-text-defaults.ts) para que la app
+// nunca se quede sin texto por una fila sin crear.
+model SiteText {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}

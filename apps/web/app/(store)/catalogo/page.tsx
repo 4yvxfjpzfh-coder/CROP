@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { getSiteSettings } from "@/lib/site-settings";
+import { getSiteTexts } from "@/lib/site-text";
 import { SiteBackground } from "@/components/site-background";
 import { Press } from "@/components/motion/press";
 import { Reveal } from "@/components/motion/reveal";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Catálogo — Crop",
-  description: "Elegí una feria para ver el excedente disponible.",
-};
+export async function generateMetadata() {
+  const t = await getSiteTexts();
+  return {
+    title: `${t["nav.catalogo"]} — ${t["brand.name"]}`,
+    description: t["catalogo.selector.subtext"],
+  };
+}
 
 /**
  * Selector de feria: el catálogo 3D ya no es una sola fila con todo
@@ -19,8 +23,9 @@ export const metadata = {
  * separado.
  */
 export default async function CatalogoPage() {
-  const [settings, pickupPoints] = await Promise.all([
+  const [settings, t, pickupPoints] = await Promise.all([
     getSiteSettings(),
+    getSiteTexts(),
     prisma.pickupPoint.findMany({
       where: { isActive: true },
       orderBy: { name: "asc" },
@@ -45,24 +50,23 @@ export default async function CatalogoPage() {
           href="/"
           className="inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-2xl uppercase text-paper hover:opacity-80"
         >
-          <span aria-hidden>←</span> Crop
+          <span aria-hidden>←</span> {t["brand.name"]}
         </Link>
       </header>
 
       <main className="mx-auto w-full max-w-5xl px-6 py-14">
         <Reveal>
           <h1 className="font-[family-name:var(--font-display)] text-3xl text-paper md:text-4xl">
-            Elegí una feria
+            {t["catalogo.selector.heading"]}
           </h1>
           <p className="mt-3 max-w-lg font-[family-name:var(--font-form)] text-sm leading-relaxed text-metal">
-            Cada feria tiene su propio recorrido en 3D con el excedente
-            disponible ahí.
+            {t["catalogo.selector.subtext"]}
           </p>
         </Reveal>
 
         {pickupPoints.length === 0 ? (
           <p className="mt-10 font-[family-name:var(--font-form)] text-sm text-metal">
-            Todavía no hay ferias configuradas.
+            {t["catalogo.selector.empty"]}
           </p>
         ) : (
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
@@ -80,7 +84,7 @@ export default async function CatalogoPage() {
                       {pp.address}
                     </p>
                     <p className="mt-4 font-[family-name:var(--font-form)] text-sm text-emerald">
-                      {pp._count.products} producto(s) disponibles
+                      {pp._count.products} {t["catalogo.selector.count_suffix"]}
                     </p>
                   </Link>
                 </Press>

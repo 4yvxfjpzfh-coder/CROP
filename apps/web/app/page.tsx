@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { getSiteSettings, getHomeFruits } from "@/lib/site-settings";
+import { getSiteTexts } from "@/lib/site-text";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel, type FruitSlide } from "@/components/fruit-carousel";
@@ -10,24 +11,6 @@ import { FlipReveal } from "@/components/motion/flip-reveal";
 import { SiteBackground } from "@/components/site-background";
 
 export const dynamic = "force-dynamic";
-
-const steps = [
-  {
-    n: "1",
-    title: "Explorá el catálogo",
-    text: "Recorré en 3D el excedente disponible hoy en la feria: fotos, precios y cantidades reales.",
-  },
-  {
-    n: "2",
-    title: "Apartá sin pagar en línea",
-    text: "Reservás lo que necesitás con un clic. El pago, si aplica, se hace al recoger.",
-  },
-  {
-    n: "3",
-    title: "Recogé en la feria",
-    text: "Tenés una ventana de tiempo para pasar a buscarlo en el punto de recogida del agricultor.",
-  },
-];
 
 const DEFAULT_HEADLINE = "El excedente de la feria, antes de que se pierda.";
 const DEFAULT_SUBTEXT =
@@ -57,10 +40,11 @@ const DEFAULT_FRUITS: FruitSlide[] = [
 ];
 
 export default async function Home() {
-  const [session, settings, dbFruits] = await Promise.all([
+  const [session, settings, dbFruits, t] = await Promise.all([
     auth(),
     getSiteSettings(),
     getHomeFruits(),
+    getSiteTexts(),
   ]);
 
   const headline = settings.homeHeadline || DEFAULT_HEADLINE;
@@ -70,28 +54,41 @@ export default async function Home() {
       ? dbFruits.map((f) => ({ name: f.name, img: f.imageUrl, blurb: f.blurb }))
       : DEFAULT_FRUITS;
 
+  const steps = [
+    { n: "1", title: t["home.how.step1.title"], text: t["home.how.step1.text"] },
+    { n: "2", title: t["home.how.step2.title"], text: t["home.how.step2.text"] },
+    { n: "3", title: t["home.how.step3.title"], text: t["home.how.step3.text"] },
+  ];
+
   return (
     <div className="min-h-dvh text-paper">
       <SiteBackground url={settings.homeBackgroundUrl} />
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="font-[family-name:var(--font-display)] text-2xl uppercase text-paper">
-          Crop
+        <span className="flex flex-col leading-tight">
+          <span className="font-[family-name:var(--font-display)] text-2xl uppercase text-paper">
+            {t["brand.name"]}
+          </span>
+          {t["brand.tagline"] && (
+            <span className="font-[family-name:var(--font-form)] text-[10px] uppercase tracking-wide text-metal">
+              {t["brand.tagline"]}
+            </span>
+          )}
         </span>
         <nav className="flex items-center gap-5 font-[family-name:var(--font-form)] text-sm">
           <Link href="/catalogo" className="text-metal hover:text-paper">
-            Catálogo
+            {t["nav.catalogo"]}
           </Link>
           {session?.user ? (
             <>
               <Link href="/mis-apartados" className="text-metal hover:text-paper">
-                Mis apartados
+                {t["nav.mis_apartados"]}
               </Link>
               <Press>
                 <Link
                   href="/perfil"
                   className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
                 >
-                  Mi perfil
+                  {t["nav.mi_perfil"]}
                 </Link>
               </Press>
             </>
@@ -101,7 +98,7 @@ export default async function Home() {
                 href="/signin"
                 className="block bg-emerald px-4 py-2 text-paper hover:opacity-90"
               >
-                Entrar
+                {t["nav.entrar"]}
               </Link>
             </Press>
           )}
@@ -129,7 +126,7 @@ export default async function Home() {
                     href="/catalogo"
                     className="block bg-emerald px-6 py-3 text-paper hover:opacity-90"
                   >
-                    Ver catálogo
+                    {t["nav.ver_catalogo"]}
                   </Link>
                 </Press>
                 {!session?.user && (
@@ -138,7 +135,7 @@ export default async function Home() {
                       href="/signin"
                       className="block border border-metal px-6 py-3 text-paper hover:bg-ink-200"
                     >
-                      Crear cuenta
+                      {t["nav.crear_cuenta"]}
                     </Link>
                   </Press>
                 )}
@@ -151,7 +148,7 @@ export default async function Home() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/demo/hero-cosecha.svg"
-                  alt="Canasta con cacao, café y piña"
+                  alt={t["home.hero.image_alt"]}
                   className="aspect-square w-full object-contain"
                 />
               </div>
@@ -182,30 +179,30 @@ export default async function Home() {
         <section className="mx-auto w-full max-w-5xl px-6 py-14">
           <Reveal className="text-center">
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-paper">
-              Lo que encontrás hoy
+              {t["home.fruits.heading"]}
             </h2>
             <p className="mt-1 font-[family-name:var(--font-form)] text-sm text-metal">
-              Recorré las frutas con las flechas.
+              {t["home.fruits.subtext"]}
             </p>
           </Reveal>
           <ParallaxDrift className="mt-8">
-            <FruitCarousel items={fruits} />
+            <FruitCarousel items={fruits} ctaLabel={t["carousel.cta"]} />
           </ParallaxDrift>
         </section>
       </main>
 
       <footer className="border-t border-ink-200">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 font-[family-name:var(--font-form)] text-xs text-metal">
-          <span>© {new Date().getFullYear()} <span className="uppercase">Crop</span> — Costa Rica</span>
+          <span>© {new Date().getFullYear()} <span className="uppercase">{t["brand.name"]}</span> — {t["footer.copyright_suffix"]}</span>
           <div className="flex gap-4">
             <Link href="/privacy" className="hover:text-paper">
-              Privacidad
+              {t["footer.privacidad"]}
             </Link>
             <Link href="/terms" className="hover:text-paper">
-              Términos
+              {t["footer.terminos"]}
             </Link>
             <Link href="/reembolsos" className="hover:text-paper">
-              Cancelaciones
+              {t["footer.cancelaciones"]}
             </Link>
           </div>
         </div>
