@@ -9,11 +9,15 @@ const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
-  quantity: z.coerce.number().int().min(0, "La cantidad no puede ser negativa"),
+  unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
+  quantity: z.coerce.number().min(0, "La cantidad no puede ser negativa"),
   originalPriceCents: z.coerce.number().int().min(0),
   discountPriceCents: z.coerce.number().int().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
+}).refine((data) => data.unit !== "UNIDAD" || Number.isInteger(data.quantity), {
+  message: "La cantidad en unidades tiene que ser un número entero",
+  path: ["quantity"],
 });
 
 export type FarmerProductResult =
@@ -25,6 +29,7 @@ function parse(formData: FormData) {
     name: formData.get("name"),
     description: formData.get("description") ?? "",
     photoUrl: formData.get("photoUrl") ?? "",
+    unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
     originalPriceCents: formData.get("originalPriceCents"),
     discountPriceCents: formData.get("discountPriceCents"),
@@ -55,21 +60,24 @@ export async function createOwnProduct(
   }
   const data = parsed.data;
 
-  const product = await prisma.product.create({
-    data: {
-      name: data.name,
-      description: data.description || null,
-      farmerId: g.actor.id,
-      providerName: g.actor.name,
-      photoUrl: data.photoUrl || null,
-      quantity: data.quantity,
-      originalPriceCents: data.originalPriceCents,
-      discountPriceCents: data.discountPriceCents,
-      pickupPointId: data.pickupPointId,
-      isActive: data.isActive,
-      // Sin catalogPosition: el admin sigue decidiendo qué entra al carrusel
-      // público desde /admin/catalogo, incluso para productos de agricultores.
-    },
+  const product = await prisma.$transaction(async (tx) => {
+    const farmerSeq = (await tx.product.count({ where: { farmerId: g.actor.id } })) + 1;
+    return tx.product.create({
+      data: {
+        name: data.name,
+        description: data.description || null,
+        farmerId: g.actor.id,
+        farmerSeq,
+        providerName: g.actor.name,
+        photoUrl: data.photoUrl || null,
+        unit: data.unit,
+        quantity: data.quantity,
+        originalPriceCents: data.originalPriceCents,
+        discountPriceCents: data.discountPriceCents,
+        pickupPointId: data.pickupPointId,
+        isActive: data.isActive,
+      },
+    });
   });
 
   revalidatePath("/agricultor/productos");
@@ -100,6 +108,7 @@ export async function updateOwnProduct(
       name: data.name,
       description: data.description || null,
       photoUrl: data.photoUrl || null,
+      unit: data.unit,
       quantity: data.quantity,
       originalPriceCents: data.originalPriceCents,
       discountPriceCents: data.discountPriceCents,

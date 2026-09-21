@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { formatPickupDeadline } from "@/lib/format";
 import { colones } from "../(store)/catalogo/catalog-types";
+import { formatQuantity } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 
@@ -25,7 +26,11 @@ export default async function MyReservationsPage() {
       orderBy: { createdAt: "desc" },
       include: {
         business: { select: { name: true } },
-        items: { include: { product: { select: { name: true, pickupPoint: { select: { name: true } } } } } },
+        items: {
+          include: {
+            product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
+          },
+        },
       },
     }),
     getSiteTexts(),
@@ -66,7 +71,7 @@ export default async function MyReservationsPage() {
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-neutral-900">
                     {order.items
-                      .map((i) => `${i.quantity}× ${i.product.name}`)
+                      .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
                       .join(", ")}
                   </span>
                   <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@crop/prisma";
-import { Catalog3D } from "../catalog-3d";
+import { CatalogGrid } from "../catalog-grid";
 import type { CatalogProduct } from "../catalog-types";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { productCode } from "@/lib/units";
 
 export const dynamic = "force-dynamic";
 
@@ -38,17 +39,24 @@ export default async function CatalogoFeriaPage({
   if (!pickupPoint) notFound();
 
   const products = await prisma.product.findMany({
-    // Curado a mano desde /admin/catalogo, y ahora también filtrado a esta
-    // feria puntual (antes /catalogo mezclaba todas las ferias en una fila).
+    // Se muestran todos los productos activos con stock de esta feria; ya no
+    // hace falta que el admin los agregue a mano uno por uno. El orden manual
+    // desde /admin/catalogo sigue existiendo, pero es opcional: solo mueve al
+    // frente lo que el admin quiera destacar, el resto entra igual por fecha.
     where: {
       isActive: true,
       quantity: { gt: 0 },
-      catalogPosition: { not: null },
       pickupPointId,
     },
-    orderBy: { catalogPosition: "asc" },
-    include: { pickupPoint: { select: { shortName: true } } },
-    take: 60,
+    orderBy: [
+      { catalogPosition: { sort: "asc", nulls: "last" } },
+      { createdAt: "desc" },
+    ],
+    include: {
+      pickupPoint: { select: { shortName: true } },
+      farmer: { select: { name: true } },
+    },
+    take: 200,
   });
 
   const items: CatalogProduct[] = products.map((p) => ({
@@ -59,10 +67,16 @@ export default async function CatalogoFeriaPage({
     photoUrl: p.photoUrl,
     harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString() : null,
     ripenessNote: p.ripenessNote,
+    unit: p.unit,
     quantity: p.quantity,
     originalPriceCents: p.originalPriceCents,
     discountPriceCents: p.discountPriceCents,
     pickupShortName: p.pickupPoint?.shortName ?? null,
+    code: productCode({
+      name: p.name,
+      farmerName: p.farmer?.name ?? p.providerName ?? null,
+      farmerSeq: p.farmerSeq,
+    }),
   }));
 
   if (items.length === 0) {
@@ -82,7 +96,7 @@ export default async function CatalogoFeriaPage({
   }
 
   return (
-    <Catalog3D
+    <CatalogGrid
       products={items}
       backgroundUrl={backgroundUrl}
       feriaName={pickupPoint.shortName}

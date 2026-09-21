@@ -6,27 +6,31 @@ import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { MAX_QUANTITY_PER_ITEM } from "./catalog-types";
 
-const MAX_QUANTITY_PER_RESERVATION = 10;
-// Sin cobro de por medio, sin este tope una sola cuenta podría acaparar todo
-// el excedente publicado. Los apartados vencidos (liberados por el cron de
-// apps/api) no cuentan para este límite.
+// Los apartados vencidos (liberados por el cron de apps/api) no cuentan
+// para este límite.
 const MAX_ACTIVE_RESERVATIONS_PER_USER = 3;
 
-export type ReserveResult =
-  | { ok: true; orderId: string; pickupBy: string }
+export type PlaceOrderResult =
+  | { ok: true; orderId: string; pickupBy: string; totalCents: number }
   | { ok: false; error: string };
 
+type CartItemInput = { productId: string; quantity: number };
+
 /**
- * Aparta 1+ unidades de un producto para el usuario autenticado.
- * Sin cobro: crea una Order en estado RESERVED con fecha límite de recogida.
- * Descuenta el stock de forma condicional para que dos apartados simultáneos
- * no dejen el inventario en negativo.
+ * Aparta todo lo que el cliente puso en el carrito de una sola vez: crea UNA
+ * Order con un OrderItem por producto distinto (antes era un click = un
+ * apartado de un solo producto). Sin cobro: queda en RESERVED con fecha
+ * límite de recogida. El stock de cada producto se descuenta de forma
+ * condicional, dentro de una sola transacción, para que dos pedidos
+ * simultáneos no dejen el inventario en negativo ni se apruebe un pedido a
+ * medias si un producto se quedó sin stock justo antes.
  */
-export async function reserveProduct(
-  _prev: ReserveResult | null,
+export async function placeOrder(
+  _prev: PlaceOrderResult | null,
   formData: FormData,
-): Promise<ReserveResult> {
+): Promise<PlaceOrderResult> {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/signin?callbackUrl=/catalogo");
@@ -34,12 +38,33 @@ export async function reserveProduct(
   const userId = session.user.id;
   const t = await getSiteTexts();
 
-  const productId = String(formData.get("productId") ?? "");
-  const quantity = Math.min(
-    MAX_QUANTITY_PER_RESERVATION,
-    Math.max(1, Math.trunc(Number(formData.get("quantity") ?? 1)) || 1),
-  );
-  if (!productId) return { ok: false, error: t["catalogo.error.invalid_product"] };
+  let rawItems: unknown;
+  try {
+    rawItems = JSON.parse(String(formData.get("items") ?? "[]"));
+  } catch {
+    return { ok: false, error: t["catalogo.error.invalid_product"] };
+  }
+  if (!Array.isArray(rawItems) || rawItems.length === 0) {
+    return { ok: false, error: t["catalogo.error.invalid_product"] };
+  }
+
+  const byProduct = new Map<string, number>();
+  for (const raw of rawItems) {
+    if (
+      typeof raw !== "object" ||
+      raw === null ||
+      typeof (raw as Partial<CartItemInput>).productId !== "string" ||
+      typeof (raw as Partial<CartItemInput>).quantity !== "number"
+    ) {
+      return { ok: false, error: t["catalogo.error.invalid_product"] };
+    }
+    const { productId, quantity: rawQuantity } = raw as CartItemInput;
+    if (!productId || !Number.isFinite(rawQuantity) || rawQuantity <= 0) {
+      return { ok: false, error: t["catalogo.error.invalid_product"] };
+    }
+    const quantity = Math.min(MAX_QUANTITY_PER_ITEM, Math.round(rawQuantity * 100) / 100);
+    byProduct.set(productId, (byProduct.get(productId) ?? 0) + quantity);
+  }
 
   const activeReservations = await prisma.order.count({
     where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } },
@@ -51,49 +76,71 @@ export async function reserveProduct(
     };
   }
 
-  const product = await prisma.product.findUnique({ where: { id: productId } });
-  if (!product || !product.isActive) {
-    return { ok: false, error: t["catalogo.error.product_unavailable"] };
-  }
-  if (product.quantity < quantity) {
-    return {
-      ok: false,
-      error: `${t["catalogo.error.insufficient_stock_prefix"]} ${product.quantity} ${t["catalogo.error.insufficient_stock_suffix"]}`,
-    };
+  const productIds = [...byProduct.keys()];
+  const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  for (const [productId, quantity] of byProduct) {
+    const product = productMap.get(productId);
+    if (!product || !product.isActive) {
+      return { ok: false, error: t["catalogo.error.product_unavailable"] };
+    }
+    if (product.unit === "UNIDAD" && !Number.isInteger(quantity)) {
+      return { ok: false, error: t["catalogo.error.invalid_product"] };
+    }
+    if (product.quantity < quantity) {
+      return {
+        ok: false,
+        error: `${product.name}: ${t["catalogo.error.insufficient_stock_prefix"]} ${product.quantity} ${t["catalogo.error.insufficient_stock_suffix"]}`,
+      };
+    }
   }
 
   const { pickupWindowHours } = await getSiteSettings();
   const pickupBy = new Date(Date.now() + pickupWindowHours * 3600 * 1000);
 
+  // Si todos los productos del carrito son del mismo Business, se guarda esa
+  // referencia; si el carrito mezcla varios (o ninguno tiene Business), se
+  // deja null en vez de atribuirle el pedido entero a uno solo.
+  const businessIds = new Set(
+    productIds.map((id) => productMap.get(id)!.businessId).filter((id): id is string => Boolean(id)),
+  );
+  const businessId = businessIds.size === 1 ? [...businessIds][0] : null;
+
   try {
     const order = await prisma.$transaction(async (tx) => {
-      const claimed = await tx.product.updateMany({
-        where: { id: productId, isActive: true, quantity: { gte: quantity } },
-        data: { quantity: { decrement: quantity } },
-      });
-      if (claimed.count === 0) throw new Error("stock");
+      for (const [productId, quantity] of byProduct) {
+        const claimed = await tx.product.updateMany({
+          where: { id: productId, isActive: true, quantity: { gte: quantity } },
+          data: { quantity: { decrement: quantity } },
+        });
+        if (claimed.count === 0) throw new Error("stock");
+      }
 
       return tx.order.create({
         data: {
           userId,
-          businessId: product.businessId, // puede ser null
+          businessId,
           pickupBy,
           items: {
-            create: [
-              {
-                productId,
-                quantity,
-                unitPriceCents: product.discountPriceCents,
-              },
-            ],
+            create: [...byProduct].map(([productId, quantity]) => ({
+              productId,
+              quantity,
+              unitPriceCents: productMap.get(productId)!.discountPriceCents,
+            })),
           },
         },
+        include: { items: true },
       });
     });
 
+    const totalCents = Math.round(
+      order.items.reduce((sum, it) => sum + it.quantity * it.unitPriceCents, 0),
+    );
+
     revalidatePath("/catalogo");
     revalidatePath("/mis-apartados");
-    return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString() };
+    return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString(), totalCents };
   } catch {
     return { ok: false, error: t["catalogo.error.generic"] };
   }

@@ -38,6 +38,7 @@ export function FarmerProductForm({
     product?.pickupPointId ?? null,
   );
   const [photoUrl, setPhotoUrl] = useState<string>(product?.photoUrl ?? "");
+  const [unit, setUnit] = useState<"UNIDAD" | "KG">(product?.unit ?? "UNIDAD");
 
   useEffect(() => {
     if (state?.ok) {
@@ -50,12 +51,17 @@ export function FarmerProductForm({
 
   return (
     <div>
-      <h2 className="mb-5 font-[family-name:var(--font-display)] text-2xl text-olive">
+      <h2 className="mb-1 font-[family-name:var(--font-display)] text-2xl text-olive">
         {isEdit ? "Editar producto" : "Nuevo producto"}
       </h2>
+      {isEdit && product?.farmerSeq && (
+        <p className="mb-1 font-[family-name:var(--font-form)] text-xs text-stone">
+          Código: {product.name} #{product.farmerSeq}
+        </p>
+      )}
       <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">
-        Publicarlo acá no lo muestra automáticamente en el catálogo público —
-        el administrador todavía tiene que agregarlo desde su panel.
+        Se muestra en el catálogo público apenas lo publicás, sin que el
+        administrador tenga que hacer nada.
       </p>
 
       <form action={formAction} className="flex flex-col gap-4">
@@ -112,16 +118,33 @@ export function FarmerProductForm({
           )}
         </div>
 
+        <div>
+          <label className={label} htmlFor="unit">
+            Se vende por
+          </label>
+          <select
+            id="unit"
+            name="unit"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value as "UNIDAD" | "KG")}
+            className={field}
+          >
+            <option value="UNIDAD">Unidades</option>
+            <option value="KG">Kilos</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className={label} htmlFor="quantity">
-              Cantidad
+              Cantidad {unit === "KG" ? "(kg)" : "(unidades)"}
             </label>
             <input
               id="quantity"
               name="quantity"
               type="number"
               min={0}
+              step={unit === "KG" ? 0.25 : 1}
               required
               defaultValue={product?.quantity ?? 0}
               className={field}
@@ -129,7 +152,7 @@ export function FarmerProductForm({
           </div>
           <div>
             <label className={label} htmlFor="originalPriceCents">
-              Ref. (¢)
+              Ref. (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="originalPriceCents"
@@ -143,7 +166,7 @@ export function FarmerProductForm({
           </div>
           <div>
             <label className={label} htmlFor="discountPriceCents">
-              Excedente (¢)
+              Excedente (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="discountPriceCents"

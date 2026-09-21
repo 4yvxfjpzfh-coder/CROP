@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type AdminFarmer, type AdminPickupPoint, type AdminProduct } from "./types";
+import { productCode } from "@/lib/units";
 import { PickupPointField } from "./pickup-point-field";
 import { PhotoEditorLauncher } from "./photo-editor-launcher";
 import { PhotoUpload } from "./photo-upload";
@@ -38,6 +39,7 @@ export function ProductForm({
     product?.pickupPointId ?? null,
   );
   const [photoUrl, setPhotoUrl] = useState<string>(product?.photoUrl ?? "");
+  const [unit, setUnit] = useState<"UNIDAD" | "KG">(product?.unit ?? "UNIDAD");
 
   useEffect(() => {
     // Refresca la lista del server component tras crear/editar. Tiene que ir
@@ -48,9 +50,18 @@ export function ProductForm({
 
   return (
     <div>
-      <h2 className="mb-5 font-[family-name:var(--font-display)] text-2xl text-olive">
+      <h2 className="mb-1 font-[family-name:var(--font-display)] text-2xl text-olive">
         {isEdit ? "Editar producto" : "Nuevo producto"}
       </h2>
+      {isEdit && product?.farmerSeq && (
+        <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">
+          Código: {productCode({
+            name: product.name,
+            farmerName: farmers.find((f) => f.id === product.farmerId)?.name ?? null,
+            farmerSeq: product.farmerSeq,
+          }) ?? `#${product.farmerSeq}`}
+        </p>
+      )}
 
       <form action={formAction} className="flex flex-col gap-4">
         {isEdit && <input type="hidden" name="id" value={product!.id} />}
@@ -170,16 +181,33 @@ export function ProductForm({
           </div>
         </div>
 
+        <div>
+          <label className={label} htmlFor="unit">
+            Se vende por
+          </label>
+          <select
+            id="unit"
+            name="unit"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value as "UNIDAD" | "KG")}
+            className={field}
+          >
+            <option value="UNIDAD">Unidades</option>
+            <option value="KG">Kilos</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className={label} htmlFor="quantity">
-              Cantidad
+              Cantidad {unit === "KG" ? "(kg)" : "(unidades)"}
             </label>
             <input
               id="quantity"
               name="quantity"
               type="number"
               min={0}
+              step={unit === "KG" ? 0.25 : 1}
               required
               defaultValue={product?.quantity ?? 0}
               className={field}
@@ -187,7 +215,7 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="originalPriceCents">
-              Ref. (¢)
+              Ref. (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="originalPriceCents"
@@ -201,7 +229,7 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="discountPriceCents">
-              Excedente (¢)
+              Excedente (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="discountPriceCents"

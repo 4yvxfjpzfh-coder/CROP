@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
+import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/site-settings";
 
 export type SettingsResult = { ok: boolean; error?: string };
 
@@ -26,9 +27,9 @@ export async function saveHomeSettings(
   const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
   const homeHeadline = String(formData.get("homeHeadline") ?? "").trim();
   const homeSubtext = String(formData.get("homeSubtext") ?? "").trim();
-  const pickupWindowHours = Math.max(
-    1,
-    Math.trunc(Number(formData.get("pickupWindowHours") ?? 24)) || 24,
+  const pickupWindowHours = Math.min(
+    MAX_PICKUP_WINDOW_HOURS,
+    Math.max(1, Math.trunc(Number(formData.get("pickupWindowHours") ?? MAX_PICKUP_WINDOW_HOURS)) || MAX_PICKUP_WINDOW_HOURS),
   );
 
   await prisma.siteSettings.upsert({

@@ -63,12 +63,14 @@ export function SettingsForm({
           name="pickupWindowHours"
           type="number"
           min={1}
+          max={2}
           defaultValue={initialPickupHours}
           className={field}
         />
         <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
           Cuando alguien aparta un producto, tiene esta cantidad de horas
           desde ese momento para recogerlo antes de que se libere solo.
+          Máximo 2 horas.
         </p>
       </div>
 

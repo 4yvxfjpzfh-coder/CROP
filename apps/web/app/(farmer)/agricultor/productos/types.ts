@@ -3,12 +3,14 @@ export type FarmerProduct = {
   name: string;
   description: string | null;
   photoUrl: string | null;
+  unit: "UNIDAD" | "KG";
   quantity: number;
   originalPriceCents: number;
   discountPriceCents: number;
   pickupPointId: string | null;
   pickupShortName: string | null;
   isActive: boolean;
+  farmerSeq: number | null;
 };
 
 export type FarmerPickupPoint = {

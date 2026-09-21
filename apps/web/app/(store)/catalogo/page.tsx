@@ -17,10 +17,8 @@ export async function generateMetadata() {
 }
 
 /**
- * Selector de feria: el catálogo 3D ya no es una sola fila con todo
- * mezclado — cada punto de recogida tiene su propia galería
- * (/catalogo/[pickupPointId]), para poder recorrer Santa Ana o Escazú por
- * separado.
+ * Selector de feria: cada punto de recogida tiene su propio catálogo
+ * (/catalogo/[pickupPointId]), para ver Santa Ana o Escazú por separado.
  */
 export default async function CatalogoPage() {
   const [settings, t, pickupPoints] = await Promise.all([
@@ -33,7 +31,7 @@ export default async function CatalogoPage() {
         _count: {
           select: {
             products: {
-              where: { isActive: true, quantity: { gt: 0 }, catalogPosition: { not: null } },
+              where: { isActive: true, quantity: { gt: 0 } },
             },
           },
         },

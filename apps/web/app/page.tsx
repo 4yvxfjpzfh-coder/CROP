@@ -132,7 +132,7 @@ export default async function Home() {
                 {!session?.user && (
                   <Press>
                     <Link
-                      href="/signin"
+                      href="/registro"
                       className="block border border-metal px-6 py-3 text-paper hover:bg-ink-200"
                     >
                       {t["nav.crear_cuenta"]}

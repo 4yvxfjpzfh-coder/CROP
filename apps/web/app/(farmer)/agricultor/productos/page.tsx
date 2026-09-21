@@ -23,12 +23,14 @@ export default async function FarmerProductsPage() {
         name: p.name,
         description: p.description,
         photoUrl: p.photoUrl,
+        unit: p.unit,
         quantity: p.quantity,
         originalPriceCents: p.originalPriceCents,
         discountPriceCents: p.discountPriceCents,
         pickupPointId: p.pickupPointId,
         pickupShortName: p.pickupPoint?.shortName ?? null,
         isActive: p.isActive,
+        farmerSeq: p.farmerSeq,
       }))}
       pickupPoints={pickupPoints.map((pp) => ({
         id: pp.id,

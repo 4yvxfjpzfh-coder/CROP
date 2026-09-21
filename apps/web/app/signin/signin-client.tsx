@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { SignInWithAppleButton } from "@/components/SignInWithAppleButton";
 import { linkifyText } from "@/components/linkify-text";
@@ -9,6 +12,9 @@ import { linkifyText } from "@/components/linkify-text";
 // (next build/start, lo que corre Vercel) esta rama nunca se incluye.
 const DEV_LOGIN_ENABLED = process.env.NODE_ENV !== "production";
 
+const field =
+  "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
+
 export function SignInClient({
   appleConfigured,
   texts: t,
@@ -16,7 +22,26 @@ export function SignInClient({
   appleConfigured: boolean;
   texts: Record<string, string>;
 }) {
+  const router = useRouter();
   const [accepted, setAccepted] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handlePasswordLogin(e: FormEvent) {
+    e.preventDefault();
+    setPending(true);
+    setError(null);
+    const res = await signIn("password", { email, password, redirect: false });
+    setPending(false);
+    if (!res || res.error) {
+      setError(t["signin.password_error"]);
+      return;
+    }
+    router.push("/catalogo");
+    router.refresh();
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-8 px-6 py-16">
@@ -50,8 +75,45 @@ export function SignInClient({
         </label>
       </div>
 
+      <form onSubmit={handlePasswordLogin} className="flex flex-col gap-3">
+        <input
+          type="email"
+          required
+          autoComplete="email"
+          placeholder={t["signin.email_placeholder"]}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={field}
+        />
+        <input
+          type="password"
+          required
+          autoComplete="current-password"
+          placeholder={t["signin.password_placeholder"]}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={field}
+        />
+        {error && (
+          <p className="font-[family-name:var(--font-form)] text-sm text-sienna">{error}</p>
+        )}
+        <button
+          type="submit"
+          disabled={!accepted || pending}
+          className="h-11 w-full bg-olive font-[family-name:var(--font-form)] text-sm text-cream disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {pending ? t["signin.password_pending"] : t["signin.password_button"]}
+        </button>
+        <p className="text-center font-[family-name:var(--font-form)] text-xs text-stone">
+          {t["signin.no_account"]}{" "}
+          <Link href="/registro" className="underline underline-offset-2">
+            {t["nav.crear_cuenta"]}
+          </Link>
+        </p>
+      </form>
+
       {appleConfigured ? (
-        <div>
+        <div className="border-t border-dashed border-cream-200 pt-4">
           <SignInWithAppleButton disabled={!accepted} callbackUrl="/welcome" />
           {!accepted && (
             <p className="mt-2 text-center font-[family-name:var(--font-form)] text-xs text-stone">

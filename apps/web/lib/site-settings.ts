@@ -7,11 +7,16 @@ export type SiteSettingsData = {
   pickupWindowHours: number;
 };
 
+// Tope duro: los apartados vencen a más tardar 2 horas después de hacerse.
+// El admin puede poner menos horas, pero nunca más, incluso si en la base
+// quedó guardado un valor viejo más alto.
+export const MAX_PICKUP_WINDOW_HOURS = 2;
+
 const DEFAULTS: SiteSettingsData = {
   homeBackgroundUrl: null,
   homeHeadline: null,
   homeSubtext: null,
-  pickupWindowHours: 24,
+  pickupWindowHours: MAX_PICKUP_WINDOW_HOURS,
 };
 
 /**
@@ -27,7 +32,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       homeBackgroundUrl: settings.homeBackgroundUrl,
       homeHeadline: settings.homeHeadline,
       homeSubtext: settings.homeSubtext,
-      pickupWindowHours: settings.pickupWindowHours,
+      pickupWindowHours: Math.min(settings.pickupWindowHours, MAX_PICKUP_WINDOW_HOURS),
     };
   } catch (err) {
     console.error("[site-settings] no se pudo leer SiteSettings:", err);

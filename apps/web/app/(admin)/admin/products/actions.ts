@@ -14,11 +14,15 @@ const productInput = z.object({
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
   harvestedAt: z.string().trim().optional().or(z.literal("")),
   ripenessNote: z.string().trim().max(80).optional().or(z.literal("")),
-  quantity: z.coerce.number().int().min(0, "La cantidad no puede ser negativa"),
+  unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
+  quantity: z.coerce.number().min(0, "La cantidad no puede ser negativa"),
   originalPriceCents: z.coerce.number().int().min(0),
   discountPriceCents: z.coerce.number().int().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
+}).refine((data) => data.unit !== "UNIDAD" || Number.isInteger(data.quantity), {
+  message: "La cantidad en unidades tiene que ser un número entero",
+  path: ["quantity"],
 });
 
 export type ProductActionResult =
@@ -34,6 +38,7 @@ function parse(formData: FormData) {
     photoUrl: formData.get("photoUrl") ?? "",
     harvestedAt: formData.get("harvestedAt") ?? "",
     ripenessNote: formData.get("ripenessNote") ?? "",
+    unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
     originalPriceCents: formData.get("originalPriceCents"),
     discountPriceCents: formData.get("discountPriceCents"),
@@ -74,21 +79,29 @@ export async function createProduct(
   });
   if (!pickupPoint) return { ok: false, error: "El punto de recogida no existe" };
 
-  const product = await prisma.product.create({
-    data: {
-      name: data.name,
-      description: data.description || null,
-      providerName: data.providerName || null,
-      farmerId: data.farmerId || null,
-      photoUrl: data.photoUrl || null,
-      harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
-      ripenessNote: data.ripenessNote || null,
-      quantity: data.quantity,
-      originalPriceCents: data.originalPriceCents,
-      discountPriceCents: data.discountPriceCents,
-      pickupPointId: pickupPoint.id,
-      isActive: data.isActive,
-    },
+  const farmerId = data.farmerId || null;
+  const product = await prisma.$transaction(async (tx) => {
+    const farmerSeq = farmerId
+      ? (await tx.product.count({ where: { farmerId } })) + 1
+      : null;
+    return tx.product.create({
+      data: {
+        name: data.name,
+        description: data.description || null,
+        providerName: data.providerName || null,
+        farmerId,
+        farmerSeq,
+        photoUrl: data.photoUrl || null,
+        harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
+        ripenessNote: data.ripenessNote || null,
+        unit: data.unit,
+        quantity: data.quantity,
+        originalPriceCents: data.originalPriceCents,
+        discountPriceCents: data.discountPriceCents,
+        pickupPointId: pickupPoint.id,
+        isActive: data.isActive,
+      },
+    });
   });
 
   await recordAdminAudit({
@@ -123,22 +136,31 @@ export async function updateProduct(
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return { ok: false, error: "El producto no existe" };
 
-  const product = await prisma.product.update({
-    where: { id },
-    data: {
-      name: data.name,
-      description: data.description || null,
-      providerName: data.providerName || null,
-      farmerId: data.farmerId || null,
-      photoUrl: data.photoUrl || null,
-      harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
-      ripenessNote: data.ripenessNote || null,
-      quantity: data.quantity,
-      originalPriceCents: data.originalPriceCents,
-      discountPriceCents: data.discountPriceCents,
-      pickupPointId: data.pickupPointId,
-      isActive: data.isActive,
-    },
+  const farmerId = data.farmerId || null;
+  const product = await prisma.$transaction(async (tx) => {
+    let farmerSeq = existing.farmerSeq;
+    if (farmerId !== existing.farmerId) {
+      farmerSeq = farmerId ? (await tx.product.count({ where: { farmerId } })) + 1 : null;
+    }
+    return tx.product.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description || null,
+        providerName: data.providerName || null,
+        farmerId,
+        farmerSeq,
+        photoUrl: data.photoUrl || null,
+        harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
+        ripenessNote: data.ripenessNote || null,
+        unit: data.unit,
+        quantity: data.quantity,
+        originalPriceCents: data.originalPriceCents,
+        discountPriceCents: data.discountPriceCents,
+        pickupPointId: data.pickupPointId,
+        isActive: data.isActive,
+      },
+    });
   });
 
   await recordAdminAudit({

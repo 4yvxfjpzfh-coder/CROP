@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
@@ -39,7 +39,7 @@ export async function addToCatalog(formData: FormData): Promise<void> {
     action: "PRODUCT_UPDATE",
     entityType: "Product",
     entityId: productId,
-    summary: `Agregó "${product.name}" al catálogo 3D (posición ${nextPosition})`,
+    summary: `Agregó "${product.name}" al catálogo (posición ${nextPosition})`,
   });
 
   refresh();
@@ -62,7 +62,7 @@ export async function removeFromCatalog(formData: FormData): Promise<void> {
     action: "PRODUCT_UPDATE",
     entityType: "Product",
     entityId: productId,
-    summary: `Quitó "${product.name}" del catálogo 3D`,
+    summary: `Quitó "${product.name}" del catálogo`,
   });
 
   refresh();
@@ -102,7 +102,7 @@ async function swap(productId: string, direction: "up" | "down") {
     action: "PRODUCT_UPDATE",
     entityType: "Product",
     entityId: productId,
-    summary: `Reordenó "${current.name}" en el catálogo 3D`,
+    summary: `Reordenó "${current.name}" en el catálogo`,
   });
 
   refresh();
@@ -115,3 +115,4 @@ export async function moveUp(formData: FormData): Promise<void> {
 export async function moveDown(formData: FormData): Promise<void> {
   await swap(String(formData.get("productId") ?? ""), "down");
 }
+

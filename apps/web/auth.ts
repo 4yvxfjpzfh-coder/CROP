@@ -2,7 +2,39 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@crop/prisma";
+import { verifyPassword } from "@/lib/password";
 import authConfig from "./auth.config";
+
+/**
+ * Correo + contraseña, para clientes que crean su propia cuenta en /registro
+ * en vez de depender de Sign in with Apple (que necesita cuenta paga de
+ * Apple Developer). Funciona en producción, a diferencia de "dev-admin".
+ * Mensaje de error genérico a propósito: no revela si el correo existe o
+ * no para evitar enumeración de cuentas.
+ */
+const passwordProvider = Credentials({
+  id: "password",
+  name: "Correo y contraseña",
+  credentials: {
+    email: { label: "Correo", type: "email" },
+    password: { label: "Contraseña", type: "password" },
+  },
+  async authorize(credentials) {
+    const email = String(credentials?.email ?? "").trim().toLowerCase();
+    const password = String(credentials?.password ?? "");
+    if (!email || !password) return null;
+    try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user?.passwordHash) return null;
+      const valid = await verifyPassword(password, user.passwordHash);
+      if (!valid) return null;
+      return { id: user.id, email: user.email, name: user.name };
+    } catch (err) {
+      console.error("[password-auth] no se pudo verificar el usuario:", err);
+      return null;
+    }
+  },
+});
 
 /**
  * Acceso de administrador SOLO para desarrollo local, mientras no hay
@@ -54,7 +86,7 @@ const devProviders =
  */
 export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   ...authConfig,
-  providers: [...authConfig.providers, ...devProviders],
+  providers: [...authConfig.providers, passwordProvider, ...devProviders],
   adapter: PrismaAdapter(prisma),
   callbacks: {
     ...authConfig.callbacks,

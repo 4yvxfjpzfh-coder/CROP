@@ -37,6 +37,9 @@ model User {
   phone         String?
   role          Role      @default(USER)
   isActive      Boolean   @default(true)
+  // Hash de contraseña (scrypt) para cuentas creadas con correo + contraseña.
+  // Null para cuentas que solo usan Apple o el login de desarrollo.
+  passwordHash  String?
   // Consentimiento de Política de Privacidad + Términos aceptado en el registro.
   consentedAt   DateTime?
   createdAt     DateTime  @default(now())
@@ -125,13 +128,17 @@ model Product {
   harvestedAt        DateTime?
   // Nota corta libre para el catálogo: "Extra dulce", "No madura todavía", etc.
   ripenessNote       String?
-  originalPriceCents Int          // Precio de referencia
-  discountPriceCents Int          // Precio de excedente
-  quantity           Int          @default(0) // Unidades disponibles para apartar
+  originalPriceCents Int          // Precio de referencia (por unidad o por kilo, según `unit`)
+  discountPriceCents Int          // Precio de excedente (por unidad o por kilo, según `unit`)
+  unit               ProductUnit  @default(UNIDAD)
+  quantity           Float        @default(0) // Cantidad disponible, en unidades o en kilos según `unit`
   isActive           Boolean      @default(true)
-  // Posición en el carrusel 3D de /catalogo. null = no se muestra ahí.
-  // Curado a mano desde /admin/catalogo; no se asigna automáticamente.
+  // Posición manual opcional para ordenar el catálogo. null = se ordena por
+  // fecha de publicación. Ya no controla si el producto se muestra o no.
   catalogPosition    Int?
+  // Número consecutivo por agricultor (1, 2, 3...), asignado al crear el
+  // producto. Sirve para mostrar un código corto tipo "Manzana - Juan García #1".
+  farmerSeq          Int?
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
@@ -141,6 +148,11 @@ model Product {
   @@index([pickupPointId, isActive])
   @@index([catalogPosition])
   @@index([farmerId])
+}
+
+enum ProductUnit {
+  UNIDAD
+  KG
 }
 
 model PickupPoint {
@@ -242,8 +254,8 @@ model OrderItem {
   order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId      String
   product        Product  @relation(fields: [productId], references: [id])
-  quantity       Int      @default(1)
-  unitPriceCents Int      // Precio de excedente al momento de apartar
+  quantity       Float    @default(1) // en unidades o en kilos, según el producto
+  unitPriceCents Int      // Precio de excedente al momento de apartar (por unidad o por kilo)
   createdAt      DateTime @default(now())
 
   @@index([orderId])
@@ -267,9 +279,10 @@ model SiteSettings {
   // en blanco por un settings sin configurar.
   homeHeadline      String?
   homeSubtext       String?
-  // Horas entre que se aparta un producto y se vence el apartado. Antes era
-  // una constante fija (24h) en catalogo/actions.ts; ahora la define el admin.
-  pickupWindowHours Int      @default(24)
+  // Horas entre que se aparta un producto y se vence el apartado. Tope fijo
+  // de 2 horas (ver MAX_PICKUP_WINDOW_HOURS en lib/site-settings.ts); el
+  // admin puede poner menos, pero nunca más.
+  pickupWindowHours Int      @default(2)
   updatedAt         DateTime @updatedAt
 }
 

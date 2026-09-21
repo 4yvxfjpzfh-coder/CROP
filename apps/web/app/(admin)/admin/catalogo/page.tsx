@@ -26,19 +26,19 @@ export default async function AdminCatalogPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Catálogo 3D
+        Orden del catálogo
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
-        Elegí qué productos aparecen en el carrusel de{" "}
+        Todo producto visible y con stock aparece solo en{" "}
         <a href="/catalogo" target="_blank" rel="noreferrer" className="underline underline-offset-2">
           /catalogo
-        </a>{" "}
-        y en qué orden. Solo se listan productos visibles y con stock; nada se
-        agrega automáticamente.
+        </a>
+        , no hace falta agregarlo a mano. Acá podés destacar algunos poniéndolos
+        primero; el resto se ordena por fecha de publicación.
       </p>
 
       <h2 className="mb-3 font-[family-name:var(--font-display)] text-xl text-olive">
-        En el catálogo ({inCatalog.length})
+        Destacados, con orden fijo ({inCatalog.length})
       </h2>
       {inCatalog.length === 0 ? (
         <p className="mb-10 font-[family-name:var(--font-form)] text-sm text-stone">
@@ -94,11 +94,11 @@ export default async function AdminCatalogPage() {
       )}
 
       <h2 className="mb-3 font-[family-name:var(--font-display)] text-xl text-olive">
-        Disponibles, sin mostrar ({notInCatalog.length})
+        Sin destacar, ordenados por fecha ({notInCatalog.length})
       </h2>
       {notInCatalog.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          Todo lo disponible ya está en el catálogo.
+          No hay más productos disponibles sin destacar.
         </p>
       ) : (
         <ul className="divide-y divide-cream-200 border-y border-cream-200">
@@ -116,7 +116,7 @@ export default async function AdminCatalogPage() {
                   type="submit"
                   className="font-[family-name:var(--font-form)] text-sm text-olive underline underline-offset-4"
                 >
-                  Agregar al catálogo
+                  Destacar primero
                 </button>
               </form>
             </li>

@@ -8,12 +8,14 @@ export type AdminProduct = {
   // ISO date (yyyy-mm-dd) o null; formato listo para <input type="date">.
   harvestedAt: string | null;
   ripenessNote: string | null;
+  unit: "UNIDAD" | "KG";
   quantity: number;
   originalPriceCents: number;
   discountPriceCents: number;
   pickupPointId: string | null;
   pickupShortName: string | null;
   isActive: boolean;
+  farmerSeq: number | null;
 };
 
 export type AdminFarmer = {

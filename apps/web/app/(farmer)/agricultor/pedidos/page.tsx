@@ -2,6 +2,7 @@ import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { colones } from "../productos/types";
 import { formatPickupDeadline } from "@/lib/format";
+import { formatQuantity } from "@/lib/units";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,9 @@ export default async function FarmerOrdersPage() {
       user: { select: { name: true, email: true } },
       items: {
         where: { product: { farmerId: actor.id } },
-        include: { product: { select: { name: true, pickupPoint: { select: { name: true } } } } },
+        include: {
+          product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
+        },
       },
     },
   });
@@ -54,7 +57,9 @@ export default async function FarmerOrdersPage() {
               <li key={order.id} className={orderCardClass(displayStatus)}>
                 <div className="flex items-baseline justify-between">
                   <span className="font-[family-name:var(--font-form)] text-sm text-olive">
-                    {order.items.map((i) => `${i.quantity}× ${i.product.name}`).join(", ")}
+                    {order.items
+                      .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                      .join(", ")}
                   </span>
                   <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                 </div>
