@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
+import { formatPickupDeadline } from "@/lib/format";
 import { colones } from "../(store)/catalogo/catalog-types";
 import { CancelButton } from "./cancel-button";
 
@@ -79,10 +80,7 @@ export default async function MyReservationsPage() {
                   )}
                   {pickup ? ` · ${t["apartados.recoge_en_prefix"]} ${pickup}` : ""}
                   {order.status === "RESERVED" && !expired
-                    ? ` · ${t["apartados.antes_del_prefix"]} ${order.pickupBy.toLocaleString("es-CR", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}`
+                    ? ` · ${t["apartados.antes_del_prefix"]} ${formatPickupDeadline(order.pickupBy)}`
                     : ""}
                 </div>
                 {order.status === "RESERVED" && !expired && (

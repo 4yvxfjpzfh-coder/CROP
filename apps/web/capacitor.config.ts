@@ -11,7 +11,10 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // se cambia a la URL de producción (ver DEPLOY.md) antes de mandar a
 // revisión de Apple. CAPACITOR_SERVER_URL permite pisarlo sin tocar este
 // archivo (ej. para probar contra la Mac en la red local).
-const serverUrl = process.env.CAPACITOR_SERVER_URL ?? "http://localhost:3000";
+// "|| " (no "??"): si alguien exporta CAPACITOR_SERVER_URL vacío por error
+// (ej. una plantilla de CI mal armada), también cae al default en vez de
+// terminar apuntando a una URL vacía.
+const serverUrl = process.env.CAPACITOR_SERVER_URL || "http://localhost:3000";
 
 const config: CapacitorConfig = {
   appId: "com.crop.app",

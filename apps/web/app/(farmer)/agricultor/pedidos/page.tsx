@@ -1,6 +1,7 @@
 import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { colones } from "../productos/types";
+import { formatPickupDeadline } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -64,10 +65,7 @@ export default async function FarmerOrdersPage() {
                     ? ` · ${order.items[0].product.pickupPoint.name}`
                     : ""}
                   {order.status === "RESERVED" && !expired
-                    ? ` · antes del ${order.pickupBy.toLocaleString("es-CR", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}`
+                    ? ` · antes del ${formatPickupDeadline(order.pickupBy)}`
                     : ""}
                 </div>
               </li>

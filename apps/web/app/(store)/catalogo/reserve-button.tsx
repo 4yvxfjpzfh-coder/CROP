@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { reserveProduct, type ReserveResult } from "./actions";
 import { schedulePickupReminder } from "@/lib/native";
+import { formatPickupDeadline } from "@/lib/format";
 
 export function ReserveButton({
   productId,
@@ -24,10 +25,7 @@ export function ReserveButton({
     return (
       <p className="mt-3 border-l-2 border-[#C89B3C] bg-[#C89B3C]/10 px-3 py-2 text-sm text-[#1F2A22]">
         {texts["catalogo.reserve.success_prefix"]}{" "}
-        {new Date(state.pickupBy).toLocaleString("es-CR", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}
+        {formatPickupDeadline(state.pickupBy)}
         {" · "}
         <a href="/mis-apartados" className="underline underline-offset-2">
           {texts["nav.mis_apartados"]}

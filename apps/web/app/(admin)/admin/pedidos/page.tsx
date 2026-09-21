@@ -1,6 +1,7 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
 import { colones } from "../products/types";
+import { formatPickupDeadline } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -62,12 +63,9 @@ export default async function AdminOrdersPage() {
                     ? ` · ${order.items[0].product.pickupPoint.name}`
                     : ""}
                   {" · creado "}
-                  {order.createdAt.toLocaleString("es-CR", { dateStyle: "medium", timeStyle: "short" })}
+                  {formatPickupDeadline(order.createdAt)}
                   {order.status === "RESERVED" && !expired
-                    ? ` · vence ${order.pickupBy.toLocaleString("es-CR", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}`
+                    ? ` · vence ${formatPickupDeadline(order.pickupBy)}`
                     : ""}
                 </div>
               </li>

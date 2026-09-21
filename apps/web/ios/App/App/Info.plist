@@ -70,5 +70,16 @@
 	<string>Crop usa la cámara para que agricultores y administradores saquen fotos de los productos que publican.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Crop necesita acceso a tus fotos para elegir la imagen de un producto desde tu galería.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- Solo habilita tráfico sin HTTPS hacia direcciones de red local
+		     (ej. probar contra la Mac por CAPACITOR_SERVER_URL=http://192.168.x.x:3000
+		     desde un iPhone real). No afecta la build de producción, que
+		     carga la URL real de Vercel por HTTPS. El "cleartext" del
+		     capacitor.config.ts es una bandera de Android; en iOS hace
+		     falta esta excepción aparte para que ATS no bloquee el pedido. -->
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

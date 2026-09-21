@@ -104,18 +104,20 @@ el riesgo en serio, todas ya en el código (`apps/web/lib/native.ts`):
   de forma confiable. Se programa solo al apartar, y se cancela solo si
   se cancela el apartado.
 - **Cámara nativa para fotos de producto** (`@capacitor/camera`): en la
-  app, el botón "Subir foto" del admin/agricultor se reemplaza por
-  "Tomar foto", que abre la cámara o galería nativa de iOS en vez del
-  selector de archivos del navegador — útil de verdad para un agricultor
-  sacando la foto del producto ahí mismo en la feria.
-- Instalado también `@capacitor/share` (nativo, listo para usar si se
-  quiere agregar "compartir esta feria/producto" más adelante).
+  app, junto al botón "Subir foto" del admin/agricultor aparece "Tomar
+  foto", que abre la cámara o galería nativa de iOS en vez de (o además
+  de) el selector de archivos del navegador — útil de verdad para un
+  agricultor sacando la foto del producto ahí mismo en la feria. El
+  selector de archivos sigue disponible como respaldo si la cámara nativa
+  falla o el permiso fue denegado.
 
-Estas dos primeras están activas y probadas en la versión web (no rompen
-nada ahí — son no-ops fuera de la app nativa); falta probarlas *dentro*
-de la app en la Mac, con un dispositivo o el Simulator, antes de enviar a
-revisión. Los permisos de cámara/galería (`NSCameraUsageDescription`,
-`NSPhotoLibraryUsageDescription`) ya están en `Info.plist`.
+Están activas y probadas en la versión web (no rompen nada ahí — son
+no-ops fuera de la app nativa); falta probarlas *dentro* de la app en la
+Mac, con un dispositivo o el Simulator, antes de enviar a revisión. Los
+permisos de cámara/galería (`NSCameraUsageDescription`,
+`NSPhotoLibraryUsageDescription`) y la excepción de red local para
+pruebas con `CAPACITOR_SERVER_URL` apuntando a la Mac
+(`NSAllowsLocalNetworking`) ya están en `Info.plist`.
 
 Si aun así Apple la rechaza por esto en la primera vuelta, el siguiente
 paso sería notificaciones push reales (no solo locales) o evaluar un
