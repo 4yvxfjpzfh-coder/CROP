@@ -6,6 +6,7 @@ import { getSiteTexts } from "@/lib/site-text";
 import { formatPickupDeadline } from "@/lib/format";
 import { colones } from "../(store)/catalogo/catalog-types";
 import { CancelButton } from "./cancel-button";
+import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -54,22 +55,21 @@ export default async function MyReservationsPage() {
           </Link>
         </p>
       ) : (
-        <ul className="mt-8 divide-y divide-neutral-200 border-y border-neutral-200">
+        <ul className="mt-8 flex flex-col gap-3">
           {orders.map((order) => {
             const pickup = order.items[0]?.product.pickupPoint?.name ?? null;
             const expired =
               order.status === "RESERVED" && order.pickupBy.getTime() < Date.now();
+            const displayStatus = expired ? "EXPIRED" : order.status;
             return (
-              <li key={order.id} className="py-4">
+              <li key={order.id} className={orderCardClass(displayStatus)}>
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-neutral-900">
                     {order.items
                       .map((i) => `${i.quantity}× ${i.product.name}`)
                       .join(", ")}
                   </span>
-                  <span className="text-xs text-neutral-500">
-                    {expired ? t["apartados.status_expired"] : statusLabel[order.status] ?? order.status}
-                  </span>
+                  <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                 </div>
                 <div className="mt-1 text-xs text-neutral-500">
                   {colones(

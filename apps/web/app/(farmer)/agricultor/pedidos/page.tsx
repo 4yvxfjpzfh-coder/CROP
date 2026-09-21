@@ -2,6 +2,7 @@ import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { colones } from "../productos/types";
 import { formatPickupDeadline } from "@/lib/format";
+import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -44,19 +45,18 @@ export default async function FarmerOrdersPage() {
           Todavía no hay apartados de tus productos.
         </p>
       ) : (
-        <ul className="divide-y divide-cream-200 border-y border-cream-200">
+        <ul className="flex flex-col gap-3">
           {orders.map((order) => {
             const expired =
               order.status === "RESERVED" && order.pickupBy.getTime() < Date.now();
+            const displayStatus = expired ? "EXPIRED" : order.status;
             return (
-              <li key={order.id} className="py-4">
+              <li key={order.id} className={orderCardClass(displayStatus)}>
                 <div className="flex items-baseline justify-between">
                   <span className="font-[family-name:var(--font-form)] text-sm text-olive">
                     {order.items.map((i) => `${i.quantity}× ${i.product.name}`).join(", ")}
                   </span>
-                  <span className="font-[family-name:var(--font-form)] text-xs text-stone">
-                    {expired ? "Vencido" : statusLabel[order.status] ?? order.status}
-                  </span>
+                  <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                 </div>
                 <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
                   {order.user.name ?? order.user.email ?? "Cliente"} ·{" "}
