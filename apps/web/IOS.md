@@ -1,0 +1,103 @@
+# Crop en el App Store (iOS)
+
+Crop es una app Next.js con Server Actions, sesión de Auth.js y acceso
+directo a Prisma/Postgres — nada de eso puede correr empaquetado dentro de
+un WebView sin backend. Por eso la app de iOS no es una copia estática del
+sitio: es una cáscara nativa (ícono, splash screen, presencia en el App
+Store) que carga el sitio real por red, con [Capacitor](https://capacitorjs.com/).
+
+**Esto significa que Crop tiene que estar desplegado (ver `DEPLOY.md`) antes
+de mandar la app a revisión de Apple** — la URL de producción es lo que la
+app de iOS carga.
+
+## Qué ya está hecho (en este repo, hecho en Windows)
+
+- `apps/web/capacitor.config.ts` — configuración de Capacitor.
+- `apps/web/ios/` — proyecto Xcode generado (`App.xcodeproj`). Usa Swift
+  Package Manager para las dependencias nativas de Capacitor (no
+  CocoaPods), así que **no hace falta instalar CocoaPods/Ruby en la Mac**.
+- Scripts nuevos en `apps/web/package.json`: `pnpm ios:sync`, `pnpm ios:open`.
+
+Todo esto ya está commiteado — en la Mac alcanza con clonar el repo.
+
+## Lo que falta (solo se puede hacer en una Mac con Xcode)
+
+### 1. Preparar la Mac
+
+- Instalar [Xcode](https://apps.apple.com/app/xcode/id497799835) desde la
+  App Store (gratis, pero pesado — varios GB).
+- Tener una cuenta de [Apple Developer Program](https://developer.apple.com/programs/)
+  paga (US$99/año) — **obligatoria** para subir algo al App Store, aparte
+  de las credenciales de "Sign in with Apple" que ya usa la app para login.
+
+### 2. Clonar y preparar el proyecto
+
+```bash
+git clone https://github.com/4yvxfjpzfh-coder/CROP.git
+cd CROP
+corepack enable
+pnpm install
+cd apps/web
+```
+
+### 3. Apuntar la app a la URL real
+
+Antes de compilar para enviar a revisión, editá `capacitor.config.ts` (o
+seteá la variable de entorno `CAPACITOR_SERVER_URL`) con la URL de
+producción de Vercel, por ejemplo:
+
+```bash
+CAPACITOR_SERVER_URL=https://crop-web.vercel.app pnpm ios:sync
+```
+
+(Sin esa variable, apunta a `http://localhost:3000` — sirve para probar en
+el Simulator con `pnpm dev` corriendo en la misma Mac, pero no para enviar
+a Apple.)
+
+### 4. Abrir en Xcode
+
+```bash
+pnpm ios:sync   # copia la config + resuelve paquetes de Capacitor
+pnpm ios:open   # abre ios/App/App.xcodeproj en Xcode
+```
+
+Dentro de Xcode:
+
+1. Seleccioná el proyecto **App** → pestaña **Signing & Capabilities** →
+   elegí tu equipo de Apple Developer en **Team**. Xcode genera el
+   certificado y el provisioning profile solo.
+2. Elegí un simulador (ej. "iPhone 16") arriba y tocá ▶ para probarla.
+3. Para un dispositivo físico o para subir al App Store: **Product → Archive**,
+   y desde el Organizer usás **Distribute App**.
+
+### 5. Íconos y splash screen
+
+Los de `ios/App/App/Assets.xcassets/` son placeholders genéricos de
+Capacitor. Antes de mandar a revisión hay que reemplazarlos por el logo
+real de Crop — la forma más simple es con
+[`@capacitor/assets`](https://github.com/ionic-team/capacitor-assets):
+generás un ícono de 1024×1024 y una imagen de splash, y el paquete arma
+todos los tamaños automáticamente.
+
+### 6. Apple Sign In dentro de la app nativa
+
+Como Crop ya usa "Sign in with Apple" vía Auth.js en el navegador, el login
+va a funcionar igual dentro del WebView de Capacitor sin cambios — pero
+Apple exige que las apps nativas que ofrecen login social también ofrezcan
+Sign in with Apple *nativo* (no solo el botón web) si usan otros logins
+sociales. Como Crop solo usa Apple, no hace falta nada nativo adicional
+para esa regla — igual conviene revisar la
+[guía de revisión 4.8](https://developer.apple.com/app-store/review/guidelines/#sign-in-with-apple)
+antes de enviar.
+
+### 7. Riesgo real de rechazo: "app que es solo un sitio web"
+
+Las guías de revisión de Apple (sección 4.2, "Minimum Functionality")
+rechazan apps que son solo una página web repackagada sin funcionalidad
+nativa real. Crop tiene interacción real (catálogo 3D, formularios,
+cámara para fotos vía el navegador) que ayuda, pero **no hay garantía de
+que pase la primera revisión** — es un riesgo conocido de este enfoque
+(Capacitor/WebView), no un bug de la implementación. Si Apple la rechaza
+por esto, las alternativas son: agregar más capacidades nativas
+(notificaciones push, por ejemplo) o evaluar un rewrite parcial en React
+Native/Swift más adelante.
