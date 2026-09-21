@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { cancelOrder } from "./actions";
+import { cancelPickupReminder } from "@/lib/native";
 
 export function CancelButton({
   orderId,
@@ -35,7 +36,11 @@ export function CancelButton({
         onClick={() =>
           startTransition(async () => {
             const result = await cancelOrder(orderId);
-            if (!result.ok) setError(result.error ?? texts["apartados.cancel.error_generic"]);
+            if (!result.ok) {
+              setError(result.error ?? texts["apartados.cancel.error_generic"]);
+            } else {
+              cancelPickupReminder(orderId);
+            }
           })
         }
         className="text-neutral-900 underline underline-offset-2 disabled:opacity-50"

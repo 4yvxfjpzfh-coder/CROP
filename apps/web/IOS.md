@@ -90,14 +90,34 @@ para esa regla — igual conviene revisar la
 [guía de revisión 4.8](https://developer.apple.com/app-store/review/guidelines/#sign-in-with-apple)
 antes de enviar.
 
-### 7. Riesgo real de rechazo: "app que es solo un sitio web"
+### 7. Riesgo de rechazo: "app que es solo un sitio web"
 
 Las guías de revisión de Apple (sección 4.2, "Minimum Functionality")
 rechazan apps que son solo una página web repackagada sin funcionalidad
-nativa real. Crop tiene interacción real (catálogo 3D, formularios,
-cámara para fotos vía el navegador) que ayuda, pero **no hay garantía de
-que pase la primera revisión** — es un riesgo conocido de este enfoque
-(Capacitor/WebView), no un bug de la implementación. Si Apple la rechaza
-por esto, las alternativas son: agregar más capacidades nativas
-(notificaciones push, por ejemplo) o evaluar un rewrite parcial en React
-Native/Swift más adelante.
+nativa real. **No hay forma de garantizar al 100% que Apple la apruebe** —
+la decisión final es de una persona revisando a mano — pero se agregaron
+capacidades nativas reales (no solo el sitio en un WebView) para reducir
+el riesgo en serio, todas ya en el código (`apps/web/lib/native.ts`):
+
+- **Recordatorio local antes de que venza un apartado** (2 horas antes,
+  `@capacitor/local-notifications`): algo que un sitio web no puede hacer
+  de forma confiable. Se programa solo al apartar, y se cancela solo si
+  se cancela el apartado.
+- **Cámara nativa para fotos de producto** (`@capacitor/camera`): en la
+  app, el botón "Subir foto" del admin/agricultor se reemplaza por
+  "Tomar foto", que abre la cámara o galería nativa de iOS en vez del
+  selector de archivos del navegador — útil de verdad para un agricultor
+  sacando la foto del producto ahí mismo en la feria.
+- Instalado también `@capacitor/share` (nativo, listo para usar si se
+  quiere agregar "compartir esta feria/producto" más adelante).
+
+Estas dos primeras están activas y probadas en la versión web (no rompen
+nada ahí — son no-ops fuera de la app nativa); falta probarlas *dentro*
+de la app en la Mac, con un dispositivo o el Simulator, antes de enviar a
+revisión. Los permisos de cámara/galería (`NSCameraUsageDescription`,
+`NSPhotoLibraryUsageDescription`) ya están en `Info.plist`.
+
+Si aun así Apple la rechaza por esto en la primera vuelta, el siguiente
+paso sería notificaciones push reales (no solo locales) o evaluar un
+rewrite parcial en React Native/Swift — pero recién tendría sentido
+evaluarlo si el rechazo efectivamente ocurre.

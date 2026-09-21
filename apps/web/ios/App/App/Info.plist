@@ -66,5 +66,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Crop usa la cámara para que agricultores y administradores saquen fotos de los productos que publican.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Crop necesita acceso a tus fotos para elegir la imagen de un producto desde tu galería.</string>
 </dict>
 </plist>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { reserveProduct, type ReserveResult } from "./actions";
+import { schedulePickupReminder } from "@/lib/native";
 
 export function ReserveButton({
   productId,
@@ -14,6 +15,10 @@ export function ReserveButton({
     reserveProduct,
     null,
   );
+
+  useEffect(() => {
+    if (state?.ok) schedulePickupReminder(state.orderId, state.pickupBy);
+  }, [state]);
 
   if (state?.ok) {
     return (
