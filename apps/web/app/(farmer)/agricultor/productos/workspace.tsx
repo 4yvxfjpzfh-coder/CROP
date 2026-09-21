@@ -12,6 +12,11 @@ export function FarmerProductsWorkspace({
   pickupPoints: FarmerPickupPoint[];
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Fuerza que el formulario se remonte en blanco después de publicar uno
+  // nuevo: mientras selectedId siga en null, la key de abajo seguiría siendo
+  // "new" y el formulario no se reiniciaría solo (quedaría con los mismos
+  // valores ya enviados, invitando a un doble envío accidental).
+  const [resetKey, setResetKey] = useState(0);
 
   const selected = useMemo(
     () => products.find((p) => p.id === selectedId) ?? null,
@@ -100,9 +105,10 @@ export function FarmerProductsWorkspace({
 
       <aside className="lg:border-l lg:border-cream-200 lg:pl-10">
         <FarmerProductForm
-          key={selected?.id ?? "new"}
+          key={selected?.id ?? `new-${resetKey}`}
           product={selected}
           pickupPoints={pickupPoints}
+          onCreated={() => setResetKey((k) => k + 1)}
         />
       </aside>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { makeFarmer, type FarmerActionResult } from "./actions";
 
 const field =
@@ -11,9 +11,14 @@ export function MakeFarmerForm() {
     makeFarmer,
     null,
   );
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.ok) formRef.current?.reset();
+  }, [state]);
 
   return (
-    <form action={formAction} className="max-w-md">
+    <form ref={formRef} action={formAction} className="max-w-md">
       <div className="flex items-end gap-3">
         <div className="flex-1">
           <label className="mb-1 block font-[family-name:var(--font-form)] text-sm text-stone" htmlFor="email">
@@ -39,6 +44,11 @@ export function MakeFarmerForm() {
       {state && !state.ok && (
         <p className="mt-2 font-[family-name:var(--font-form)] text-sm text-sienna">
           {state.error}
+        </p>
+      )}
+      {state?.ok && (
+        <p className="mt-2 font-[family-name:var(--font-form)] text-sm text-olive">
+          Listo, ya es agricultor.
         </p>
       )}
     </form>

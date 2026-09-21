@@ -242,7 +242,7 @@ export function ProductForm({
           </p>
         )}
 
-        <div className="mt-2 flex items-center gap-3">
+        <div className="mt-2">
           <button
             type="submit"
             disabled={pending}
@@ -250,12 +250,18 @@ export function ProductForm({
           >
             {pending ? "Guardando…" : isEdit ? "Guardar cambios" : "Publicar producto"}
           </button>
-
-          {isEdit && (
-            <DeleteButton productId={product!.id} onDone={() => router.refresh()} />
-          )}
         </div>
       </form>
+
+      {/* Fuera del <form> de arriba a propósito: DeleteButton tiene su propio
+          <form> (para el botón "Sí, eliminar"), y un <form> anidado dentro de
+          otro es HTML inválido — el navegador lo rompe y el submit deja de
+          ir a la acción correcta. */}
+      {isEdit && (
+        <div className="mt-3 flex items-center gap-3">
+          <DeleteButton productId={product!.id} onDone={() => router.refresh()} />
+        </div>
+      )}
     </div>
   );
 }

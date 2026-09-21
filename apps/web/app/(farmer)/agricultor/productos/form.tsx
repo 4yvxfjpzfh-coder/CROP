@@ -20,9 +20,11 @@ const label = "mb-1 block font-[family-name:var(--font-form)] text-sm text-stone
 export function FarmerProductForm({
   product,
   pickupPoints,
+  onCreated,
 }: {
   product: FarmerProduct | null;
   pickupPoints: FarmerPickupPoint[];
+  onCreated?: () => void;
 }) {
   const router = useRouter();
   const isEdit = Boolean(product);
@@ -38,8 +40,13 @@ export function FarmerProductForm({
   const [photoUrl, setPhotoUrl] = useState<string>(product?.photoUrl ?? "");
 
   useEffect(() => {
-    if (state?.ok) router.refresh();
-  }, [state, router]);
+    if (state?.ok) {
+      router.refresh();
+      // Solo al crear: limpia el formulario para el próximo producto. Al
+      // editar, se queda mostrando lo que se acaba de guardar.
+      if (!isEdit) onCreated?.();
+    }
+  }, [state, router, isEdit, onCreated]);
 
   return (
     <div>
@@ -177,7 +184,7 @@ export function FarmerProductForm({
           </p>
         )}
 
-        <div className="mt-2 flex items-center gap-3">
+        <div className="mt-2">
           <button
             type="submit"
             disabled={pending}
@@ -185,12 +192,18 @@ export function FarmerProductForm({
           >
             {pending ? "Guardando…" : isEdit ? "Guardar cambios" : "Publicar producto"}
           </button>
-
-          {isEdit && (
-            <DeleteButton productId={product!.id} onDone={() => router.refresh()} />
-          )}
         </div>
       </form>
+
+      {/* Fuera del <form> de arriba a propósito: DeleteButton tiene su propio
+          <form> (para el botón "Sí, eliminar"), y un <form> anidado dentro de
+          otro es HTML inválido — el navegador lo rompe y el submit deja de
+          ir a la acción correcta. */}
+      {isEdit && (
+        <div className="mt-3 flex items-center gap-3">
+          <DeleteButton productId={product!.id} onDone={() => router.refresh()} />
+        </div>
+      )}
     </div>
   );
 }

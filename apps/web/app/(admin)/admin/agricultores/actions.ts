@@ -72,37 +72,3 @@ export async function removeFarmerRole(userId: string): Promise<FarmerActionResu
   revalidatePath("/admin/agricultores");
   return { ok: true };
 }
-
-/** Vincula (o desvincula, con farmerId="") un producto a un agricultor. */
-export async function assignProductFarmer(
-  productId: string,
-  farmerId: string,
-): Promise<FarmerActionResult> {
-  let actor;
-  try {
-    actor = await requireAdmin("throw");
-  } catch (err) {
-    if (err instanceof AdminAccessError) return { ok: false, error: err.message };
-    throw err;
-  }
-
-  const product = await prisma.product.update({
-    where: { id: productId },
-    data: { farmerId: farmerId || null },
-  });
-
-  await recordAdminAudit({
-    actor,
-    action: "PRODUCT_UPDATE",
-    entityType: "Product",
-    entityId: product.id,
-    summary: farmerId
-      ? `Vinculó "${product.name}" a un agricultor`
-      : `Desvinculó "${product.name}" de su agricultor`,
-  });
-
-  revalidatePath("/admin/agricultores");
-  revalidatePath("/admin/products");
-  revalidatePath("/agricultor/productos");
-  return { ok: true };
-}

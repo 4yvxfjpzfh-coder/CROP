@@ -30,7 +30,7 @@ export default async function AdminFarmersPage() {
         <a href="/admin/products" className="underline underline-offset-2">
           /admin/products
         </a>{" "}
-        o desde la lista de abajo.
+        (campo &quot;Cuenta de agricultor vinculada&quot; en cada producto).
       </p>
 
       <MakeFarmerForm />
