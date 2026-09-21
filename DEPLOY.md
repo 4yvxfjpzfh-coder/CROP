@@ -30,6 +30,8 @@ Variables de entorno (Settings → Environment Variables), mismas que
 | `AUTH_APPLE_SECRET` | JWT generado con `node apps/web/scripts/generate-apple-secret.mjs` |
 | `ADMIN_EMAILS` | Tu correo (y los que corresponda), separados por coma |
 | `BLOB_READ_WRITE_TOKEN` | Ver paso 2 |
+| `RESEND_API_KEY` | Cuenta gratis en resend.com → API Keys (avisa por correo al agricultor cuando le apartan un producto) |
+| `EMAIL_FROM` | `Crop <notificaciones@resend.dev>` sirve para arrancar sin verificar dominio propio |
 
 ## 2. Vercel Blob (fotos de producto)
 

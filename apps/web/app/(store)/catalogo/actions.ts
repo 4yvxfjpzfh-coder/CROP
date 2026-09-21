@@ -6,6 +6,7 @@ import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteSettings } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { sendFarmerReservationEmail } from "@/lib/email";
 
 const MAX_QUANTITY_PER_RESERVATION = 10;
 // Sin cobro de por medio, sin este tope una sola cuenta podría acaparar todo
@@ -51,7 +52,13 @@ export async function reserveProduct(
     };
   }
 
-  const product = await prisma.product.findUnique({ where: { id: productId } });
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: {
+      farmer: { select: { email: true, name: true } },
+      pickupPoint: { select: { shortName: true } },
+    },
+  });
   if (!product || !product.isActive) {
     return { ok: false, error: t["catalogo.error.product_unavailable"] };
   }
@@ -93,6 +100,18 @@ export async function reserveProduct(
 
     revalidatePath("/catalogo");
     revalidatePath("/mis-apartados");
+
+    if (product.farmer?.email) {
+      await sendFarmerReservationEmail({
+        to: product.farmer.email,
+        farmerName: product.farmer.name,
+        productName: product.name,
+        quantity,
+        pickupPointName: product.pickupPoint?.shortName ?? null,
+        pickupBy,
+      });
+    }
+
     return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString() };
   } catch {
     return { ok: false, error: t["catalogo.error.generic"] };
