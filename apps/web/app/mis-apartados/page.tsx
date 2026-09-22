@@ -22,7 +22,12 @@ export default async function MyReservationsPage() {
 
   const [orders, t] = await Promise.all([
     prisma.order.findMany({
-      where: { userId: session.user.id },
+      // Cancelados y vencidos no se muestran acá -- siguen en la base, pero
+      // desaparecen de la vista apenas se cancelan o se vence la fecha.
+      where: {
+        userId: session.user.id,
+        OR: [{ status: "PICKED_UP" }, { status: "RESERVED", pickupBy: { gte: new Date() } }],
+      },
       orderBy: { createdAt: "desc" },
       include: {
         business: { select: { name: true } },
@@ -45,7 +50,10 @@ export default async function MyReservationsPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-16">
-      <div className="flex items-end justify-between">
+      <Link href="/" className="text-sm text-neutral-500 underline underline-offset-2 hover:text-neutral-800">
+        {t["nav.volver_inicio"]}
+      </Link>
+      <div className="mt-4 flex items-end justify-between">
         <h1 className="text-2xl font-semibold text-neutral-900">{t["apartados.heading"]}</h1>
         <Link href="/catalogo" className="text-sm text-neutral-700 underline underline-offset-2">
           {t["nav.ver_catalogo"]}

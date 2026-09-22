@@ -24,7 +24,10 @@ export default async function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-lg px-6 py-16">
-      <h1 className="text-2xl font-semibold text-neutral-900">{t["perfil.heading"]}</h1>
+      <Link href="/" className="text-sm text-neutral-500 underline underline-offset-2 hover:text-neutral-800">
+        {t["nav.volver_inicio"]}
+      </Link>
+      <h1 className="mt-4 text-2xl font-semibold text-neutral-900">{t["perfil.heading"]}</h1>
 
       <dl className="mt-6 space-y-3 text-sm">
         <div className="flex justify-between border-b border-neutral-200 py-2">

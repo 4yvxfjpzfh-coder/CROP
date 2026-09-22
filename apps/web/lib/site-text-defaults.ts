@@ -56,6 +56,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "nav.panel_agricultor", label: "Enlace \"Panel de agricultor\"", default: "Panel de agricultor" },
       { key: "nav.panel_admin", label: "Enlace \"Panel de administración\"", default: "Panel de administración" },
       { key: "nav.cerrar_sesion", label: "Botón \"Cerrar sesión\"", default: "Cerrar sesión" },
+      { key: "nav.volver_inicio", label: "Enlace \"Volver al inicio\"", default: "← Volver al inicio" },
       { key: "footer.privacidad", label: "Enlace \"Privacidad\"", default: "Privacidad" },
       { key: "footer.terminos", label: "Enlace \"Términos\"", default: "Términos" },
       { key: "footer.cancelaciones", label: "Enlace \"Cancelaciones\"", default: "Cancelaciones" },

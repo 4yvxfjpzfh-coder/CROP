@@ -45,6 +45,12 @@ export function SignInClient({
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-8 px-6 py-16">
+      <Link
+        href="/"
+        className="-mb-4 w-fit font-[family-name:var(--font-form)] text-sm text-stone underline underline-offset-2 hover:text-olive"
+      >
+        {t["nav.volver_inicio"]}
+      </Link>
       <div>
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
           {t["signin.heading_prefix"]} <span className="uppercase">{t["brand.name"]}</span>

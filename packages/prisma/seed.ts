@@ -23,6 +23,13 @@ const pickupPoints = [
     latitude: 9.9187,
     longitude: -84.1332,
   },
+  {
+    name: "Feria del Agricultor de Guachipelín",
+    shortName: "Guachipelín",
+    address: "Guachipelín, Escazú, San José",
+    latitude: 9.9469,
+    longitude: -84.1464,
+  },
 ];
 
 async function main() {
