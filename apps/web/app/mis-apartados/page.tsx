@@ -3,11 +3,13 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
+import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { formatPickupDeadline } from "@/lib/format";
 import { colones } from "../(store)/catalogo/catalog-types";
 import { formatQuantity } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
+import { SiteBackground } from "@/components/site-background";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +22,7 @@ export default async function MyReservationsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin?callbackUrl=/mis-apartados");
 
-  const [orders, t] = await Promise.all([
+  const [orders, t, backgroundUrl] = await Promise.all([
     prisma.order.findMany({
       // Cancelados y vencidos no se muestran acá -- siguen en la base, pero
       // desaparecen de la vista apenas se cancelan o se vence la fecha.
@@ -39,6 +41,7 @@ export default async function MyReservationsPage() {
       },
     }),
     getSiteTexts(),
+    getHomeBackgroundUrl(),
   ]);
 
   const statusLabel: Record<string, string> = {
@@ -49,63 +52,68 @@ export default async function MyReservationsPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-16">
-      <Link href="/" className="text-sm text-neutral-500 underline underline-offset-2 hover:text-neutral-800">
-        {t["nav.volver_inicio"]}
-      </Link>
-      <div className="mt-4 flex items-end justify-between">
-        <h1 className="text-2xl font-semibold text-neutral-900">{t["apartados.heading"]}</h1>
-        <Link href="/catalogo" className="text-sm text-neutral-700 underline underline-offset-2">
-          {t["nav.ver_catalogo"]}
+    <div className="relative min-h-dvh w-full">
+      <SiteBackground url={backgroundUrl} />
+      <main className="mx-auto w-full max-w-2xl px-6 py-16">
+        <Link href="/" className="text-sm text-metal underline underline-offset-2 hover:text-paper">
+          {t["nav.volver_inicio"]}
         </Link>
-      </div>
-
-      {orders.length === 0 ? (
-        <p className="mt-8 text-sm text-neutral-600">
-          {t["apartados.empty_text"]}{" "}
-          <Link href="/catalogo" className="underline underline-offset-2">
-            {t["apartados.empty_link"]}
+        <div className="mt-4 flex items-end justify-between">
+          <h1 className="text-2xl font-semibold text-paper">{t["apartados.heading"]}</h1>
+          <Link href="/catalogo" className="text-sm text-metal underline underline-offset-2 hover:text-paper">
+            {t["nav.ver_catalogo"]}
           </Link>
-        </p>
-      ) : (
-        <ul className="mt-8 flex flex-col gap-3">
-          {orders.map((order) => {
-            const pickup = order.items[0]?.product.pickupPoint?.name ?? null;
-            const expired =
-              order.status === "RESERVED" && order.pickupBy.getTime() < Date.now();
-            const displayStatus = expired ? "EXPIRED" : order.status;
-            return (
-              <li key={order.id} className={orderCardClass(displayStatus)}>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-sm font-medium text-neutral-900">
-                    {order.items
-                      .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
-                      .join(", ")}
-                  </span>
-                  <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
-                </div>
-                <div className="mt-1 text-xs text-neutral-500">
-                  {colones(
-                    order.items.reduce(
-                      (s, i) => s + i.unitPriceCents * i.quantity,
-                      0,
-                    ),
-                  )}
-                  {pickup ? ` · ${t["apartados.recoge_en_prefix"]} ${pickup}` : ""}
-                  {order.status === "RESERVED" && !expired
-                    ? ` · ${t["apartados.antes_del_prefix"]} ${formatPickupDeadline(order.pickupBy)}`
-                    : ""}
-                </div>
-                {order.status === "RESERVED" && !expired && (
-                  <div className="mt-2">
-                    <CancelButton orderId={order.id} texts={t} />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </main>
+        </div>
+
+        <div className="mt-8 rounded-lg bg-cream/95 p-6 backdrop-blur-sm">
+          {orders.length === 0 ? (
+            <p className="text-sm text-stone">
+              {t["apartados.empty_text"]}{" "}
+              <Link href="/catalogo" className="underline underline-offset-2">
+                {t["apartados.empty_link"]}
+              </Link>
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {orders.map((order) => {
+                const pickup = order.items[0]?.product.pickupPoint?.name ?? null;
+                const expired =
+                  order.status === "RESERVED" && order.pickupBy.getTime() < Date.now();
+                const displayStatus = expired ? "EXPIRED" : order.status;
+                return (
+                  <li key={order.id} className={orderCardClass(displayStatus)}>
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-sm font-medium text-neutral-900">
+                        {order.items
+                          .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                          .join(", ")}
+                      </span>
+                      <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                    </div>
+                    <div className="mt-1 text-xs text-neutral-500">
+                      {colones(
+                        order.items.reduce(
+                          (s, i) => s + i.unitPriceCents * i.quantity,
+                          0,
+                        ),
+                      )}
+                      {pickup ? ` · ${t["apartados.recoge_en_prefix"]} ${pickup}` : ""}
+                      {order.status === "RESERVED" && !expired
+                        ? ` · ${t["apartados.antes_del_prefix"]} ${formatPickupDeadline(order.pickupBy)}`
+                        : ""}
+                    </div>
+                    {order.status === "RESERVED" && !expired && (
+                      <div className="mt-2">
+                        <CancelButton orderId={order.id} texts={t} />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }

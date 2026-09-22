@@ -184,13 +184,17 @@ export function CatalogGrid({
 
       {state?.ok && (
         <div className="mx-auto max-w-6xl px-6">
-          <p className="border-l-2 border-gold bg-gold/10 px-4 py-3 font-[family-name:var(--font-form)] text-sm text-olive">
-            {texts["catalogo.cart.success_prefix"]} {formatPickupDeadline(state.pickupBy)}
-            {" · "}
-            <Link href="/mis-apartados" className="underline underline-offset-2">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-l-2 border-gold bg-gold/10 px-4 py-3">
+            <p className="font-[family-name:var(--font-form)] text-sm text-olive">
+              {texts["catalogo.cart.success_prefix"]} {formatPickupDeadline(state.pickupBy)}
+            </p>
+            <Link
+              href="/mis-apartados"
+              className="shrink-0 bg-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-cream hover:opacity-90"
+            >
               {texts["nav.mis_apartados"]}
             </Link>
-          </p>
+          </div>
         </div>
       )}
 
