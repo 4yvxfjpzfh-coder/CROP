@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { placeOrder, type PlaceOrderResult } from "./actions";
-import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, colones } from "./catalog-types";
+import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, SERVICE_FEE_CENTS, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
 import { schedulePickupReminder } from "@/lib/native";
@@ -180,6 +180,15 @@ export function CatalogGrid({
         >
           <span aria-hidden>←</span> {feriaName ?? texts["brand.name"]}
         </Link>
+        <Link
+          href="/"
+          className={
+            "font-[family-name:var(--font-form)] text-sm underline underline-offset-2 hover:opacity-80 " +
+            (backgroundUrl ? "text-cream" : "text-stone")
+          }
+        >
+          {texts["nav.volver_inicio"]}
+        </Link>
       </header>
 
       {state?.ok && (
@@ -221,8 +230,14 @@ export function CatalogGrid({
           <input type="hidden" name="items" value={itemsJson} />
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
             <p className="font-[family-name:var(--font-form)] text-sm text-olive">
+              {texts["catalogo.cart.subtotal_prefix"]} {colones(totalCents)}
+              {" + "}
+              {texts["catalogo.cart.service_fee_prefix"]} {colones(SERVICE_FEE_CENTS)}
+              {" — "}
               {texts["catalogo.cart.total_prefix"]}{" "}
-              <span className="font-semibold text-gold-text">{colones(totalCents)}</span>
+              <span className="font-semibold text-gold-text">
+                {colones(totalCents + SERVICE_FEE_CENTS)}
+              </span>
             </p>
             <button
               type="submit"

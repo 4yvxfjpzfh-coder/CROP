@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { formatPickupDeadline } from "@/lib/format";
-import { colones } from "../(store)/catalogo/catalog-types";
+import { colones, SERVICE_FEE_CENTS } from "../(store)/catalogo/catalog-types";
 import { formatQuantity } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
@@ -91,12 +91,13 @@ export default async function MyReservationsPage() {
                       <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                     </div>
                     <div className="mt-1 text-xs text-neutral-500">
-                      {colones(
-                        order.items.reduce(
+                      {(() => {
+                        const subtotal = order.items.reduce(
                           (s, i) => s + i.unitPriceCents * i.quantity,
                           0,
-                        ),
-                      )}
+                        );
+                        return `${colones(subtotal)} + ${colones(SERVICE_FEE_CENTS)} ${t["catalogo.cart.service_fee_prefix"]} = ${colones(subtotal + SERVICE_FEE_CENTS)}`;
+                      })()}
                       {pickup ? ` · ${t["apartados.recoge_en_prefix"]} ${pickup}` : ""}
                       {order.status === "RESERVED" && !expired
                         ? ` · ${t["apartados.antes_del_prefix"]} ${formatPickupDeadline(order.pickupBy)}`

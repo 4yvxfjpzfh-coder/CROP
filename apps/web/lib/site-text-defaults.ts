@@ -96,6 +96,8 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "catalogo.reserve.pending", label: "Botón apartar — mientras carga", default: "Apartando…" },
       { key: "catalogo.reserve.idle", label: "Botón \"Apartar\"", default: "Apartar 1 unidad" },
       { key: "catalogo.cart.add", label: "Botón \"Agregar\" al carrito", default: "Agregar" },
+      { key: "catalogo.cart.subtotal_prefix", label: "Texto antes del subtotal del carrito", default: "Subtotal" },
+      { key: "catalogo.cart.service_fee_prefix", label: "Texto antes del cargo por servicio", default: "Servicio" },
       { key: "catalogo.cart.total_prefix", label: "Texto antes del total del carrito", default: "Total" },
       { key: "catalogo.cart.place_order", label: "Botón \"Hacer pedido\"", default: "Hacer pedido" },
       { key: "catalogo.cart.pending", label: "Botón \"Hacer pedido\" — mientras carga", default: "Enviando…" },
