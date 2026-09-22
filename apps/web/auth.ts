@@ -5,6 +5,11 @@ import { prisma } from "@crop/prisma";
 import { verifyPassword } from "@/lib/password";
 import authConfig from "./auth.config";
 
+// Fuerza bruta: tras este número de intentos fallidos seguidos, se bloquea
+// el login de esa cuenta por un rato (independiente de quién lo intente).
+const MAX_FAILED_LOGIN_ATTEMPTS = 8;
+const LOCKOUT_MINUTES = 15;
+
 /**
  * Correo + contraseña, para clientes que crean su propia cuenta en /registro
  * en vez de depender de Sign in with Apple (que necesita cuenta paga de
@@ -26,8 +31,35 @@ const passwordProvider = Credentials({
     try {
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user?.passwordHash) return null;
+
+      // Bloqueado: ni intenta verificar la contraseña (evita el costo de
+      // scrypt y deja el bloqueo intacto mientras dure).
+      if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
+        return null;
+      }
+
       const valid = await verifyPassword(password, user.passwordHash);
-      if (!valid) return null;
+      if (!valid) {
+        const failedLoginCount = user.failedLoginCount + 1;
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            failedLoginCount,
+            lockedUntil:
+              failedLoginCount >= MAX_FAILED_LOGIN_ATTEMPTS
+                ? new Date(Date.now() + LOCKOUT_MINUTES * 60_000)
+                : null,
+          },
+        });
+        return null;
+      }
+
+      if (user.failedLoginCount > 0 || user.lockedUntil) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { failedLoginCount: 0, lockedUntil: null },
+        });
+      }
       return { id: user.id, email: user.email, name: user.name };
     } catch (err) {
       console.error("[password-auth] no se pudo verificar el usuario:", err);

@@ -40,6 +40,11 @@ model User {
   // Hash de contraseña (scrypt) para cuentas creadas con correo + contraseña.
   // Null para cuentas que solo usan Apple o el login de desarrollo.
   passwordHash  String?
+  // Protección contra fuerza bruta del login por contraseña: se cuentan los
+  // intentos fallidos seguidos y, al pasar el tope, se bloquea el login por
+  // un rato (ver MAX_FAILED_LOGIN_ATTEMPTS/LOCKOUT_MINUTES en auth.ts).
+  failedLoginCount Int      @default(0)
+  lockedUntil      DateTime?
   // Consentimiento de Política de Privacidad + Términos aceptado en el registro.
   consentedAt   DateTime?
   createdAt     DateTime  @default(now())

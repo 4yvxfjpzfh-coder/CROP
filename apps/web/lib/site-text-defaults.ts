@@ -159,7 +159,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "signin.password_placeholder", label: "Campo de contraseña — texto de ayuda", default: "Contraseña" },
       { key: "signin.password_button", label: "Botón \"Entrar\" con correo y contraseña", default: "Entrar" },
       { key: "signin.password_pending", label: "Botón \"Entrar\" — mientras carga", default: "Entrando…" },
-      { key: "signin.password_error", label: "Error al entrar con correo y contraseña", default: "Correo o contraseña incorrectos." },
+      { key: "signin.password_error", label: "Error al entrar con correo y contraseña", default: "Correo o contraseña incorrectos, o demasiados intentos. Si fallaste varias veces, esperá unos minutos y probá de nuevo." },
       { key: "signin.no_account", label: "Texto antes del enlace \"Crear cuenta\"", default: "¿Todavía no tenés cuenta?" },
       { key: "signin.apple_not_configured", label: "Aviso si Apple no está configurado", default: "El inicio de sesión con Apple todavía no está configurado en este entorno.", multiline: true },
       { key: "signin.dev_hint", label: "Aviso de acceso de desarrollo", default: "Usá el acceso de desarrollo de abajo mientras tanto." },
@@ -215,9 +215,9 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
         hint: 'Una línea que empieza con "N. " se muestra como título de sección; el resto son párrafos.',
         default:
           "1. Datos que recopilamos\n" +
-          "Cuando iniciás sesión con Apple recibimos tu nombre y tu dirección de correo (o el correo privado de reenvío de Apple, si elegís ocultarlo). Guardamos también los apartados que hacés en la plataforma.\n\n" +
+          "Si creás tu cuenta con correo y contraseña, guardamos tu nombre, tu correo y tu contraseña (nunca en texto plano: se guarda cifrada con un algoritmo de un solo sentido, así que ni nosotros podemos leerla). Si entrás con Apple, recibimos tu nombre y tu dirección de correo (o el correo privado de reenvío de Apple, si elegís ocultarlo). Guardamos también los apartados que hacés en la plataforma. Si sos agricultor o administrador, la app puede acceder a tu cámara o galería para subir fotos de los productos que publicás.\n\n" +
           "2. Uso de los datos\n" +
-          "Usamos estos datos únicamente para identificarte, mostrarte tus apartados y coordinar la recogida en la feria del agricultor. No vendemos ni compartimos tus datos con terceros.\n\n" +
+          "Usamos estos datos únicamente para identificarte, mostrarte tus apartados y coordinar la recogida en la feria del agricultor. No vendemos ni compartimos tus datos con terceros, y no los usamos para publicidad ni seguimiento.\n\n" +
           "3. Conservación y eliminación\n" +
           "Podés eliminar tu cuenta y tus datos personales en cualquier momento desde tu perfil. Al hacerlo borramos tu nombre, correo y credenciales de acceso de forma permanente.\n\n" +
           "4. Contacto\n" +
@@ -235,7 +235,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "2. Apartados y recogida\n" +
           "Un apartado reserva unidades por un tiempo limitado. Si no se recoge antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven a estar disponibles.\n\n" +
           "3. Tu cuenta\n" +
-          "Sos responsable de la actividad de tu cuenta. Podés eliminarla en cualquier momento desde tu perfil.\n\n" +
+          "Podés crear tu cuenta con Apple o con tu propio correo y contraseña. Sos responsable de la actividad de tu cuenta y de mantener tu contraseña en secreto. Podés eliminar tu cuenta en cualquier momento desde tu perfil.\n\n" +
           "4. Disponibilidad y cambios\n" +
           'El servicio se ofrece "tal cual". Podemos modificar o suspender funciones; los cambios materiales se comunicarán con antelación razonable.',
       },

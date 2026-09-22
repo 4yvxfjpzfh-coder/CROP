@@ -8,10 +8,10 @@ export async function generateMetadata() {
 
 export const dynamic = "force-dynamic";
 
-// TODO(legal): reemplazar este placeholder con el texto legal final.
-// Debe cubrir, para cumplir con Apple: qué datos se recogen (nombre, correo de
-// Apple), para qué se usan, con quién se comparten (nadie), cuánto se conservan,
-// y cómo eliminar la cuenta (/perfil).
+// TODO(legal): reemplazar "[correo pendiente]" (en lib/site-text-defaults.ts,
+// legal.privacy.body y legal.reembolsos.body) por un correo de soporte real
+// antes de enviar a la App Store -- Apple pide un contacto/soporte que
+// funcione de verdad, y ahora mismo no hay ninguno cargado.
 export default async function PrivacyPage() {
   const t = await getSiteTexts();
 
