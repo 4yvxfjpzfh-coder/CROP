@@ -47,7 +47,7 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-8 px-6 py-16">
       <Link
         href="/"
-        className="-mb-4 w-fit font-[family-name:var(--font-form)] text-sm text-stone underline underline-offset-2 hover:text-olive"
+        className="-mb-2 inline-block w-fit bg-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-cream hover:opacity-90"
       >
         {t["nav.volver_inicio"]}
       </Link>

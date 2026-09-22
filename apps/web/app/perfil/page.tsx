@@ -24,7 +24,10 @@ export default async function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-lg px-6 py-16">
-      <Link href="/" className="text-sm text-neutral-500 underline underline-offset-2 hover:text-neutral-800">
+      <Link
+        href="/"
+        className="inline-block bg-olive px-4 py-2 text-sm text-cream hover:opacity-90"
+      >
         {t["nav.volver_inicio"]}
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-neutral-900">{t["perfil.heading"]}</h1>

@@ -182,10 +182,7 @@ export function CatalogGrid({
         </Link>
         <Link
           href="/"
-          className={
-            "font-[family-name:var(--font-form)] text-sm underline underline-offset-2 hover:opacity-80 " +
-            (backgroundUrl ? "text-cream" : "text-stone")
-          }
+          className="inline-block bg-cream px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:opacity-90"
         >
           {texts["nav.volver_inicio"]}
         </Link>
