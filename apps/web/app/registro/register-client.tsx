@@ -17,6 +17,7 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
+  const [autoLoginFailed, setAutoLoginFailed] = useState(false);
 
   const [state, formAction, pending] = useActionState<RegisterResult | null, FormData>(
     registerCustomer,
@@ -26,7 +27,17 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
   useEffect(() => {
     if (!state?.ok) return;
     setLoggingIn(true);
-    signIn("password", { email, password, redirect: false }).then(() => {
+    signIn("password", { email, password, redirect: false }).then((res) => {
+      // La cuenta sí se creó (state.ok ya lo confirma); esto solo cubre que
+      // el auto-login que sigue haya funcionado. Si falla (ej. la DB tardó
+      // en confirmar la contraseña justo después de crearla), no fingir que
+      // entró: mandarlo a /signin en vez de un /catalogo donde en realidad
+      // no tiene sesión.
+      if (!res || res.error) {
+        setLoggingIn(false);
+        setAutoLoginFailed(true);
+        return;
+      }
       router.push("/catalogo");
       router.refresh();
     });
@@ -100,9 +111,17 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
         {state && !state.ok && (
           <p className="font-[family-name:var(--font-form)] text-sm text-sienna">{state.error}</p>
         )}
-        {state?.ok && (
+        {state?.ok && !autoLoginFailed && (
           <p className="font-[family-name:var(--font-form)] text-sm text-olive">
             {t["registro.success"]}
+          </p>
+        )}
+        {autoLoginFailed && (
+          <p className="font-[family-name:var(--font-form)] text-sm text-sienna">
+            {t["registro.auto_login_failed"]}{" "}
+            <Link href="/signin" className="underline underline-offset-2">
+              {t["nav.entrar"]}
+            </Link>
           </p>
         )}
 

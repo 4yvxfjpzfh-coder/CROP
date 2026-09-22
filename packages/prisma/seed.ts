@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 /**
- * Puntos de recogida iniciales: las dos ferias del agricultor.
+ * Puntos de recogida iniciales: las ferias del agricultor.
  * Idempotente (upsert por `name`), se puede correr varias veces.
  *
  *   pnpm --filter @crop/prisma exec prisma db seed

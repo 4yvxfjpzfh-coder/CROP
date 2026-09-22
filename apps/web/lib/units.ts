@@ -1,3 +1,5 @@
+import type { Prisma } from "@crop/prisma";
+
 export type ProductUnit = "UNIDAD" | "KG";
 
 /** Paso del selector de cantidad: kilos se venden fraccionados, unidades no. */
@@ -5,6 +7,11 @@ export const QUANTITY_STEP: Record<ProductUnit, number> = {
   UNIDAD: 1,
   KG: 0.25,
 };
+
+/** Forma corta para etiquetas chicas (el stepper del carrito): "kg" o "u". */
+export function unitSuffix(unit: ProductUnit): string {
+  return unit === "KG" ? "kg" : "u";
+}
 
 export function formatQuantity(quantity: number, unit: ProductUnit): string {
   if (unit === "KG") {
@@ -18,6 +25,25 @@ export function formatQuantity(quantity: number, unit: ProductUnit): string {
 /** Precio unitario mostrado junto al nombre del producto: "₡500" o "₡500 / kg". */
 export function formatUnitPrice(colones: string, unit: ProductUnit): string {
   return unit === "KG" ? `${colones} / kg` : colones;
+}
+
+/**
+ * Siguiente número consecutivo para un agricultor (1, 2, 3...). Usa el MAX
+ * actual + 1 en vez de contar filas: si se borra un producto de en medio
+ * (ej. el #2 de 3), el próximo sigue siendo #4, no un #3 repetido que
+ * confundiría con el que ya existe. Tiene que llamarse dentro de un
+ * prisma.$transaction para que la lectura y el create/update que le sigue
+ * queden juntos.
+ */
+export async function nextFarmerSeq(
+  tx: Prisma.TransactionClient,
+  farmerId: string,
+): Promise<number> {
+  const { _max } = await tx.product.aggregate({
+    where: { farmerId },
+    _max: { farmerSeq: true },
+  });
+  return (_max.farmerSeq ?? 0) + 1;
 }
 
 /**

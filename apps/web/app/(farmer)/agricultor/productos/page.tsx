@@ -22,6 +22,7 @@ export default async function FarmerProductsPage() {
         id: p.id,
         name: p.name,
         description: p.description,
+        providerName: p.providerName,
         photoUrl: p.photoUrl,
         unit: p.unit,
         quantity: p.quantity,

@@ -4,13 +4,14 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@crop/prisma";
 import { requireFarmer, FarmerAccessError } from "@/lib/farmer-guard";
+import { nextFarmerSeq } from "@/lib/units";
 
 const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
-  quantity: z.coerce.number().min(0, "La cantidad no puede ser negativa"),
+  quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
   originalPriceCents: z.coerce.number().int().min(0),
   discountPriceCents: z.coerce.number().int().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
@@ -61,7 +62,7 @@ export async function createOwnProduct(
   const data = parsed.data;
 
   const product = await prisma.$transaction(async (tx) => {
-    const farmerSeq = (await tx.product.count({ where: { farmerId: g.actor.id } })) + 1;
+    const farmerSeq = await nextFarmerSeq(tx, g.actor.id);
     return tx.product.create({
       data: {
         name: data.name,

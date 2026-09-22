@@ -2,6 +2,7 @@ export type FarmerProduct = {
   id: string;
   name: string;
   description: string | null;
+  providerName: string | null;
   photoUrl: string | null;
   unit: "UNIDAD" | "KG";
   quantity: number;

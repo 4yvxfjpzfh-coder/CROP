@@ -11,6 +11,11 @@ import { MAX_QUANTITY_PER_ITEM } from "./catalog-types";
 // Los apartados vencidos (liberados por el cron de apps/api) no cuentan
 // para este límite.
 const MAX_ACTIVE_RESERVATIONS_PER_USER = 3;
+// Antes (un producto = un apartado) este mismo tope de arriba ya evitaba que
+// una sola cuenta acaparara todo el excedente. Ahora que un pedido puede
+// traer varios productos distintos, hace falta este segundo tope para que
+// un solo pedido no se lleve todo el catálogo de una feria.
+const MAX_DISTINCT_PRODUCTS_PER_ORDER = 10;
 
 export type PlaceOrderResult =
   | { ok: true; orderId: string; pickupBy: string; totalCents: number }
@@ -66,9 +71,19 @@ export async function placeOrder(
     byProduct.set(productId, (byProduct.get(productId) ?? 0) + quantity);
   }
 
-  const activeReservations = await prisma.order.count({
-    where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } },
-  });
+  if (byProduct.size > MAX_DISTINCT_PRODUCTS_PER_ORDER) {
+    return {
+      ok: false,
+      error: `${t["catalogo.error.too_many_products_prefix"]} ${MAX_DISTINCT_PRODUCTS_PER_ORDER} ${t["catalogo.error.too_many_products_suffix"]}`,
+    };
+  }
+
+  const productIds = [...byProduct.keys()];
+  const [activeReservations, products, { pickupWindowHours }] = await Promise.all([
+    prisma.order.count({ where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } } }),
+    prisma.product.findMany({ where: { id: { in: productIds } } }),
+    getSiteSettings(),
+  ]);
   if (activeReservations >= MAX_ACTIVE_RESERVATIONS_PER_USER) {
     return {
       ok: false,
@@ -76,8 +91,6 @@ export async function placeOrder(
     };
   }
 
-  const productIds = [...byProduct.keys()];
-  const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
   const productMap = new Map(products.map((p) => [p.id, p]));
 
   for (const [productId, quantity] of byProduct) {
@@ -96,7 +109,6 @@ export async function placeOrder(
     }
   }
 
-  const { pickupWindowHours } = await getSiteSettings();
   const pickupBy = new Date(Date.now() + pickupWindowHours * 3600 * 1000);
 
   // Si todos los productos del carrito son del mismo Business, se guarda esa

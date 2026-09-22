@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { type FarmerPickupPoint, type FarmerProduct, colones } from "./types";
+import { formatQuantity, formatUnitPrice } from "@/lib/units";
 import { FarmerProductForm } from "./form";
 
 export function FarmerProductsWorkspace({
@@ -80,14 +81,14 @@ export function FarmerProductsWorkspace({
                         {p.name}
                       </span>
                       <span className="mt-0.5 block font-[family-name:var(--font-form)] text-xs text-stone">
-                        {p.quantity} disponibles
+                        {formatQuantity(p.quantity, p.unit)} disponibles
                         {p.pickupShortName ? ` · ${p.pickupShortName}` : " · sin punto de recogida"}
                         {!p.isActive && " · oculto"}
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
                       <span className="font-[family-name:var(--font-display)] text-base text-gold-text">
-                        {colones(p.discountPriceCents)}
+                        {formatUnitPrice(colones(p.discountPriceCents), p.unit)}
                       </span>
                       {p.discountPriceCents < p.originalPriceCents && (
                         <span className="mt-0.5 block font-[family-name:var(--font-form)] text-[11px] text-sienna">

@@ -105,7 +105,7 @@ export function SignInClient({
         )}
         <button
           type="submit"
-          disabled={!accepted || pending}
+          disabled={pending}
           className="h-11 w-full bg-olive font-[family-name:var(--font-form)] text-sm text-cream disabled:cursor-not-allowed disabled:opacity-40"
         >
           {pending ? t["signin.password_pending"] : t["signin.password_button"]}

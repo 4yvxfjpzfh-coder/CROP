@@ -5,6 +5,7 @@ import { z } from "zod";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
 import { recordAdminAudit } from "@/lib/audit";
+import { nextFarmerSeq } from "@/lib/units";
 
 const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
@@ -15,7 +16,7 @@ const productInput = z.object({
   harvestedAt: z.string().trim().optional().or(z.literal("")),
   ripenessNote: z.string().trim().max(80).optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
-  quantity: z.coerce.number().min(0, "La cantidad no puede ser negativa"),
+  quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
   originalPriceCents: z.coerce.number().int().min(0),
   discountPriceCents: z.coerce.number().int().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
@@ -81,9 +82,7 @@ export async function createProduct(
 
   const farmerId = data.farmerId || null;
   const product = await prisma.$transaction(async (tx) => {
-    const farmerSeq = farmerId
-      ? (await tx.product.count({ where: { farmerId } })) + 1
-      : null;
+    const farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
     return tx.product.create({
       data: {
         name: data.name,
@@ -140,7 +139,7 @@ export async function updateProduct(
   const product = await prisma.$transaction(async (tx) => {
     let farmerSeq = existing.farmerSeq;
     if (farmerId !== existing.farmerId) {
-      farmerSeq = farmerId ? (await tx.product.count({ where: { farmerId } })) + 1 : null;
+      farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
     }
     return tx.product.update({
       where: { id },

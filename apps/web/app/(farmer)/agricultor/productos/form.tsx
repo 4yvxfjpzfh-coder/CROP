@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type FarmerPickupPoint, type FarmerProduct } from "./types";
+import { productCode } from "@/lib/units";
 import { PickupPointField } from "@/app/(admin)/admin/products/pickup-point-field";
 import { PhotoUpload } from "@/app/(admin)/admin/products/photo-upload";
 import { PhotoEditorLauncher } from "@/app/(admin)/admin/products/photo-editor-launcher";
@@ -47,7 +48,14 @@ export function FarmerProductForm({
       // editar, se queda mostrando lo que se acaba de guardar.
       if (!isEdit) onCreated?.();
     }
-  }, [state, router, isEdit, onCreated]);
+    // "onCreated" es una función inline nueva en cada render del padre
+    // (workspace.tsx no la memoiza) e "isEdit" no cambia sin un remount (la
+    // key del form usa product?.id). Si se incluyen acá, cada
+    // router.refresh() dispara el efecto otra vez aunque "state" no haya
+    // cambiado -> bucle infinito de refresh al editar un producto. El
+    // efecto solo debe correr cuando "state" cambia de verdad.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, router]);
 
   return (
     <div>
@@ -56,7 +64,11 @@ export function FarmerProductForm({
       </h2>
       {isEdit && product?.farmerSeq && (
         <p className="mb-1 font-[family-name:var(--font-form)] text-xs text-stone">
-          Código: {product.name} #{product.farmerSeq}
+          Código: {productCode({
+            name: product.name,
+            farmerName: product.providerName,
+            farmerSeq: product.farmerSeq,
+          }) ?? `#${product.farmerSeq}`}
         </p>
       )}
       <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">

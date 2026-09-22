@@ -32,25 +32,32 @@ const passwordProvider = Credentials({
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user?.passwordHash) return null;
 
-      // Bloqueado: ni intenta verificar la contraseña (evita el costo de
-      // scrypt y deja el bloqueo intacto mientras dure).
-      if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
-        return null;
-      }
+      const isLocked = Boolean(user.lockedUntil && user.lockedUntil.getTime() > Date.now());
 
+      // Siempre se verifica la contraseña (scrypt), incluso si ya está
+      // bloqueada: si se cortara acá antes de bloquear, alguien podría medir
+      // el tiempo de respuesta (rápido = bloqueada, lento = no) y saber
+      // cuándo arrancó/termina el bloqueo sin necesidad del mensaje de error.
       const valid = await verifyPassword(password, user.passwordHash);
-      if (!valid) {
-        const failedLoginCount = user.failedLoginCount + 1;
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            failedLoginCount,
-            lockedUntil:
-              failedLoginCount >= MAX_FAILED_LOGIN_ATTEMPTS
-                ? new Date(Date.now() + LOCKOUT_MINUTES * 60_000)
-                : null,
-          },
-        });
+
+      if (isLocked || !valid) {
+        if (!isLocked) {
+          // Increment atómico (no un read-then-write): si no fuera atómico,
+          // varios intentos en paralelo podrían leer el mismo contador
+          // viejo y pisarse la escritura entre sí, dejando pasar más de
+          // MAX_FAILED_LOGIN_ATTEMPTS intentos reales antes de bloquear.
+          const updated = await prisma.user.update({
+            where: { id: user.id },
+            data: { failedLoginCount: { increment: 1 } },
+            select: { failedLoginCount: true },
+          });
+          if (updated.failedLoginCount >= MAX_FAILED_LOGIN_ATTEMPTS) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { lockedUntil: new Date(Date.now() + LOCKOUT_MINUTES * 60_000) },
+            });
+          }
+        }
         return null;
       }
 

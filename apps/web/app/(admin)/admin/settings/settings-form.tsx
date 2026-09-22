@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { PhotoUpload } from "../products/photo-upload";
 import { saveHomeSettings, type SettingsResult } from "./actions";
+import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/site-settings";
 
 const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
@@ -63,14 +64,14 @@ export function SettingsForm({
           name="pickupWindowHours"
           type="number"
           min={1}
-          max={2}
+          max={MAX_PICKUP_WINDOW_HOURS}
           defaultValue={initialPickupHours}
           className={field}
         />
         <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
           Cuando alguien aparta un producto, tiene esta cantidad de horas
           desde ese momento para recogerlo antes de que se libere solo.
-          Máximo 2 horas.
+          Máximo {MAX_PICKUP_WINDOW_HOURS} horas.
         </p>
       </div>
 

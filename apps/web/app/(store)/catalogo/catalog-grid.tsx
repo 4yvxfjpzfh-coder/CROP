@@ -4,14 +4,10 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { placeOrder, type PlaceOrderResult } from "./actions";
 import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, colones } from "./catalog-types";
-import { formatUnitPrice, QUANTITY_STEP, type ProductUnit } from "@/lib/units";
+import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
 import { schedulePickupReminder } from "@/lib/native";
 import { SiteBackground } from "@/components/site-background";
-
-function unitSuffix(unit: ProductUnit) {
-  return unit === "KG" ? "kg" : "u";
-}
 
 function ProductCard({
   product,
