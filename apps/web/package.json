@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "ios:sync": "cap sync ios",
-    "ios:open": "cap open ios"
+    "ios:open": "cap open ios",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
