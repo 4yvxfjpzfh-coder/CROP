@@ -22,7 +22,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const siteUrl = process.env.AUTH_URL ?? "http://localhost:3000";
+const siteUrl = process.env.AUTH_URL || "http://localhost:3000";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getSiteTexts();
