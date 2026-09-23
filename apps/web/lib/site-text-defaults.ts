@@ -137,7 +137,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "apartados.status_cancelled", label: "Estado: Cancelado", default: "Cancelado" },
       { key: "apartados.status_expired", label: "Estado: Vencido", default: "Vencido" },
       { key: "apartados.heading", label: "Título de la página", default: "Mis apartados" },
-      { key: "apartados.pedido_numero_prefix", label: "Texto antes del número de pedido", default: "Pedido" },
+      { key: "apartados.codigo_cliente_prefix", label: "Texto antes del código de cliente", default: "Tu código de cliente" },
       { key: "apartados.empty_text", label: "Mensaje si no hay apartados", default: "Todavía no apartaste nada." },
       { key: "apartados.empty_link", label: "Enlace en el mensaje vacío", default: "Explorá el excedente disponible." },
       { key: "apartados.recoge_en_prefix", label: "Texto antes del punto de recogida", default: "Recogé en" },

@@ -37,6 +37,13 @@ model User {
   phone         String?
   role          Role      @default(USER)
   isActive      Boolean   @default(true)
+  // Código corto y correlativo del cliente (1, 2, 3...), igual en todos sus
+  // pedidos. Se muestra al cliente y al admin para identificar a la persona
+  // al recoger, sin tener que usar el correo. Autoincrement de Postgres:
+  // nunca se repite. No aplica a agricultores/admin, solo tiene sentido
+  // para clientes, pero se numera parejo para todos (más simple que llevar
+  // dos secuencias separadas).
+  customerNumber   Int       @unique @default(autoincrement())
   // Hash de contraseña (scrypt) para cuentas creadas con correo + contraseña.
   // Null para cuentas que solo usan Apple o el login de desarrollo.
   passwordHash  String?
@@ -235,11 +242,6 @@ model ImpactMetric {
 
 model Order {
   id          String      @id @default(cuid())
-  // Número corto y correlativo para mostrar al cliente y al admin/agricultor
-  // al recoger ("Pedido #1042") -- el id (cuid) no es práctico para decirlo
-  // en persona. Autoincrement de Postgres: nunca se repite, aunque haya
-  // pedidos simultáneos (a diferencia de un count()+1 hecho a mano).
-  orderNumber Int         @unique @default(autoincrement())
   userId      String
   user        User        @relation(fields: [userId], references: [id])
   // Opcional: el excedente puede apartarse aunque el agricultor todavía no

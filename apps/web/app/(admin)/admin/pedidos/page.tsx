@@ -26,7 +26,7 @@ export default async function AdminOrdersPage() {
     orderBy: { createdAt: "desc" },
     take: 200,
     include: {
-      user: { select: { id: true, name: true, email: true } },
+      user: { select: { id: true, name: true, email: true, customerNumber: true } },
       items: {
         include: {
           product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
@@ -37,11 +37,18 @@ export default async function AdminOrdersPage() {
 
   // Carpeta por cliente: mantiene el orden general (más reciente primero)
   // porque `orders` ya viene ordenado y Map conserva el orden de inserción.
-  const groups = new Map<string, { label: string; orders: typeof orders }>();
+  const groups = new Map<
+    string,
+    { label: string; customerNumber: number; orders: typeof orders }
+  >();
   for (const order of orders) {
     const key = order.user.id;
     if (!groups.has(key)) {
-      groups.set(key, { label: order.user.name ?? order.user.email ?? "Cliente", orders: [] });
+      groups.set(key, {
+        label: order.user.name ?? order.user.email ?? "Cliente",
+        customerNumber: order.user.customerNumber,
+        orders: [],
+      });
     }
     groups.get(key)!.orders.push(order);
   }
@@ -66,7 +73,7 @@ export default async function AdminOrdersPage() {
           {customerGroups.map(([userId, group]) => (
             <details key={userId} open className="border border-cream-200">
               <summary className="cursor-pointer bg-cream-200/40 px-4 py-3 font-[family-name:var(--font-form)] text-sm font-medium text-olive">
-                {group.label} ({group.orders.length})
+                Cliente #{group.customerNumber} — {group.label} ({group.orders.length})
               </summary>
               <ul className="flex flex-col gap-3 p-4">
                 {group.orders.map((order) => {
@@ -76,15 +83,12 @@ export default async function AdminOrdersPage() {
                   return (
                     <li key={order.id} className={orderCardClass(displayStatus)}>
                       <div className="flex items-baseline justify-between gap-4">
-                        <span className="font-[family-name:var(--font-form)] text-xs font-semibold text-stone">
-                          Pedido #{order.orderNumber}
+                        <span className="font-[family-name:var(--font-form)] text-sm text-olive">
+                          {order.items
+                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                            .join(", ")}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
-                      </div>
-                      <div className="mt-0.5 font-[family-name:var(--font-form)] text-sm text-olive">
-                        {order.items
-                          .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
-                          .join(", ")}
                       </div>
                       <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
                         {colones(order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0))}

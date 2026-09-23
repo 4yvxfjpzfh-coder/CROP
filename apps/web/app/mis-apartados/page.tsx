@@ -22,7 +22,7 @@ export default async function MyReservationsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin?callbackUrl=/mis-apartados");
 
-  const [orders, t, backgroundUrl] = await Promise.all([
+  const [orders, customer, t, backgroundUrl] = await Promise.all([
     prisma.order.findMany({
       // Cancelados y vencidos no se muestran acá -- siguen en la base, pero
       // desaparecen de la vista apenas se cancelan o se vence la fecha.
@@ -40,6 +40,7 @@ export default async function MyReservationsPage() {
         },
       },
     }),
+    prisma.user.findUnique({ where: { id: session.user.id }, select: { customerNumber: true } }),
     getSiteTexts(),
     getHomeBackgroundUrl(),
   ]);
@@ -71,7 +72,14 @@ export default async function MyReservationsPage() {
           {t["nav.volver_inicio"]}
         </Link>
         <div className="mt-4 flex items-end justify-between">
-          <h1 className="text-2xl font-semibold text-paper">{t["apartados.heading"]}</h1>
+          <div>
+            <h1 className="text-2xl font-semibold text-paper">{t["apartados.heading"]}</h1>
+            {customer && (
+              <p className="mt-1 text-sm text-metal">
+                {t["apartados.codigo_cliente_prefix"]} #{customer.customerNumber}
+              </p>
+            )}
+          </div>
           <Link href="/catalogo" className="text-sm text-metal underline underline-offset-2 hover:text-paper">
             {t["nav.ver_catalogo"]}
           </Link>
@@ -105,15 +113,12 @@ export default async function MyReservationsPage() {
                   return (
                     <li key={order.id} className={orderCardClass(displayStatus)}>
                       <div className="flex items-baseline justify-between">
-                        <span className="font-[family-name:var(--font-form)] text-xs font-semibold text-stone">
-                          {t["apartados.pedido_numero_prefix"]} #{order.orderNumber}
+                        <span className="text-sm font-medium text-neutral-900">
+                          {order.items
+                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                            .join(", ")}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
-                      </div>
-                      <div className="mt-0.5 text-sm font-medium text-neutral-900">
-                        {order.items
-                          .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
-                          .join(", ")}
                       </div>
                       <div className="mt-1 text-xs text-neutral-500">
                         {colones(subtotal)}
