@@ -68,7 +68,7 @@ export function FarmerProductForm({
             name: product.name,
             farmerName: product.providerName,
             farmerSeq: product.farmerSeq,
-          }) ?? `#${product.farmerSeq}`}
+          }) ?? `${product.name} #${product.farmerSeq}`}
         </p>
       )}
       <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">

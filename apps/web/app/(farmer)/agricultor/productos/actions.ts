@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@crop/prisma";
 import { requireFarmer, FarmerAccessError } from "@/lib/farmer-guard";
-import { nextFarmerSeq } from "@/lib/units";
+import { nextFarmerSeq, retryOnUniqueConflict } from "@/lib/units";
 
 const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
@@ -61,25 +61,27 @@ export async function createOwnProduct(
   }
   const data = parsed.data;
 
-  const product = await prisma.$transaction(async (tx) => {
-    const farmerSeq = await nextFarmerSeq(tx, g.actor.id);
-    return tx.product.create({
-      data: {
-        name: data.name,
-        description: data.description || null,
-        farmerId: g.actor.id,
-        farmerSeq,
-        providerName: g.actor.name,
-        photoUrl: data.photoUrl || null,
-        unit: data.unit,
-        quantity: data.quantity,
-        originalPriceCents: data.originalPriceCents,
-        discountPriceCents: data.discountPriceCents,
-        pickupPointId: data.pickupPointId,
-        isActive: data.isActive,
-      },
-    });
-  });
+  const product = await retryOnUniqueConflict(() =>
+    prisma.$transaction(async (tx) => {
+      const farmerSeq = await nextFarmerSeq(tx, g.actor.id);
+      return tx.product.create({
+        data: {
+          name: data.name,
+          description: data.description || null,
+          farmerId: g.actor.id,
+          farmerSeq,
+          providerName: g.actor.name,
+          photoUrl: data.photoUrl || null,
+          unit: data.unit,
+          quantity: data.quantity,
+          originalPriceCents: data.originalPriceCents,
+          discountPriceCents: data.discountPriceCents,
+          pickupPointId: data.pickupPointId,
+          isActive: data.isActive,
+        },
+      });
+    }),
+  );
 
   revalidatePath("/agricultor/productos");
   return { ok: true, productId: product.id };

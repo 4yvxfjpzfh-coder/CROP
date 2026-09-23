@@ -59,7 +59,7 @@ export function ProductForm({
             name: product.name,
             farmerName: farmers.find((f) => f.id === product.farmerId)?.name ?? null,
             farmerSeq: product.farmerSeq,
-          }) ?? `#${product.farmerSeq}`}
+          }) ?? `${product.name} #${product.farmerSeq}`}
         </p>
       )}
 

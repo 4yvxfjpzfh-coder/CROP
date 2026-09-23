@@ -8,10 +8,6 @@ export async function generateMetadata() {
 
 export const dynamic = "force-dynamic";
 
-// TODO(legal): reemplazar "[correo pendiente]" (en lib/site-text-defaults.ts,
-// legal.privacy.body y legal.reembolsos.body) por un correo de soporte real
-// antes de enviar a la App Store -- Apple pide un contacto/soporte que
-// funcione de verdad, y ahora mismo no hay ninguno cargado.
 export default async function PrivacyPage() {
   const t = await getSiteTexts();
 

@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { PhotoUpload } from "../products/photo-upload";
 import { saveHomeSettings, type SettingsResult } from "./actions";
-import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/site-settings";
+import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/pickup-window";
 
 const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";

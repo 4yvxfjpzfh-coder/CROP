@@ -1,4 +1,5 @@
 import { prisma } from "@crop/prisma";
+import { MAX_PICKUP_WINDOW_HOURS } from "./pickup-window";
 
 export type SiteSettingsData = {
   homeBackgroundUrl: string | null;
@@ -9,8 +10,11 @@ export type SiteSettingsData = {
 
 // Tope duro: los apartados vencen a más tardar 2 horas después de hacerse.
 // El admin puede poner menos horas, pero nunca más, incluso si en la base
-// quedó guardado un valor viejo más alto.
-export const MAX_PICKUP_WINDOW_HOURS = 2;
+// quedó guardado un valor viejo más alto. La constante en sí vive en
+// lib/pickup-window.ts (sin Prisma) para que un componente cliente la
+// pueda importar sin arrastrar @crop/prisma al bundle del navegador; acá
+// se re-exporta para no romper a quienes ya la importan desde este archivo.
+export { MAX_PICKUP_WINDOW_HOURS };
 
 const DEFAULTS: SiteSettingsData = {
   homeBackgroundUrl: null,

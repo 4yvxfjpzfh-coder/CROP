@@ -212,7 +212,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "3. Apartados vencidos\n" +
           "Si no recogés el producto antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven al inventario disponible. No hay ninguna penalización por esto.\n\n" +
           "4. Problemas con un producto\n" +
-          "Como Crop no interviene en el pago ni en la entrega física, un reclamo sobre la calidad o el estado de un producto se resuelve directamente con el agricultor en el punto de recogida. Si el problema es con la plataforma en sí (por ejemplo, un error en la información mostrada), escribinos a: [correo pendiente].",
+          "Como Crop no interviene en el pago ni en la entrega física, un reclamo sobre la calidad o el estado de un producto se resuelve directamente con el agricultor en el punto de recogida. Si el problema es con la plataforma en sí (por ejemplo, un error en la información mostrada), escribinos a: ldqg33@gmail.com o gboydt@icloud.com.",
       },
       { key: "legal.privacy.heading", label: "Título — Privacidad", default: "Política de Privacidad" },
       {
@@ -228,7 +228,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "3. Conservación y eliminación\n" +
           "Podés eliminar tu cuenta y tus datos personales en cualquier momento desde tu perfil. Al hacerlo borramos tu nombre, correo y credenciales de acceso de forma permanente.\n\n" +
           "4. Contacto\n" +
-          "Para consultas sobre privacidad, escribinos a: [correo pendiente].",
+          "Para consultas sobre privacidad, escribinos a: ldqg33@gmail.com o gboydt@icloud.com.",
       },
       { key: "legal.terms.heading", label: "Título — Términos", default: "Términos de Servicio" },
       {

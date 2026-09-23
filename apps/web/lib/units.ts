@@ -47,6 +47,30 @@ export async function nextFarmerSeq(
 }
 
 /**
+ * El MAX+1 de arriba no es atómico: dos creaciones al mismo tiempo para el
+ * mismo agricultor podrían leer el mismo máximo y calcular el mismo
+ * farmerSeq. La restricción única (farmerId, farmerSeq) en la base evita que
+ * eso quede guardado en silencio -- la segunda tira P2002. Esto envuelve el
+ * intento entero (lectura + create/update, ambos dentro del mismo
+ * $transaction) y lo reintenta con un farmerSeq nuevo si eso pasa. En la
+ * práctica es rarísimo (dos altas del mismo agricultor en el mismo
+ * instante), así que 3 intentos sobran.
+ */
+export async function retryOnUniqueConflict<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isUniqueConflict =
+        typeof err === "object" && err !== null && "code" in err && (err as { code: unknown }).code === "P2002";
+      if (!isUniqueConflict || attempt === attempts) throw err;
+    }
+  }
+  // Inalcanzable: el loop siempre retorna o tira en el último intento.
+  throw new Error("retryOnUniqueConflict: no debería llegar acá");
+}
+
+/**
  * Código corto para identificar de qué producto y agricultor se trata,
  * ej. "Manzana — Juan García #1". null si el producto no tiene agricultor
  * vinculado (nada que numerar todavía).

@@ -160,6 +160,12 @@ model Product {
   @@index([pickupPointId, isActive])
   @@index([catalogPosition])
   @@index([farmerId])
+  // Evita que dos creaciones al mismo tiempo para el mismo agricultor
+  // terminen con el mismo farmerSeq (nextFarmerSeq() por sí solo no es
+  // atómico); con esto, la segunda falla en vez de duplicarse en
+  // silencio, y el código que llama la reintenta. Postgres no choca por
+  // NULL=NULL, así que los productos sin agricultor no se ven afectados.
+  @@unique([farmerId, farmerSeq])
 }
 
 enum ProductUnit {

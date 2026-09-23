@@ -5,7 +5,7 @@ import { z } from "zod";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
 import { recordAdminAudit } from "@/lib/audit";
-import { nextFarmerSeq } from "@/lib/units";
+import { nextFarmerSeq, retryOnUniqueConflict } from "@/lib/units";
 
 const productInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
@@ -81,27 +81,29 @@ export async function createProduct(
   if (!pickupPoint) return { ok: false, error: "El punto de recogida no existe" };
 
   const farmerId = data.farmerId || null;
-  const product = await prisma.$transaction(async (tx) => {
-    const farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
-    return tx.product.create({
-      data: {
-        name: data.name,
-        description: data.description || null,
-        providerName: data.providerName || null,
-        farmerId,
-        farmerSeq,
-        photoUrl: data.photoUrl || null,
-        harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
-        ripenessNote: data.ripenessNote || null,
-        unit: data.unit,
-        quantity: data.quantity,
-        originalPriceCents: data.originalPriceCents,
-        discountPriceCents: data.discountPriceCents,
-        pickupPointId: pickupPoint.id,
-        isActive: data.isActive,
-      },
-    });
-  });
+  const product = await retryOnUniqueConflict(() =>
+    prisma.$transaction(async (tx) => {
+      const farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
+      return tx.product.create({
+        data: {
+          name: data.name,
+          description: data.description || null,
+          providerName: data.providerName || null,
+          farmerId,
+          farmerSeq,
+          photoUrl: data.photoUrl || null,
+          harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
+          ripenessNote: data.ripenessNote || null,
+          unit: data.unit,
+          quantity: data.quantity,
+          originalPriceCents: data.originalPriceCents,
+          discountPriceCents: data.discountPriceCents,
+          pickupPointId: pickupPoint.id,
+          isActive: data.isActive,
+        },
+      });
+    }),
+  );
 
   await recordAdminAudit({
     actor: g.actor,
@@ -136,31 +138,33 @@ export async function updateProduct(
   if (!existing) return { ok: false, error: "El producto no existe" };
 
   const farmerId = data.farmerId || null;
-  const product = await prisma.$transaction(async (tx) => {
-    let farmerSeq = existing.farmerSeq;
-    if (farmerId !== existing.farmerId) {
-      farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
-    }
-    return tx.product.update({
-      where: { id },
-      data: {
-        name: data.name,
-        description: data.description || null,
-        providerName: data.providerName || null,
-        farmerId,
-        farmerSeq,
-        photoUrl: data.photoUrl || null,
-        harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
-        ripenessNote: data.ripenessNote || null,
-        unit: data.unit,
-        quantity: data.quantity,
-        originalPriceCents: data.originalPriceCents,
-        discountPriceCents: data.discountPriceCents,
-        pickupPointId: data.pickupPointId,
-        isActive: data.isActive,
-      },
-    });
-  });
+  const product = await retryOnUniqueConflict(() =>
+    prisma.$transaction(async (tx) => {
+      let farmerSeq = existing.farmerSeq;
+      if (farmerId !== existing.farmerId) {
+        farmerSeq = farmerId ? await nextFarmerSeq(tx, farmerId) : null;
+      }
+      return tx.product.update({
+        where: { id },
+        data: {
+          name: data.name,
+          description: data.description || null,
+          providerName: data.providerName || null,
+          farmerId,
+          farmerSeq,
+          photoUrl: data.photoUrl || null,
+          harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
+          ripenessNote: data.ripenessNote || null,
+          unit: data.unit,
+          quantity: data.quantity,
+          originalPriceCents: data.originalPriceCents,
+          discountPriceCents: data.discountPriceCents,
+          pickupPointId: data.pickupPointId,
+          isActive: data.isActive,
+        },
+      });
+    }),
+  );
 
   await recordAdminAudit({
     actor: g.actor,

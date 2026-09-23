@@ -27,21 +27,37 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
   useEffect(() => {
     if (!state?.ok) return;
     setLoggingIn(true);
-    signIn("password", { email, password, redirect: false }).then((res) => {
-      // La cuenta sí se creó (state.ok ya lo confirma); esto solo cubre que
-      // el auto-login que sigue haya funcionado. Si falla (ej. la DB tardó
-      // en confirmar la contraseña justo después de crearla), no fingir que
-      // entró: mandarlo a /signin en vez de un /catalogo donde en realidad
-      // no tiene sesión.
-      if (!res || res.error) {
+    signIn("password", { email, password, redirect: false })
+      .then((res) => {
+        // La cuenta sí se creó (state.ok ya lo confirma); esto solo cubre que
+        // el auto-login que sigue haya funcionado. Si falla (ej. la DB tardó
+        // en confirmar la contraseña justo después de crearla), no fingir que
+        // entró: mandarlo a /signin en vez de un /catalogo donde en realidad
+        // no tiene sesión.
+        if (!res || res.error) {
+          setLoggingIn(false);
+          setAutoLoginFailed(true);
+          return;
+        }
+        router.push("/catalogo");
+        router.refresh();
+      })
+      // Si signIn() rechaza en vez de resolver con {error} (ej. un fallo de
+      // red), sin esto el botón se quedaba trabado en "Creando…" para
+      // siempre, sin aviso y sin forma de reintentar sin recargar la página.
+      .catch(() => {
         setLoggingIn(false);
         setAutoLoginFailed(true);
-        return;
-      }
-      router.push("/catalogo");
-      router.refresh();
-    });
-  }, [state, email, password, router]);
+      });
+    // email/password quedan afuera a propósito: este efecto solo debe
+    // correr una vez por cada "state" nuevo (una respuesta real del server
+    // action), no cada vez que se edita un campo mientras el auto-login
+    // sigue en curso -- eso dispararía un segundo signIn() con datos
+    // distintos en paralelo. Los campos ya están bloqueados mientras
+    // loggingIn es true (ver más abajo), así que no deberían cambiar en ese
+    // momento, pero quedan fuera del array igual por las dudas.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, router]);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-8 px-6 py-16">
@@ -68,6 +84,7 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
           placeholder={t["registro.name_placeholder"]}
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={pending || loggingIn}
           className={field}
         />
         <input
@@ -78,6 +95,7 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
           placeholder={t["registro.email_placeholder"]}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={pending || loggingIn}
           className={field}
         />
         <input
@@ -89,6 +107,7 @@ export function RegisterClient({ texts: t }: { texts: Record<string, string> }) 
           placeholder={t["registro.password_placeholder"]}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={pending || loggingIn}
           className={field}
         />
 
