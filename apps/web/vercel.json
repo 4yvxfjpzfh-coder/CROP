@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "echo NODE_VERSION_CHECK=$(node -v) && corepack enable && corepack prepare pnpm@10.34.5 --activate && pnpm install"
+  "installCommand": "npx --yes bun@1.4.2 install"
 }
