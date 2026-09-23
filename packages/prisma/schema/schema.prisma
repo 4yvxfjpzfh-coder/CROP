@@ -235,6 +235,11 @@ model ImpactMetric {
 
 model Order {
   id          String      @id @default(cuid())
+  // Número corto y correlativo para mostrar al cliente y al admin/agricultor
+  // al recoger ("Pedido #1042") -- el id (cuid) no es práctico para decirlo
+  // en persona. Autoincrement de Postgres: nunca se repite, aunque haya
+  // pedidos simultáneos (a diferencia de un count()+1 hecho a mano).
+  orderNumber Int         @unique @default(autoincrement())
   userId      String
   user        User        @relation(fields: [userId], references: [id])
   // Opcional: el excedente puede apartarse aunque el agricultor todavía no

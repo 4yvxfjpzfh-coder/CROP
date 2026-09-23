@@ -76,12 +76,15 @@ export default async function AdminOrdersPage() {
                   return (
                     <li key={order.id} className={orderCardClass(displayStatus)}>
                       <div className="flex items-baseline justify-between gap-4">
-                        <span className="font-[family-name:var(--font-form)] text-sm text-olive">
-                          {order.items
-                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
-                            .join(", ")}
+                        <span className="font-[family-name:var(--font-form)] text-xs font-semibold text-stone">
+                          Pedido #{order.orderNumber}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                      </div>
+                      <div className="mt-0.5 font-[family-name:var(--font-form)] text-sm text-olive">
+                        {order.items
+                          .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                          .join(", ")}
                       </div>
                       <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
                         {colones(order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0))}

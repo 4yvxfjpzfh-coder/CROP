@@ -105,12 +105,15 @@ export default async function MyReservationsPage() {
                   return (
                     <li key={order.id} className={orderCardClass(displayStatus)}>
                       <div className="flex items-baseline justify-between">
-                        <span className="text-sm font-medium text-neutral-900">
-                          {order.items
-                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
-                            .join(", ")}
+                        <span className="font-[family-name:var(--font-form)] text-xs font-semibold text-stone">
+                          {t["apartados.pedido_numero_prefix"]} #{order.orderNumber}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                      </div>
+                      <div className="mt-0.5 text-sm font-medium text-neutral-900">
+                        {order.items
+                          .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                          .join(", ")}
                       </div>
                       <div className="mt-1 text-xs text-neutral-500">
                         {colones(subtotal)}
