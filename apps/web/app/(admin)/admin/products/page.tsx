@@ -1,5 +1,6 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { ProductsWorkspace } from "./products-workspace";
 
 export const dynamic = "force-dynamic";
@@ -7,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function ProductsPage() {
   await requireAdmin("redirect");
 
-  const [products, pickupPoints, farmers] = await Promise.all([
+  const [products, pickupPoints, farmers, texts] = await Promise.all([
     prisma.product.findMany({
       orderBy: { createdAt: "desc" },
       include: { pickupPoint: { select: { id: true, shortName: true } } },
@@ -21,6 +22,7 @@ export default async function ProductsPage() {
       orderBy: { createdAt: "desc" },
       select: { id: true, name: true, email: true },
     }),
+    getSiteTexts(),
   ]);
 
   return (
@@ -52,6 +54,7 @@ export default async function ProductsPage() {
         longitude: pp.longitude,
       }))}
       farmers={farmers}
+      texts={texts}
     />
   );
 }

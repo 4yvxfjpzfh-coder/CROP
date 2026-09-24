@@ -22,10 +22,12 @@ export function ProductForm({
   product,
   pickupPoints,
   farmers,
+  texts: t,
 }: {
   product: AdminProduct | null;
   pickupPoints: AdminPickupPoint[];
   farmers: AdminFarmer[];
+  texts: Record<string, string>;
 }) {
   const router = useRouter();
   const isEdit = Boolean(product);
@@ -51,11 +53,11 @@ export function ProductForm({
   return (
     <div>
       <h2 className="mb-1 font-[family-name:var(--font-display)] text-2xl text-olive">
-        {isEdit ? "Editar producto" : "Nuevo producto"}
+        {isEdit ? t["admin.products.form_editar"] : t["admin.products.form_nuevo"]}
       </h2>
       {isEdit && product?.farmerSeq && (
         <p className="mb-4 font-[family-name:var(--font-form)] text-xs text-stone">
-          Código: {productCode({
+          {t["admin.products.form_codigo_prefix"]} {productCode({
             name: product.name,
             farmerName: farmers.find((f) => f.id === product.farmerId)?.name ?? null,
             farmerSeq: product.farmerSeq,
@@ -68,7 +70,7 @@ export function ProductForm({
 
         <div>
           <label className={label} htmlFor="name">
-            Nombre
+            {t["admin.products.form_nombre"]}
           </label>
           <input
             id="name"
@@ -81,7 +83,7 @@ export function ProductForm({
 
         <div>
           <label className={label} htmlFor="description">
-            Descripción
+            {t["admin.products.form_descripcion"]}
           </label>
           <textarea
             id="description"
@@ -94,12 +96,12 @@ export function ProductForm({
 
         <div>
           <label className={label} htmlFor="providerName">
-            Agricultor / proveedor (opcional)
+            {t["admin.products.form_proveedor"]}
           </label>
           <input
             id="providerName"
             name="providerName"
-            placeholder="ej. María Elena, Finca La Esperanza"
+            placeholder={t["admin.products.form_proveedor_placeholder"]}
             defaultValue={product?.providerName ?? ""}
             className={field}
           />
@@ -107,7 +109,7 @@ export function ProductForm({
 
         <div>
           <label className={label} htmlFor="farmerId">
-            Cuenta de agricultor vinculada (opcional)
+            {t["admin.products.form_cuenta_agricultor"]}
           </label>
           <select
             id="farmerId"
@@ -115,7 +117,7 @@ export function ProductForm({
             defaultValue={product?.farmerId ?? ""}
             className={field}
           >
-            <option value="">Sin vincular</option>
+            <option value="">{t["admin.products.form_sin_vincular"]}</option>
             {farmers.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.name ?? f.email ?? f.id}
@@ -123,17 +125,16 @@ export function ProductForm({
             ))}
           </select>
           <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
-            Si el agricultor tiene su propia cuenta, vinculalo acá para que
-            pueda ver y editar este producto desde /agricultor.
+            {t["admin.products.form_cuenta_agricultor_hint"]}
           </p>
         </div>
 
         <div>
-          <label className={label}>Foto</label>
+          <label className={label}>{t["admin.products.form_foto"]}</label>
           <PhotoUpload onPhotoUrl={setPhotoUrl} />
           <div className="mt-3 flex flex-col gap-2">
             <label className={label} htmlFor="photoUrl">
-              O pegá una URL
+              {t["admin.products.form_pegar_url"]}
             </label>
             <input
               id="photoUrl"
@@ -156,7 +157,7 @@ export function ProductForm({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={label} htmlFor="harvestedAt">
-              Última cosecha
+              {t["admin.products.form_cosecha"]}
             </label>
             <input
               id="harvestedAt"
@@ -168,13 +169,13 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="ripenessNote">
-              Nota (ej. Extra dulce, No madura)
+              {t["admin.products.form_nota"]}
             </label>
             <input
               id="ripenessNote"
               name="ripenessNote"
               maxLength={80}
-              placeholder="Extra dulce"
+              placeholder={t["admin.products.form_nota_placeholder"]}
               defaultValue={product?.ripenessNote ?? ""}
               className={field}
             />
@@ -183,7 +184,7 @@ export function ProductForm({
 
         <div>
           <label className={label} htmlFor="unit">
-            Se vende por
+            {t["admin.products.form_se_vende_por"]}
           </label>
           <select
             id="unit"
@@ -192,15 +193,15 @@ export function ProductForm({
             onChange={(e) => setUnit(e.target.value as "UNIDAD" | "KG")}
             className={field}
           >
-            <option value="UNIDAD">Unidades</option>
-            <option value="KG">Kilos</option>
+            <option value="UNIDAD">{t["admin.products.form_unidades"]}</option>
+            <option value="KG">{t["admin.products.form_kilos"]}</option>
           </select>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className={label} htmlFor="quantity">
-              Cantidad {unit === "KG" ? "(kg)" : "(unidades)"}
+              {t["admin.products.form_cantidad_prefix"]} {unit === "KG" ? "(kg)" : "(unidades)"}
             </label>
             <input
               id="quantity"
@@ -215,7 +216,7 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="originalPriceCents">
-              Ref. (¢{unit === "KG" ? "/kg" : ""})
+              {t["admin.products.form_referencia_prefix"]} (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="originalPriceCents"
@@ -229,7 +230,7 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="discountPriceCents">
-              Excedente (¢{unit === "KG" ? "/kg" : ""})
+              {t["admin.products.form_excedente_prefix"]} (¢{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="discountPriceCents"
@@ -256,7 +257,7 @@ export function ProductForm({
             defaultChecked={product?.isActive ?? true}
             className="size-4 accent-olive"
           />
-          Visible para clientes
+          {t["admin.products.form_visible_clientes"]}
         </label>
 
         {state && !state.ok && (
@@ -266,7 +267,7 @@ export function ProductForm({
         )}
         {state?.ok && (
           <p className="border-l-2 border-gold bg-gold/10 px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive">
-            Guardado.
+            {t["admin.products.form_guardado"]}
           </p>
         )}
 
@@ -276,7 +277,11 @@ export function ProductForm({
             disabled={pending}
             className="bg-olive px-5 py-2 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
           >
-            {pending ? "Guardando…" : isEdit ? "Guardar cambios" : "Publicar producto"}
+            {pending
+              ? t["admin.products.form_guardando"]
+              : isEdit
+                ? t["admin.products.form_guardar_cambios"]
+                : t["admin.products.form_publicar_producto"]}
           </button>
         </div>
       </form>
@@ -287,7 +292,7 @@ export function ProductForm({
           ir a la acción correcta. */}
       {isEdit && (
         <div className="mt-3 flex items-center gap-3">
-          <DeleteButton productId={product!.id} onDone={() => router.refresh()} />
+          <DeleteButton productId={product!.id} onDone={() => router.refresh()} texts={t} />
         </div>
       )}
     </div>
@@ -297,9 +302,11 @@ export function ProductForm({
 function DeleteButton({
   productId,
   onDone,
+  texts: t,
 }: {
   productId: string;
   onDone: () => void;
+  texts: Record<string, string>;
 }) {
   const [state, action, pending] = useActionState<ProductActionResult | null, FormData>(
     deleteProduct,
@@ -318,7 +325,7 @@ function DeleteButton({
         onClick={() => setConfirming(true)}
         className="font-[family-name:var(--font-form)] text-sm text-sienna underline underline-offset-4"
       >
-        Eliminar
+        {t["admin.products.form_eliminar"]}
       </button>
     );
   }
@@ -327,21 +334,21 @@ function DeleteButton({
     <form action={action} className="flex items-center gap-2">
       <input type="hidden" name="id" value={productId} />
       <span className="font-[family-name:var(--font-form)] text-sm text-sienna">
-        ¿Seguro?
+        {t["admin.products.form_seguro"]}
       </span>
       <button
         type="submit"
         disabled={pending}
         className="bg-sienna px-3 py-1.5 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
       >
-        Sí, eliminar
+        {t["admin.products.form_si_eliminar"]}
       </button>
       <button
         type="button"
         onClick={() => setConfirming(false)}
         className="font-[family-name:var(--font-form)] text-sm text-stone"
       >
-        Cancelar
+        {t["admin.products.form_cancelar"]}
       </button>
     </form>
   );

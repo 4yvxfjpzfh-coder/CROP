@@ -14,10 +14,12 @@ export function ProductsWorkspace({
   products,
   pickupPoints,
   farmers,
+  texts,
 }: {
   products: AdminProduct[];
   pickupPoints: AdminPickupPoint[];
   farmers: AdminFarmer[];
+  texts: Record<string, string>;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -31,7 +33,7 @@ export function ProductsWorkspace({
       <section>
         <header className="mb-6 flex items-end justify-between">
           <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
-            Productos de excedente
+            {texts["admin.products.heading"]}
           </h1>
           <button
             type="button"
@@ -42,13 +44,13 @@ export function ProductsWorkspace({
                 : "border-b-2 border-transparent pb-1 font-[family-name:var(--font-form)] text-sm text-stone hover:text-olive"
             }
           >
-            Publicar nuevo
+            {texts["admin.products.publicar_nuevo"]}
           </button>
         </header>
 
         {products.length === 0 ? (
           <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-            Todavía no hay productos publicados.
+            {texts["admin.products.empty"]}
           </p>
         ) : (
           <ul className="divide-y divide-cream-200 border-y border-cream-200">
@@ -75,7 +77,7 @@ export function ProductsWorkspace({
                       />
                     ) : (
                       <span className="flex size-12 shrink-0 items-center justify-center rounded-sm border border-dashed border-cream-200 font-[family-name:var(--font-form)] text-[10px] text-stone">
-                        sin foto
+                        {texts["admin.products.sin_foto"]}
                       </span>
                     )}
                     <span className="min-w-0 flex-1">
@@ -83,10 +85,10 @@ export function ProductsWorkspace({
                         {p.name}
                       </span>
                       <span className="mt-0.5 block font-[family-name:var(--font-form)] text-xs text-stone">
-                        {formatQuantity(p.quantity, p.unit)} disponibles
-                        {p.pickupShortName ? ` · ${p.pickupShortName}` : " · sin punto de recogida"}
+                        {formatQuantity(p.quantity, p.unit)} {texts["admin.products.disponibles_suffix"]}
+                        {p.pickupShortName ? ` · ${p.pickupShortName}` : ` · ${texts["admin.products.sin_punto_recogida"]}`}
                         {p.providerName ? ` · ${p.providerName}` : ""}
-                        {!p.isActive && " · oculto"}
+                        {!p.isActive && ` · ${texts["admin.products.oculto"]}`}
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
@@ -95,7 +97,7 @@ export function ProductsWorkspace({
                       </span>
                       {p.discountPriceCents < p.originalPriceCents && (
                         <span className="mt-0.5 block font-[family-name:var(--font-form)] text-[11px] text-sienna">
-                          antes {colones(p.originalPriceCents)}
+                          {texts["admin.products.antes_prefix"]} {colones(p.originalPriceCents)}
                         </span>
                       )}
                     </span>
@@ -113,6 +115,7 @@ export function ProductsWorkspace({
           product={selected}
           pickupPoints={pickupPoints}
           farmers={farmers}
+          texts={texts}
         />
       </aside>
     </div>
