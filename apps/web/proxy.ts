@@ -19,7 +19,7 @@ import authConfig from "@/auth.config";
  */
 const { auth } = NextAuth(authConfig);
 
-const PUBLIC_PATHS = ["/signin", "/welcome", "/privacy", "/terms"];
+const PUBLIC_PATHS = ["/signin", "/welcome", "/privacy", "/terms", "/olvide-password", "/restablecer-password"];
 
 export default auth((req) => {
   const { nextUrl } = req;

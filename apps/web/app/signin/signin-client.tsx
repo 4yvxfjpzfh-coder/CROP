@@ -111,6 +111,11 @@ export function SignInClient({
           {pending ? t["signin.password_pending"] : t["signin.password_button"]}
         </button>
         <p className="text-center font-[family-name:var(--font-form)] text-xs text-stone">
+          <Link href="/olvide-password" className="underline underline-offset-2">
+            {t["signin.olvide_password"]}
+          </Link>
+        </p>
+        <p className="text-center font-[family-name:var(--font-form)] text-xs text-stone">
           {t["signin.no_account"]}{" "}
           <Link href="/registro" className="underline underline-offset-2">
             {t["nav.crear_cuenta"]}
