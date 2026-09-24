@@ -56,6 +56,9 @@ export default async function ProfilePage() {
         <Link href="/catalogo" className="text-neutral-700 underline underline-offset-2">
           {t["nav.ver_catalogo"]}
         </Link>
+        <Link href="/soporte" className="text-neutral-700 underline underline-offset-2">
+          {t["footer.soporte"]}
+        </Link>
         {(user.role === "FARMER" || user.role === "ADMIN") && (
           <Link href="/agricultor" className="text-neutral-700 underline underline-offset-2">
             {t["nav.panel_agricultor"]}
