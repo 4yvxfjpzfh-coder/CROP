@@ -91,6 +91,8 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "catalogo.gallery.disponibles_suffix", label: "Texto tras la cantidad disponible", default: "disponibles" },
       { key: "catalogo.gallery.cultivado_por_prefix", label: "Texto antes del nombre del agricultor", default: "Cultivado por" },
       { key: "catalogo.gallery.cosechado_el_prefix", label: "Texto antes de la fecha de cosecha", default: "Cosechado el" },
+      { key: "catalogo.gallery.compartir", label: "Botón para compartir un producto", default: "Compartir" },
+      { key: "catalogo.gallery.link_copiado", label: "Aviso al copiar el link (sin menú de compartir)", default: "Link copiado" },
       { key: "catalogo.gallery.cerrar", label: "Botón \"Cerrar\" del detalle", default: "Cerrar" },
       { key: "catalogo.reserve.success_prefix", label: "Mensaje al apartar (antes de la fecha)", default: "Apartado listo. Recogé antes del" },
       { key: "catalogo.reserve.pending", label: "Botón apartar — mientras carga", default: "Apartando…" },

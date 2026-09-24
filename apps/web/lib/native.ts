@@ -133,3 +133,54 @@ export async function captureNativePhoto(): Promise<CapturePhotoResult> {
     };
   }
 }
+
+export type ShareResult = "shared" | "cancelled" | "copied" | "unavailable";
+
+/**
+ * Comparte un producto/enlace. Usa el menú nativo de compartir dentro de la
+ * app (@capacitor/share), el Web Share API del navegador en celulares fuera
+ * de la app, o copia el link al portapapeles como último recurso (ej.
+ * navegador de escritorio, donde no existe menú de compartir del sistema).
+ */
+export async function shareContent(options: {
+  title: string;
+  text: string;
+  url: string;
+}): Promise<ShareResult> {
+  if (isNativeApp()) {
+    try {
+      const { Share } = await import("@capacitor/share");
+      await Share.share({ ...options, dialogTitle: options.title });
+      return "shared";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      // El usuario cerró la hoja de compartir sin elegir nada: no es un
+      // error, y tampoco corresponde caer al respaldo de portapapeles acá
+      // (sorprendería copiar el link sin que el usuario lo haya pedido).
+      if (/cancel/i.test(message)) return "cancelled";
+      console.error("[native] no se pudo compartir:", err);
+      return "unavailable";
+    }
+  }
+
+  if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    try {
+      await navigator.share(options);
+      return "shared";
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return "cancelled";
+      console.error("[native] no se pudo compartir (web share):", err);
+      return "unavailable";
+    }
+  }
+
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(options.url);
+      return "copied";
+    } catch (err) {
+      console.error("[native] no se pudo copiar el link:", err);
+    }
+  }
+  return "unavailable";
+}

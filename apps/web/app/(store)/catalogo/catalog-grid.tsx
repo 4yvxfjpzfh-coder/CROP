@@ -6,7 +6,7 @@ import { placeOrder, type PlaceOrderResult } from "./actions";
 import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, SERVICE_FEE_CENTS, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
-import { schedulePickupReminder } from "@/lib/native";
+import { schedulePickupReminder, shareContent } from "@/lib/native";
 import { SiteBackground } from "@/components/site-background";
 
 function ProductCard({
@@ -24,6 +24,19 @@ function ProductCard({
   const step = QUANTITY_STEP[product.unit];
   const max = Math.min(MAX_QUANTITY_PER_ITEM, product.quantity);
   const round = (n: number) => Math.round(n * 100) / 100;
+  const [shareFeedback, setShareFeedback] = useState<"copied" | null>(null);
+
+  async function handleShare() {
+    const result = await shareContent({
+      title: product.name,
+      text: `${product.name} — ${formatUnitPrice(colones(product.discountPriceCents), product.unit)} en Crop`,
+      url: typeof window !== "undefined" ? window.location.href : "",
+    });
+    if (result === "copied") {
+      setShareFeedback("copied");
+      setTimeout(() => setShareFeedback(null), 2000);
+    }
+  }
 
   return (
     <div className="flex flex-col border border-cream-200 bg-white">
@@ -47,9 +60,25 @@ function ProductCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-3">
-        <p className="font-[family-name:var(--font-display)] text-base text-olive">
-          {product.name}
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-[family-name:var(--font-display)] text-base text-olive">
+            {product.name}
+          </p>
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label={texts["catalogo.gallery.compartir"]}
+            title={texts["catalogo.gallery.compartir"]}
+            className="shrink-0 text-stone hover:text-olive"
+          >
+            ⇪
+          </button>
+        </div>
+        {shareFeedback === "copied" && (
+          <p className="font-[family-name:var(--font-form)] text-[11px] text-gold-text">
+            {texts["catalogo.gallery.link_copiado"]}
+          </p>
+        )}
         {product.code && (
           <p className="font-[family-name:var(--font-form)] text-[11px] text-stone">
             {product.code}
