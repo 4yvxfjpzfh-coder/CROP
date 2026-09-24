@@ -337,6 +337,27 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "admin.products.form_cancelar", label: "Botón Cancelar", default: "Cancelar" },
     ],
   },
+  {
+    title: "Agricultor — Productos",
+    fields: [
+      { key: "agricultor.products.heading", label: "Título de la página", default: "Mis productos" },
+      { key: "agricultor.products.publicar_nuevo", label: "Pestaña \"Publicar nuevo\"", default: "Publicar nuevo" },
+      { key: "agricultor.products.empty", label: "Aviso sin productos", default: "Todavía no publicaste ningún producto." },
+      { key: "agricultor.products.form_auto_publica", label: "Aviso de publicación automática", default: "Se muestra en el catálogo público apenas lo publicás, sin que el administrador tenga que hacer nada.", multiline: true },
+      { key: "agricultor.products.guia_titulo", label: "Título de la guía de fotos (plegable)", default: "¿Cómo subo una buena foto del producto?" },
+      {
+        key: "agricultor.products.guia_body",
+        label: "Guía de fotos (una línea por consejo)",
+        multiline: true,
+        default:
+          "Tomá la foto con luz natural, de día — evitá el flash directo.\n" +
+          "Que se vea solo el producto, sin fondo desordenado detrás.\n" +
+          "Mostrá el producto entero, no muy de cerca ni muy lejos.\n" +
+          'Usá el botón "Tomar foto" para sacarla ahí mismo con la cámara del celular, o "Subir foto" si ya la tenés guardada.\n' +
+          "Después de subirla podés recortarla y ajustar brillo/contraste con el editor que aparece debajo.",
+      },
+    ],
+  },
 ];
 
 export const SITE_TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(

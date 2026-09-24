@@ -1,5 +1,6 @@
 import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { FarmerProductsWorkspace } from "./workspace";
 
 export const dynamic = "force-dynamic";
@@ -7,13 +8,14 @@ export const dynamic = "force-dynamic";
 export default async function FarmerProductsPage() {
   const actor = await requireFarmer("redirect");
 
-  const [products, pickupPoints] = await Promise.all([
+  const [products, pickupPoints, texts] = await Promise.all([
     prisma.product.findMany({
       where: { farmerId: actor.id },
       orderBy: { createdAt: "desc" },
       include: { pickupPoint: { select: { id: true, shortName: true } } },
     }),
     prisma.pickupPoint.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
+    getSiteTexts(),
   ]);
 
   return (
@@ -33,6 +35,7 @@ export default async function FarmerProductsPage() {
         isActive: p.isActive,
         farmerSeq: p.farmerSeq,
       }))}
+      texts={texts}
       pickupPoints={pickupPoints.map((pp) => ({
         id: pp.id,
         name: pp.name,
