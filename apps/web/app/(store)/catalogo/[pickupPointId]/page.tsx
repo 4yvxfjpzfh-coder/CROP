@@ -79,6 +79,15 @@ export default async function CatalogoFeriaPage({
     }),
   }));
 
+  // Google Maps entiende este link universal en cualquier plataforma: abre
+  // la app instalada (Google Maps en Android, o la que corresponda en iOS)
+  // o cae a la version web si no hay ninguna. Coordenadas si existen, si no
+  // la direccion en texto.
+  const mapsUrl =
+    pickupPoint.latitude != null && pickupPoint.longitude != null
+      ? `https://www.google.com/maps/dir/?api=1&destination=${pickupPoint.latitude},${pickupPoint.longitude}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(pickupPoint.address)}`;
+
   if (items.length === 0) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-lg flex-col items-center justify-center gap-4 px-6 text-center">
@@ -88,6 +97,14 @@ export default async function CatalogoFeriaPage({
         <p className="text-sm text-neutral-600">
           {t["catalogo.feria.empty"]}
         </p>
+        <a
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-neutral-700 underline underline-offset-2"
+        >
+          {t["catalogo.feria.como_llegar"]}
+        </a>
         <Link href="/catalogo" className="text-sm text-neutral-700 underline underline-offset-2">
           {t["catalogo.feria.volver"]}
         </Link>
@@ -101,6 +118,7 @@ export default async function CatalogoFeriaPage({
       backgroundUrl={backgroundUrl}
       feriaName={pickupPoint.shortName}
       backHref="/catalogo"
+      mapsUrl={mapsUrl}
       texts={t}
     />
   );

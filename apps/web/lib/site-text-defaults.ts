@@ -87,6 +87,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "catalogo.feria.meta_description", label: "Descripción para buscadores de la página de una feria", default: "Recorré el excedente disponible en esta feria." },
       { key: "catalogo.feria.empty", label: "Mensaje si una feria no tiene excedente", default: "Todavía no hay excedente en esta feria. Volvé pronto." },
       { key: "catalogo.feria.volver", label: "Enlace \"Ver otras ferias\"", default: "Ver otras ferias" },
+      { key: "catalogo.feria.como_llegar", label: "Botón para abrir el mapa hacia la feria", default: "Cómo llegar" },
       { key: "catalogo.gallery.instructions", label: "Instrucciones de la galería (ya no se usa, se deja por compatibilidad)", default: "Elegí lo que querés, ajustá la cantidad y hacé tu pedido.", multiline: true },
       { key: "catalogo.gallery.disponibles_suffix", label: "Texto tras la cantidad disponible", default: "disponibles" },
       { key: "catalogo.gallery.cultivado_por_prefix", label: "Texto antes del nombre del agricultor", default: "Cultivado por" },

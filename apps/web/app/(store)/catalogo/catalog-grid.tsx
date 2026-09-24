@@ -6,7 +6,7 @@ import { placeOrder, type PlaceOrderResult } from "./actions";
 import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, SERVICE_FEE_CENTS, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
-import { schedulePickupReminder, shareContent } from "@/lib/native";
+import { schedulePickupReminder, shareContent, hapticTap } from "@/lib/native";
 import { SiteBackground } from "@/components/site-background";
 
 function ProductCard({
@@ -113,7 +113,10 @@ function ProductCard({
           {quantityInCart <= 0 ? (
             <button
               type="button"
-              onClick={() => onChange(Math.min(max, step))}
+              onClick={() => {
+                hapticTap();
+                onChange(Math.min(max, step));
+              }}
               disabled={max <= 0}
               className="w-full bg-olive px-3 py-1.5 font-[family-name:var(--font-form)] text-xs text-cream disabled:opacity-40"
             >
@@ -123,7 +126,10 @@ function ProductCard({
             <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
-                onClick={() => onChange(Math.max(0, round(quantityInCart - step)))}
+                onClick={() => {
+                  hapticTap();
+                  onChange(Math.max(0, round(quantityInCart - step)));
+                }}
                 className="size-7 border border-cream-200 text-olive"
                 aria-label="Restar"
               >
@@ -134,7 +140,10 @@ function ProductCard({
               </span>
               <button
                 type="button"
-                onClick={() => onChange(Math.min(max, round(quantityInCart + step)))}
+                onClick={() => {
+                  hapticTap();
+                  onChange(Math.min(max, round(quantityInCart + step)));
+                }}
                 disabled={quantityInCart >= max}
                 className="size-7 border border-cream-200 text-olive disabled:opacity-30"
                 aria-label="Sumar"
@@ -154,12 +163,14 @@ export function CatalogGrid({
   backgroundUrl,
   feriaName,
   backHref = "/",
+  mapsUrl,
   texts,
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
   feriaName?: string;
   backHref?: string;
+  mapsUrl?: string;
   texts: Record<string, string>;
 }) {
   const [cart, setCart] = useState<Record<string, number>>({});
@@ -172,6 +183,7 @@ export function CatalogGrid({
 
   useEffect(() => {
     if (state?.ok) {
+      hapticTap("medium");
       schedulePickupReminder(state.orderId, state.pickupBy);
       setCart({});
     }
@@ -209,12 +221,24 @@ export function CatalogGrid({
         >
           <span aria-hidden>←</span> {feriaName ?? texts["brand.name"]}
         </Link>
-        <Link
-          href="/"
-          className="inline-block bg-cream px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:opacity-90"
-        >
-          {texts["nav.volver_inicio"]}
-        </Link>
+        <div className="flex items-center gap-2">
+          {mapsUrl && (
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-cream px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:opacity-90"
+            >
+              {texts["catalogo.feria.como_llegar"]}
+            </a>
+          )}
+          <Link
+            href="/"
+            className="inline-block bg-cream px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:opacity-90"
+          >
+            {texts["nav.volver_inicio"]}
+          </Link>
+        </div>
       </header>
 
       {state?.ok && (

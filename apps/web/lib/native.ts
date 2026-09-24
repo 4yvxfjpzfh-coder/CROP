@@ -184,3 +184,22 @@ export async function shareContent(options: {
   }
   return "unavailable";
 }
+
+export type HapticStrength = "light" | "medium" | "heavy";
+
+/**
+ * Vibración corta al tocar acciones clave (sumar/restar cantidad, apartar,
+ * cancelar). No-op fuera de la app nativa — el navegador no tiene una API
+ * equivalente confiable, así que no vale la pena un respaldo ahí.
+ */
+export async function hapticTap(strength: HapticStrength = "light"): Promise<void> {
+  if (!isNativeApp()) return;
+  try {
+    const { Haptics, ImpactStyle } = await import("@capacitor/haptics");
+    const style =
+      strength === "heavy" ? ImpactStyle.Heavy : strength === "medium" ? ImpactStyle.Medium : ImpactStyle.Light;
+    await Haptics.impact({ style });
+  } catch (err) {
+    console.error("[native] no se pudo vibrar:", err);
+  }
+}
