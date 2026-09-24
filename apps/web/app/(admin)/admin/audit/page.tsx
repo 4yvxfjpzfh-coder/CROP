@@ -1,16 +1,18 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 
 export const dynamic = "force-dynamic";
 
-const actionLabel: Record<string, string> = {
-  PRODUCT_CREATE: "Creó",
-  PRODUCT_UPDATE: "Editó",
-  PRODUCT_DELETE: "Eliminó",
-};
-
 export default async function AuditPage() {
   await requireAdmin("redirect");
+  const t = await getSiteTexts();
+
+  const actionLabel: Record<string, string> = {
+    PRODUCT_CREATE: t["admin.audit.action_create"],
+    PRODUCT_UPDATE: t["admin.audit.action_update"],
+    PRODUCT_DELETE: t["admin.audit.action_delete"],
+  };
 
   const entries = await prisma.adminAuditLog.findMany({
     orderBy: { createdAt: "desc" },
@@ -20,12 +22,12 @@ export default async function AuditPage() {
   return (
     <section>
       <h1 className="mb-6 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Registro de cambios
+        {t["admin.audit.heading"]}
       </h1>
 
       {entries.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          Sin actividad registrada.
+          {t["admin.audit.empty"]}
         </p>
       ) : (
         <ul className="divide-y divide-cream-200 border-y border-cream-200">

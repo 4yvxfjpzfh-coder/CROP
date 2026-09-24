@@ -1,5 +1,6 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { colones } from "../products/types";
 import { addToCatalog, removeFromCatalog, moveUp, moveDown } from "./actions";
 
@@ -13,6 +14,7 @@ const rowMeta = (p: {
 
 export default async function AdminCatalogPage() {
   await requireAdmin("redirect");
+  const t = await getSiteTexts();
 
   const products = await prisma.product.findMany({
     where: { isActive: true, quantity: { gt: 0 } },
@@ -26,23 +28,18 @@ export default async function AdminCatalogPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Orden del catálogo
+        {t["admin.catalogo_orden.heading"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
-        Todo producto visible y con stock aparece solo en{" "}
-        <a href="/catalogo" target="_blank" rel="noreferrer" className="underline underline-offset-2">
-          /catalogo
-        </a>
-        , no hace falta agregarlo a mano. Acá podés destacar algunos poniéndolos
-        primero; el resto se ordena por fecha de publicación.
+        {t["admin.catalogo_orden.subtext"]}
       </p>
 
       <h2 className="mb-3 font-[family-name:var(--font-display)] text-xl text-olive">
-        Destacados, con orden fijo ({inCatalog.length})
+        {t["admin.catalogo_orden.destacados_heading"]} ({inCatalog.length})
       </h2>
       {inCatalog.length === 0 ? (
         <p className="mb-10 font-[family-name:var(--font-form)] text-sm text-stone">
-          Ninguno todavía.
+          {t["admin.catalogo_orden.destacados_empty"]}
         </p>
       ) : (
         <ul className="mb-10 divide-y divide-cream-200 border-y border-cream-200">
@@ -62,7 +59,7 @@ export default async function AdminCatalogPage() {
                 <button
                   type="submit"
                   disabled={i === 0}
-                  aria-label="Subir"
+                  aria-label={t["admin.catalogo_orden.subir"]}
                   className="px-2 text-stone disabled:opacity-30"
                 >
                   ↑
@@ -73,7 +70,7 @@ export default async function AdminCatalogPage() {
                 <button
                   type="submit"
                   disabled={i === inCatalog.length - 1}
-                  aria-label="Bajar"
+                  aria-label={t["admin.catalogo_orden.bajar"]}
                   className="px-2 text-stone disabled:opacity-30"
                 >
                   ↓
@@ -85,7 +82,7 @@ export default async function AdminCatalogPage() {
                   type="submit"
                   className="font-[family-name:var(--font-form)] text-sm text-sienna underline underline-offset-4"
                 >
-                  Quitar
+                  {t["admin.catalogo_orden.quitar"]}
                 </button>
               </form>
             </li>
@@ -94,11 +91,11 @@ export default async function AdminCatalogPage() {
       )}
 
       <h2 className="mb-3 font-[family-name:var(--font-display)] text-xl text-olive">
-        Sin destacar, ordenados por fecha ({notInCatalog.length})
+        {t["admin.catalogo_orden.sin_destacar_heading"]} ({notInCatalog.length})
       </h2>
       {notInCatalog.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          No hay más productos disponibles sin destacar.
+          {t["admin.catalogo_orden.sin_destacar_empty"]}
         </p>
       ) : (
         <ul className="divide-y divide-cream-200 border-y border-cream-200">
@@ -116,7 +113,7 @@ export default async function AdminCatalogPage() {
                   type="submit"
                   className="font-[family-name:var(--font-form)] text-sm text-olive underline underline-offset-4"
                 >
-                  Destacar primero
+                  {t["admin.catalogo_orden.destacar_primero"]}
                 </button>
               </form>
             </li>

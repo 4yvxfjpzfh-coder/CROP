@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { AdminNav } from "./admin/admin-nav";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   // Verificación autoritativa del lado del servidor (rol en DB + allowlist).
   // El middleware ya filtró antes, esto es la segunda barrera.
-  const actor = await requireAdmin("redirect");
+  const [actor, t] = await Promise.all([requireAdmin("redirect"), getSiteTexts()]);
 
   return (
     <div className="flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive">
@@ -17,20 +18,20 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               Crop
             </span>
             <span className="mt-1 block text-xs text-stone">
-              Excedente de feria
+              {t["admin.nav.subtitulo"]}
             </span>
           </Link>
-          <AdminNav />
+          <AdminNav texts={t} />
         </div>
 
         <div className="border-t border-olive-700 pt-4 text-xs leading-relaxed text-stone">
-          <p className="text-cream">{actor.name ?? "Administración"}</p>
+          <p className="text-cream">{actor.name ?? t["admin.nav.administracion"]}</p>
           <p>{actor.email}</p>
           <Link href="/" className="mt-2 block text-cream underline underline-offset-4">
-            Salir del panel
+            {t["admin.nav.salir_panel"]}
           </Link>
           <Link href="/api/auth/signout" className="mt-1 block text-cream underline underline-offset-4">
-            Cerrar sesión
+            {t["admin.nav.cerrar_sesion"]}
           </Link>
         </div>
       </aside>

@@ -398,6 +398,61 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "admin.agricultores.cancelar", label: "Botón Cancelar", default: "Cancelar" },
     ],
   },
+  {
+    title: "Admin — Auditoría",
+    fields: [
+      { key: "admin.audit.heading", label: "Título de la página", default: "Registro de cambios" },
+      { key: "admin.audit.empty", label: "Aviso sin actividad", default: "Sin actividad registrada." },
+      { key: "admin.audit.action_create", label: "Acción: creó", default: "Creó" },
+      { key: "admin.audit.action_update", label: "Acción: editó", default: "Editó" },
+      { key: "admin.audit.action_delete", label: "Acción: eliminó", default: "Eliminó" },
+    ],
+  },
+  {
+    title: "Admin — Orden del catálogo",
+    fields: [
+      { key: "admin.catalogo_orden.heading", label: "Título de la página", default: "Orden del catálogo" },
+      {
+        key: "admin.catalogo_orden.subtext",
+        label: "Subtítulo de la página",
+        multiline: true,
+        default: "Todo producto visible y con stock aparece solo en /catalogo, no hace falta agregarlo a mano. Acá podés destacar algunos poniéndolos primero; el resto se ordena por fecha de publicación.",
+      },
+      { key: "admin.catalogo_orden.destacados_heading", label: "Título \"Destacados\"", default: "Destacados, con orden fijo" },
+      { key: "admin.catalogo_orden.destacados_empty", label: "Aviso sin destacados", default: "Ninguno todavía." },
+      { key: "admin.catalogo_orden.subir", label: "Botón subir (aria-label)", default: "Subir" },
+      { key: "admin.catalogo_orden.bajar", label: "Botón bajar (aria-label)", default: "Bajar" },
+      { key: "admin.catalogo_orden.quitar", label: "Botón \"Quitar\"", default: "Quitar" },
+      { key: "admin.catalogo_orden.sin_destacar_heading", label: "Título \"Sin destacar\"", default: "Sin destacar, ordenados por fecha" },
+      { key: "admin.catalogo_orden.sin_destacar_empty", label: "Aviso sin productos para destacar", default: "No hay más productos disponibles sin destacar." },
+      { key: "admin.catalogo_orden.destacar_primero", label: "Botón \"Destacar primero\"", default: "Destacar primero" },
+    ],
+  },
+  {
+    title: "Admin — Menú lateral",
+    fields: [
+      { key: "admin.nav.subtitulo", label: "Subtítulo bajo el logo", default: "Excedente de feria" },
+      { key: "admin.nav.productos", label: "Enlace Productos", default: "Productos" },
+      { key: "admin.nav.agricultores", label: "Enlace Agricultores", default: "Agricultores" },
+      { key: "admin.nav.catalogo", label: "Enlace Catálogo 3D", default: "Catálogo 3D" },
+      { key: "admin.nav.apartados", label: "Enlace Apartados", default: "Apartados" },
+      { key: "admin.nav.apariencia", label: "Enlace Apariencia", default: "Apariencia" },
+      { key: "admin.nav.textos", label: "Enlace Textos", default: "Textos" },
+      { key: "admin.nav.registro_cambios", label: "Enlace Registro de cambios", default: "Registro de cambios" },
+      { key: "admin.nav.administracion", label: "Texto por defecto sin nombre", default: "Administración" },
+      { key: "admin.nav.salir_panel", label: "Enlace \"Salir del panel\"", default: "Salir del panel" },
+      { key: "admin.nav.cerrar_sesion", label: "Enlace \"Cerrar sesión\"", default: "Cerrar sesión" },
+    ],
+  },
+  {
+    title: "Agricultor — Menú lateral",
+    fields: [
+      { key: "agricultor.nav.subtitulo", label: "Subtítulo bajo el logo", default: "Panel del agricultor" },
+      { key: "agricultor.nav.mis_productos", label: "Enlace Mis productos", default: "Mis productos" },
+      { key: "agricultor.nav.pedidos", label: "Enlace Pedidos", default: "Pedidos" },
+      { key: "agricultor.nav.agricultor_default", label: "Texto por defecto sin nombre", default: "Agricultor" },
+    ],
+  },
 ];
 
 export const SITE_TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(
