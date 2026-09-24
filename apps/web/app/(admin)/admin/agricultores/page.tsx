@@ -1,5 +1,6 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { MakeFarmerForm } from "./make-farmer-form";
 import { RemoveFarmerButton } from "./remove-farmer-button";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminFarmersPage() {
   await requireAdmin("redirect");
+  const t = await getSiteTexts();
 
   const farmers = await prisma.user.findMany({
     where: { role: "FARMER" },
@@ -22,25 +24,20 @@ export default async function AdminFarmersPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Agricultores
+        {t["admin.agricultores.heading"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
-        Asigná el rol de agricultor a una cuenta que ya inició sesión al menos
-        una vez. Después, vinculá sus productos desde{" "}
-        <a href="/admin/products" className="underline underline-offset-2">
-          /admin/products
-        </a>{" "}
-        (campo &quot;Cuenta de agricultor vinculada&quot; en cada producto).
+        {t["admin.agricultores.subtext"]}
       </p>
 
-      <MakeFarmerForm />
+      <MakeFarmerForm texts={t} />
 
       <h2 className="mb-3 mt-10 font-[family-name:var(--font-display)] text-xl text-olive">
-        Agricultores activos ({farmers.length})
+        {t["admin.agricultores.activos_heading"]} ({farmers.length})
       </h2>
       {farmers.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          Ninguno todavía.
+          {t["admin.agricultores.ninguno"]}
         </p>
       ) : (
         <ul className="divide-y divide-cream-200 border-y border-cream-200">
@@ -49,10 +46,10 @@ export default async function AdminFarmersPage() {
               <span className="flex-1 font-[family-name:var(--font-form)] text-sm text-olive">
                 {f.name ?? f.email}
                 <span className="ml-2 text-xs text-stone">
-                  {f.email} · {f._count.farmerProducts} producto(s)
+                  {f.email} · {f._count.farmerProducts} {t["admin.agricultores.productos_suffix"]}
                 </span>
               </span>
-              <RemoveFarmerButton userId={f.id} />
+              <RemoveFarmerButton userId={f.id} texts={t} />
             </li>
           ))}
         </ul>

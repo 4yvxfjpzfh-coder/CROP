@@ -1,21 +1,24 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { colones } from "../products/types";
 import { formatPickupDeadline } from "@/lib/format";
 import { formatQuantity } from "@/lib/units";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
+import { markPickedUp } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-const statusLabel: Record<string, string> = {
-  RESERVED: "Apartado",
-  PICKED_UP: "Recogido",
-  CANCELLED: "Cancelado",
-  EXPIRED: "Vencido",
-};
-
 export default async function AdminOrdersPage() {
   await requireAdmin("redirect");
+  const t = await getSiteTexts();
+
+  const statusLabel: Record<string, string> = {
+    RESERVED: t["admin.pedidos.status_reserved"],
+    PICKED_UP: t["admin.pedidos.status_picked_up"],
+    CANCELLED: t["admin.pedidos.status_cancelled"],
+    EXPIRED: t["admin.pedidos.status_expired"],
+  };
 
   // Cancelados y vencidos no se muestran acá — siguen en la base, solo se
   // sacan de esta lista para no acumular ruido.
@@ -57,23 +60,22 @@ export default async function AdminOrdersPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Apartados
+        {t["admin.pedidos.heading"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
-        Apartados activos y recogidos, en una carpeta por cliente. Los
-        cancelados o vencidos no se muestran acá.
+        {t["admin.pedidos.subtext"]}
       </p>
 
       {customerGroups.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          Todavía no hay apartados.
+          {t["admin.pedidos.empty"]}
         </p>
       ) : (
         <div className="flex flex-col gap-4">
           {customerGroups.map(([userId, group]) => (
             <details key={userId} open className="border border-cream-200">
               <summary className="cursor-pointer bg-cream-200/40 px-4 py-3 font-[family-name:var(--font-form)] text-sm font-medium text-olive">
-                Cliente #{group.customerNumber} — {group.label} ({group.orders.length})
+                {t["admin.pedidos.cliente_prefix"]} #{group.customerNumber} — {group.label} ({group.orders.length})
               </summary>
               <ul className="flex flex-col gap-3 p-4">
                 {group.orders.map((order) => {
@@ -95,12 +97,23 @@ export default async function AdminOrdersPage() {
                         {order.items[0]?.product.pickupPoint?.name
                           ? ` · ${order.items[0].product.pickupPoint.name}`
                           : ""}
-                        {" · creado "}
-                        {formatPickupDeadline(order.createdAt)}
+                        {" · "}
+                        {t["admin.pedidos.creado_prefix"]} {formatPickupDeadline(order.createdAt)}
                         {order.status === "RESERVED" && !expired
-                          ? ` · vence ${formatPickupDeadline(order.pickupBy)}`
+                          ? ` · ${t["admin.pedidos.vence_prefix"]} ${formatPickupDeadline(order.pickupBy)}`
                           : ""}
                       </div>
+                      {order.status === "RESERVED" && !expired && (
+                        <form action={markPickedUp} className="mt-2">
+                          <input type="hidden" name="orderId" value={order.id} />
+                          <button
+                            type="submit"
+                            className="bg-olive px-3 py-1.5 font-[family-name:var(--font-form)] text-xs text-cream hover:opacity-90"
+                          >
+                            {t["admin.pedidos.marcar_entregado"]}
+                          </button>
+                        </form>
+                      )}
                     </li>
                   );
                 })}

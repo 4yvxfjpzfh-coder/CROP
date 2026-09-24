@@ -358,6 +358,46 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       },
     ],
   },
+  {
+    title: "Admin — Pedidos",
+    fields: [
+      { key: "admin.pedidos.heading", label: "Título de la página", default: "Apartados" },
+      { key: "admin.pedidos.subtext", label: "Subtítulo de la página", default: "Apartados activos y recogidos, en una carpeta por cliente. Los cancelados o vencidos no se muestran acá.", multiline: true },
+      { key: "admin.pedidos.empty", label: "Aviso sin apartados", default: "Todavía no hay apartados." },
+      { key: "admin.pedidos.cliente_prefix", label: "Prefijo \"Cliente #\"", default: "Cliente" },
+      { key: "admin.pedidos.creado_prefix", label: "Texto antes de la fecha de creación", default: "creado" },
+      { key: "admin.pedidos.vence_prefix", label: "Texto antes de la fecha de vencimiento", default: "vence" },
+      { key: "admin.pedidos.marcar_entregado", label: "Botón \"Marcar como entregado\"", default: "Marcar como entregado" },
+      { key: "admin.pedidos.status_reserved", label: "Estado: Apartado", default: "Apartado" },
+      { key: "admin.pedidos.status_picked_up", label: "Estado: Recogido", default: "Recogido" },
+      { key: "admin.pedidos.status_cancelled", label: "Estado: Cancelado", default: "Cancelado" },
+      { key: "admin.pedidos.status_expired", label: "Estado: Vencido", default: "Vencido" },
+    ],
+  },
+  {
+    title: "Admin — Agricultores",
+    fields: [
+      { key: "admin.agricultores.heading", label: "Título de la página", default: "Agricultores" },
+      {
+        key: "admin.agricultores.subtext",
+        label: "Subtítulo de la página",
+        multiline: true,
+        default: 'Asigná el rol de agricultor a una cuenta que ya inició sesión al menos una vez. Después, vinculá sus productos desde /admin/products (campo "Cuenta de agricultor vinculada" en cada producto).',
+      },
+      { key: "admin.agricultores.email_label", label: "Campo de correo", default: "Correo de la cuenta que ya inició sesión" },
+      { key: "admin.agricultores.email_placeholder", label: "Placeholder del correo", default: "agricultor@ejemplo.com" },
+      { key: "admin.agricultores.asignando", label: "Botón mientras asigna", default: "Asignando…" },
+      { key: "admin.agricultores.hacer_agricultor", label: "Botón \"Hacer agricultor\"", default: "Hacer agricultor" },
+      { key: "admin.agricultores.listo", label: "Aviso tras asignar", default: "Listo, ya es agricultor." },
+      { key: "admin.agricultores.activos_heading", label: "Título \"Agricultores activos\"", default: "Agricultores activos" },
+      { key: "admin.agricultores.ninguno", label: "Aviso sin agricultores", default: "Ninguno todavía." },
+      { key: "admin.agricultores.productos_suffix", label: "Sufijo \"producto(s)\"", default: "producto(s)" },
+      { key: "admin.agricultores.quitar_rol", label: "Botón \"Quitar rol\"", default: "Quitar rol" },
+      { key: "admin.agricultores.seguro", label: "Confirmación ¿Seguro?", default: "¿Seguro?" },
+      { key: "admin.agricultores.si_quitar", label: "Botón \"Sí, quitar\"", default: "Sí, quitar" },
+      { key: "admin.agricultores.cancelar", label: "Botón Cancelar", default: "Cancelar" },
+    ],
+  },
 ];
 
 export const SITE_TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(
