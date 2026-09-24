@@ -60,6 +60,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "footer.privacidad", label: "Enlace \"Privacidad\"", default: "Privacidad" },
       { key: "footer.terminos", label: "Enlace \"Términos\"", default: "Términos" },
       { key: "footer.cancelaciones", label: "Enlace \"Cancelaciones\"", default: "Cancelaciones" },
+      { key: "footer.soporte", label: "Enlace \"Soporte\"", default: "Soporte" },
       { key: "footer.copyright_suffix", label: "Texto del pie de página tras el año", default: "Costa Rica" },
     ],
   },
@@ -248,6 +249,28 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "Podés crear tu cuenta con Apple o con tu propio correo y contraseña. Sos responsable de la actividad de tu cuenta y de mantener tu contraseña en secreto. Podés eliminar tu cuenta en cualquier momento desde tu perfil.\n\n" +
           "4. Disponibilidad y cambios\n" +
           'El servicio se ofrece "tal cual". Podemos modificar o suspender funciones; los cambios materiales se comunicarán con antelación razonable.',
+      },
+    ],
+  },
+  {
+    title: "Soporte",
+    fields: [
+      { key: "soporte.heading", label: "Título — Soporte", default: "Soporte" },
+      { key: "soporte.subtext", label: "Subtítulo — Soporte", default: "¿Necesitás ayuda con un apartado, tu cuenta o algo en el sitio? Escribinos." },
+      {
+        key: "soporte.body",
+        label: "Texto — Soporte",
+        multiline: true,
+        hint: 'Una línea que empieza con "N. " se muestra como título de sección; el resto son párrafos. "Mis apartados" se convierte en enlace automáticamente.',
+        default:
+          "1. Contacto\n" +
+          "Escribinos a: ldqg33@gmail.com o gboydt@icloud.com. Respondemos lo antes posible.\n\n" +
+          "2. ¿Cómo aparto un producto?\n" +
+          'Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. No se cobra nada en línea: el pago, si aplica, es directo con el agricultor al recoger.\n\n' +
+          "3. ¿Cómo cancelo un apartado?\n" +
+          "Desde Mis apartados podés cancelar cualquier apartado vigente antes de la fecha límite de recogida.\n\n" +
+          "4. Problemas con la cuenta\n" +
+          "Si no podés iniciar sesión o tenés un problema con tu cuenta, escribinos a los correos de arriba con el correo que usaste para registrarte.",
       },
     ],
   },

@@ -204,6 +204,9 @@ export default async function Home() {
             <Link href="/reembolsos" className="hover:text-paper">
               {t["footer.cancelaciones"]}
             </Link>
+            <Link href="/soporte" className="hover:text-paper">
+              {t["footer.soporte"]}
+            </Link>
           </div>
         </div>
       </footer>
