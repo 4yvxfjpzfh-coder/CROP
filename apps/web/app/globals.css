@@ -33,12 +33,10 @@
   --color-metal: #9aa39c; /* gris metálico, texto secundario sobre oscuro */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Sin variante oscura a propósito: toda la identidad de Crop (olivo/crema/
+   dorado) está diseñada para fondo claro fijo. Sin esto, cualquier página
+   que no ponga su propio fondo explícito (ej. /signin) heredaba negro del
+   modo oscuro del sistema, con texto igual de oscuro encima — invisible. */
 
 body {
   background: var(--background);
