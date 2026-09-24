@@ -301,6 +301,11 @@ model SiteSettings {
   // de 2 horas (ver MAX_PICKUP_WINDOW_HOURS en lib/site-settings.ts); el
   // admin puede poner menos, pero nunca más.
   pickupWindowHours Int      @default(2)
+  // Color de letra de toda la marca (reemplaza el olivo #1F2A22 por
+  // defecto). Formato hex validado en el server action antes de guardar --
+  // se inyecta directo en una etiqueta <style>, así que nunca se guarda sin
+  // validar.
+  brandTextColor    String?
   updatedAt         DateTime @updatedAt
 }
 

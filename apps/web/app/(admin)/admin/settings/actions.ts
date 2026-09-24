@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
+import { isValidHexColor } from "@/lib/site-settings";
 
 export type SettingsResult = { ok: boolean; error?: string };
 
@@ -26,6 +27,15 @@ export async function saveHomeSettings(
   const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
   const homeHeadline = String(formData.get("homeHeadline") ?? "").trim();
   const homeSubtext = String(formData.get("homeSubtext") ?? "").trim();
+  const brandTextColorRaw = String(formData.get("brandTextColor") ?? "").trim();
+  if (brandTextColorRaw && !isValidHexColor(brandTextColorRaw)) {
+    return { ok: false, error: "El color tiene que ser un hex válido, ej. #1f2a22" };
+  }
+  // #1f2a22 es el olivo original: guardarlo como null (no como el mismo
+  // valor) mantiene layout.tsx sin inyectar una etiqueta <style> de más
+  // cuando el admin en realidad no cambió nada del color.
+  const brandTextColor =
+    brandTextColorRaw && brandTextColorRaw.toLowerCase() !== "#1f2a22" ? brandTextColorRaw : null;
 
   await prisma.siteSettings.upsert({
     where: { id: "default" },
@@ -33,12 +43,14 @@ export async function saveHomeSettings(
       homeBackgroundUrl: homeBackgroundUrl || null,
       homeHeadline: homeHeadline || null,
       homeSubtext: homeSubtext || null,
+      brandTextColor,
     },
     create: {
       id: "default",
       homeBackgroundUrl: homeBackgroundUrl || null,
       homeHeadline: homeHeadline || null,
       homeSubtext: homeSubtext || null,
+      brandTextColor,
     },
   });
 

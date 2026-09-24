@@ -6,7 +6,7 @@ import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { resolvePickupDeadline } from "@/lib/pickup-schedule";
-import { MAX_QUANTITY_PER_ITEM } from "./catalog-types";
+import { MAX_QUANTITY_PER_ITEM, MIN_ORDER_CENTS } from "./catalog-types";
 
 // Los apartados vencidos (liberados por el cron de apps/api) no cuentan
 // para este límite.
@@ -112,6 +112,14 @@ export async function placeOrder(
         error: `${product.name}: ${t["catalogo.error.insufficient_stock_prefix"]} ${product.quantity} ${t["catalogo.error.insufficient_stock_suffix"]}`,
       };
     }
+  }
+
+  const subtotalCents = [...byProduct].reduce(
+    (sum, [productId, quantity]) => sum + quantity * productMap.get(productId)!.discountPriceCents,
+    0,
+  );
+  if (subtotalCents < MIN_ORDER_CENTS) {
+    return { ok: false, error: t["catalogo.error.below_minimum"] };
   }
 
   // Si todos los productos del carrito son del mismo Business, se guarda esa

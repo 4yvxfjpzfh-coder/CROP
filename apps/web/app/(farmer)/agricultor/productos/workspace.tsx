@@ -44,6 +44,19 @@ export function FarmerProductsWorkspace({
           </button>
         </header>
 
+        <details className="mb-6 border border-cream-200 bg-cream-200/30 px-4 py-3">
+          <summary className="cursor-pointer font-[family-name:var(--font-form)] text-sm font-medium text-olive">
+            ¿Cómo subo una buena foto del producto?
+          </summary>
+          <ul className="mt-2 list-disc space-y-1 pl-5 font-[family-name:var(--font-form)] text-sm text-stone">
+            <li>Tomá la foto con luz natural, de día — evitá el flash directo.</li>
+            <li>Que se vea solo el producto, sin fondo desordenado detrás.</li>
+            <li>Mostrá el producto entero, no muy de cerca ni muy lejos.</li>
+            <li>Usá el botón &quot;Tomar foto&quot; para sacarla ahí mismo con la cámara del celular, o &quot;Subir foto&quot; si ya la tenés guardada.</li>
+            <li>Después de subirla podés recortarla y ajustar brillo/contraste con el editor que aparece debajo.</li>
+          </ul>
+        </details>
+
         {products.length === 0 ? (
           <p className="font-[family-name:var(--font-form)] text-sm text-stone">
             Todavía no publicaste ningún producto.

@@ -20,12 +20,20 @@ export type CatalogProduct = {
 // intente mandar algo que el server va a rechazar igual.
 export const MAX_QUANTITY_PER_ITEM = 10;
 
-// Cargo por servicio, fijo por pedido: se cobra en efectivo al recoger,
-// junto con el producto (Crop no cobra en línea). Es solo informativo acá
-// -- no se guarda en Order/OrderItem, se suma nada más al mostrar el total,
-// para no mezclarlo con el precio real de los productos (lo que le
-// corresponde al agricultor).
-export const SERVICE_FEE_CENTS = 50000;
+// Cargo por servicio: 11% del subtotal del pedido, se cobra en efectivo al
+// recoger junto con el producto (Crop no cobra en línea). Es solo
+// informativo acá -- no se guarda en Order/OrderItem, se calcula nada más
+// al mostrar el total, para no mezclarlo con el precio real de los
+// productos (lo que le corresponde al agricultor).
+export const SERVICE_FEE_RATE = 0.11;
+
+export function serviceFeeCents(subtotalCents: number): number {
+  return Math.round(subtotalCents * SERVICE_FEE_RATE);
+}
+
+// Mínimo de compra: el subtotal de productos (sin contar el cargo por
+// servicio) tiene que llegar a esto antes de poder mandar el pedido.
+export const MIN_ORDER_CENTS = 400000;
 
 export const colones = (cents: number) =>
   new Intl.NumberFormat("es-CR", {

@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { formatPickupDeadline } from "@/lib/format";
-import { colones, SERVICE_FEE_CENTS } from "../(store)/catalogo/catalog-types";
+import { colones, serviceFeeCents } from "../(store)/catalogo/catalog-types";
 import { formatQuantity } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
@@ -54,12 +54,13 @@ export default async function MyReservationsPage() {
 
   // Un solo total para todos los apartados listados, no uno por uno: la
   // suma de todos los productos de todas las órdenes, más un único cargo
-  // por servicio de ₡500 (no uno por cada apartado).
+  // por servicio del 11% (no uno por cada apartado).
   const grandSubtotal = orders.reduce(
     (sum, order) => sum + order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0),
     0,
   );
-  const grandTotal = grandSubtotal + SERVICE_FEE_CENTS;
+  const grandFee = serviceFeeCents(grandSubtotal);
+  const grandTotal = grandSubtotal + grandFee;
 
   return (
     <div className="relative min-h-dvh w-full">
@@ -98,7 +99,7 @@ export default async function MyReservationsPage() {
               <p className="mb-4 border-b border-cream-200 pb-4 text-sm text-olive">
                 {t["catalogo.cart.subtotal_prefix"]} {colones(grandSubtotal)}
                 {" + "}
-                {t["catalogo.cart.service_fee_prefix"]} {colones(SERVICE_FEE_CENTS)}
+                {t["catalogo.cart.service_fee_prefix"]} {colones(grandFee)}
                 {" — "}
                 {t["catalogo.cart.total_prefix"]}{" "}
                 <span className="font-semibold text-gold-text">{colones(grandTotal)}</span>

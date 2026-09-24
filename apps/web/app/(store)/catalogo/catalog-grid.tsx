@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { placeOrder, type PlaceOrderResult } from "./actions";
-import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, SERVICE_FEE_CENTS, colones } from "./catalog-types";
+import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, MIN_ORDER_CENTS, serviceFeeCents, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
 import { schedulePickupReminder, shareContent, hapticTap } from "@/lib/native";
@@ -212,6 +212,8 @@ export function CatalogGrid({
   const itemsJson = JSON.stringify(
     cartEntries.map(([productId, quantity]) => ({ productId, quantity })),
   );
+  const feeCents = serviceFeeCents(totalCents);
+  const belowMinimum = cartEntries.length > 0 && totalCents < MIN_ORDER_CENTS;
 
   return (
     <div className="relative min-h-dvh w-full pb-28">
@@ -313,21 +315,26 @@ export function CatalogGrid({
             <p className="font-[family-name:var(--font-form)] text-sm text-olive">
               {texts["catalogo.cart.subtotal_prefix"]} {colones(totalCents)}
               {" + "}
-              {texts["catalogo.cart.service_fee_prefix"]} {colones(SERVICE_FEE_CENTS)}
+              {texts["catalogo.cart.service_fee_prefix"]} {colones(feeCents)}
               {" — "}
               {texts["catalogo.cart.total_prefix"]}{" "}
               <span className="font-semibold text-gold-text">
-                {colones(totalCents + SERVICE_FEE_CENTS)}
+                {colones(totalCents + feeCents)}
               </span>
             </p>
             <button
               type="submit"
-              disabled={pending || !pickupSlot}
+              disabled={pending || !pickupSlot || belowMinimum}
               className="bg-olive px-6 py-2.5 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
             >
               {pending ? texts["catalogo.cart.pending"] : texts["catalogo.cart.place_order"]}
             </button>
           </div>
+          {belowMinimum && (
+            <p className="mx-auto mt-2 max-w-6xl font-[family-name:var(--font-form)] text-sm text-sienna">
+              {texts["catalogo.cart.below_minimum_prefix"]} {colones(MIN_ORDER_CENTS)}
+            </p>
+          )}
           {state && !state.ok && (
             <p className="mx-auto mt-2 max-w-6xl font-[family-name:var(--font-form)] text-sm text-sienna">
               {state.error}

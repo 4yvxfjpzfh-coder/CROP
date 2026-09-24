@@ -8,16 +8,21 @@ const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
 const label = "mb-1 block font-[family-name:var(--font-form)] text-sm text-stone";
 
+const DEFAULT_OLIVE = "#1f2a22";
+
 export function SettingsForm({
   initialUrl,
   initialHeadline,
   initialSubtext,
+  initialBrandTextColor,
 }: {
   initialUrl: string;
   initialHeadline: string;
   initialSubtext: string;
+  initialBrandTextColor: string;
 }) {
   const [url, setUrl] = useState(initialUrl);
+  const [textColor, setTextColor] = useState(initialBrandTextColor);
   const [state, formAction, pending] = useActionState<SettingsResult | null, FormData>(
     saveHomeSettings,
     null,
@@ -79,6 +84,48 @@ export function SettingsForm({
           <img src={url} alt="Vista previa" className="aspect-video w-full object-cover" />
         </div>
       )}
+
+      <div>
+        <label className={label} htmlFor="brandTextColor">
+          Color de letra de toda la marca
+        </label>
+        <div className="flex items-center gap-3">
+          <input
+            id="brandTextColor"
+            name="brandTextColor"
+            type="color"
+            value={textColor}
+            onChange={(e) => setTextColor(e.target.value)}
+            className="h-10 w-14 shrink-0 border border-cream-200 bg-white p-1"
+          />
+          <input
+            type="text"
+            value={textColor}
+            onChange={(e) => setTextColor(e.target.value)}
+            placeholder={DEFAULT_OLIVE}
+            className={field}
+          />
+          <button
+            type="button"
+            onClick={() => setTextColor(DEFAULT_OLIVE)}
+            className="shrink-0 whitespace-nowrap font-[family-name:var(--font-form)] text-xs text-stone underline underline-offset-2"
+          >
+            Restaurar
+          </button>
+        </div>
+        <p
+          className="mt-2 border border-cream-200 bg-cream px-3 py-2 font-[family-name:var(--font-form)] text-sm"
+          style={{ color: textColor }}
+        >
+          Así se va a ver el texto en todo el sitio.
+        </p>
+        <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
+          Cambia el color del texto principal en toda la app (catálogo,
+          botones, títulos). Es un cambio grande — si el contraste queda
+          mal en algún fondo, tocá &quot;Restaurar&quot; para volver al
+          olivo original.
+        </p>
+      </div>
 
       {state && !state.ok && (
         <p className="border-l-2 border-sienna bg-sienna/10 px-3 py-2 font-[family-name:var(--font-form)] text-sm text-sienna">

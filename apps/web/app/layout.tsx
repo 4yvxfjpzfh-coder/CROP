@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { CookieConsent } from "@/components/cookie-consent";
 import { getSiteTexts } from "@/lib/site-text";
+import { getBrandTextColor, isValidHexColor } from "@/lib/site-settings";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -38,12 +39,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const t = await getSiteTexts();
+  const [t, brandTextColor] = await Promise.all([getSiteTexts(), getBrandTextColor()]);
   return (
     <html
       lang="es"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
+      <head>
+        {/* Tailwind "@theme inline" hornea el color de .text-olive directo
+            en el CSS compilado (color: #1f2a22), no como var(--color-olive)
+            -- así que una variable CSS en :root no lo pisaría. Esta regla
+            suelta, cargada después de globals.css, sí gana por orden.
+            isValidHexColor ya se corrió al leer el settings, pero se repite
+            acá (defensa en profundidad: esto se imprime tal cual en HTML). */}
+        {brandTextColor && isValidHexColor(brandTextColor) && (
+          <style>{`.text-olive{color:${brandTextColor} !important}`}</style>
+        )}
+      </head>
       {/* suppressHydrationWarning: extensiones como Grammarly inyectan sus
           propios atributos data-gr-* en <body> antes de que React hidrate;
           no es un problema real de la app, solo ruido en consola. */}

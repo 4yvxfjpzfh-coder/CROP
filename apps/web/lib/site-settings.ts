@@ -6,6 +6,7 @@ export type SiteSettingsData = {
   homeHeadline: string | null;
   homeSubtext: string | null;
   pickupWindowHours: number;
+  brandTextColor: string | null;
 };
 
 // Tope duro: los apartados vencen a más tardar 2 horas después de hacerse.
@@ -21,7 +22,18 @@ const DEFAULTS: SiteSettingsData = {
   homeHeadline: null,
   homeSubtext: null,
   pickupWindowHours: MAX_PICKUP_WINDOW_HOURS,
+  brandTextColor: null,
 };
+
+// Formato estricto #RRGGBB: esto se inyecta directo en una etiqueta <style>
+// en el <head> (ver app/layout.tsx), así que se valida en dos puntos -- acá
+// al leer, y de nuevo en el server action al guardar -- antes de confiar en
+// que sea un color y no algo que rompa el CSS o inyecte otra cosa.
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
+export function isValidHexColor(value: string): boolean {
+  return HEX_COLOR.test(value);
+}
 
 /**
  * Lee /admin/settings. Nunca tira: si la DB está caída (pasó varias veces con
@@ -37,6 +49,10 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       homeHeadline: settings.homeHeadline,
       homeSubtext: settings.homeSubtext,
       pickupWindowHours: Math.min(settings.pickupWindowHours, MAX_PICKUP_WINDOW_HOURS),
+      brandTextColor:
+        settings.brandTextColor && isValidHexColor(settings.brandTextColor)
+          ? settings.brandTextColor
+          : null,
     };
   } catch (err) {
     console.error("[site-settings] no se pudo leer SiteSettings:", err);
@@ -48,6 +64,12 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
 export async function getHomeBackgroundUrl(): Promise<string | null> {
   const settings = await getSiteSettings();
   return settings.homeBackgroundUrl;
+}
+
+/** Solo el color de letra — usado en el layout raíz, que no necesita el resto. */
+export async function getBrandTextColor(): Promise<string | null> {
+  const settings = await getSiteSettings();
+  return settings.brandTextColor;
 }
 
 export type HomeFruitData = { id: string; name: string; imageUrl: string; blurb: string };

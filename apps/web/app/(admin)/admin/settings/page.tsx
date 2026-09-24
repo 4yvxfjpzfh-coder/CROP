@@ -26,6 +26,7 @@ export default async function AdminSettingsPage() {
         initialUrl={settings?.homeBackgroundUrl ?? ""}
         initialHeadline={settings?.homeHeadline ?? ""}
         initialSubtext={settings?.homeSubtext ?? ""}
+        initialBrandTextColor={settings?.brandTextColor ?? "#1f2a22"}
       />
 
       <h2 className="mb-3 mt-12 font-[family-name:var(--font-display)] text-xl text-olive">
