@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
-import { getSiteSettings } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { resolvePickupDeadline } from "@/lib/pickup-schedule";
 import { MAX_QUANTITY_PER_ITEM } from "./catalog-types";
 
 // Los apartados vencidos (liberados por el cron de apps/api) no cuentan
@@ -78,11 +78,16 @@ export async function placeOrder(
     };
   }
 
+  const pickupSlot = String(formData.get("pickupSlot") ?? "");
+  const pickupBy = resolvePickupDeadline(pickupSlot);
+  if (!pickupBy) {
+    return { ok: false, error: t["catalogo.error.invalid_slot"] };
+  }
+
   const productIds = [...byProduct.keys()];
-  const [activeReservations, products, { pickupWindowHours }] = await Promise.all([
+  const [activeReservations, products] = await Promise.all([
     prisma.order.count({ where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } } }),
     prisma.product.findMany({ where: { id: { in: productIds } } }),
-    getSiteSettings(),
   ]);
   if (activeReservations >= MAX_ACTIVE_RESERVATIONS_PER_USER) {
     return {
@@ -108,8 +113,6 @@ export async function placeOrder(
       };
     }
   }
-
-  const pickupBy = new Date(Date.now() + pickupWindowHours * 3600 * 1000);
 
   // Si todos los productos del carrito son del mismo Business, se guarda esa
   // referencia; si el carrito mezcla varios (o ninguno tiene Business), se

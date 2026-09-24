@@ -3,7 +3,6 @@
 import { useActionState, useState } from "react";
 import { PhotoUpload } from "../products/photo-upload";
 import { saveHomeSettings, type SettingsResult } from "./actions";
-import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/pickup-window";
 
 const field =
   "w-full border border-cream-200 bg-white px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive";
@@ -13,12 +12,10 @@ export function SettingsForm({
   initialUrl,
   initialHeadline,
   initialSubtext,
-  initialPickupHours,
 }: {
   initialUrl: string;
   initialHeadline: string;
   initialSubtext: string;
-  initialPickupHours: number;
 }) {
   const [url, setUrl] = useState(initialUrl);
   const [state, formAction, pending] = useActionState<SettingsResult | null, FormData>(
@@ -53,26 +50,6 @@ export function SettingsForm({
           placeholder="Cacao, café, banano, piña y más — directo de agricultores de Costa Rica…"
           className={field}
         />
-      </div>
-
-      <div>
-        <label className={label} htmlFor="pickupWindowHours">
-          Horas para recoger un apartado
-        </label>
-        <input
-          id="pickupWindowHours"
-          name="pickupWindowHours"
-          type="number"
-          min={1}
-          max={MAX_PICKUP_WINDOW_HOURS}
-          defaultValue={initialPickupHours}
-          className={field}
-        />
-        <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
-          Cuando alguien aparta un producto, tiene esta cantidad de horas
-          desde ese momento para recogerlo antes de que se libere solo.
-          Máximo {MAX_PICKUP_WINDOW_HOURS} horas.
-        </p>
       </div>
 
       <div>

@@ -7,6 +7,7 @@ import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, SERVICE_FEE_CENTS, colones 
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
 import { formatPickupDeadline } from "@/lib/format";
 import { schedulePickupReminder, shareContent, hapticTap } from "@/lib/native";
+import { getPickupSlots } from "@/lib/pickup-schedule";
 import { SiteBackground } from "@/components/site-background";
 
 function ProductCard({
@@ -174,18 +175,23 @@ export function CatalogGrid({
   texts: Record<string, string>;
 }) {
   const [cart, setCart] = useState<Record<string, number>>({});
+  const [pickupSlot, setPickupSlot] = useState("");
   const [state, formAction, pending] = useActionState<PlaceOrderResult | null, FormData>(
     placeOrder,
     null,
   );
 
   const productMap = useMemo(() => new Map(products.map((p) => [p.id, p])), [products]);
+  // Se calcula una sola vez al cargar la página: las franjas son siempre las
+  // del próximo miércoles, no cambian mientras el carrito está abierto.
+  const pickupSlots = useMemo(() => getPickupSlots(), []);
 
   useEffect(() => {
     if (state?.ok) {
       hapticTap("medium");
       schedulePickupReminder(state.orderId, state.pickupBy);
       setCart({});
+      setPickupSlot("");
     }
   }, [state]);
 
@@ -278,6 +284,31 @@ export function CatalogGrid({
           className="fixed inset-x-0 bottom-0 z-[60] border-t border-cream-200 bg-cream/95 px-6 py-4 backdrop-blur"
         >
           <input type="hidden" name="items" value={itemsJson} />
+          <div className="mx-auto mb-3 flex max-w-6xl flex-wrap items-center gap-2">
+            <label
+              htmlFor="pickupSlot"
+              className="font-[family-name:var(--font-form)] text-sm text-olive"
+            >
+              {texts["catalogo.cart.pickup_slot_label"]}
+            </label>
+            <select
+              id="pickupSlot"
+              name="pickupSlot"
+              required
+              value={pickupSlot}
+              onChange={(e) => setPickupSlot(e.target.value)}
+              className="border border-cream-200 bg-white px-3 py-1.5 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive"
+            >
+              <option value="" disabled>
+                {texts["catalogo.cart.pickup_slot_placeholder"]}
+              </option>
+              {pickupSlots.map((slot) => (
+                <option key={slot.value} value={slot.value}>
+                  {slot.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
             <p className="font-[family-name:var(--font-form)] text-sm text-olive">
               {texts["catalogo.cart.subtotal_prefix"]} {colones(totalCents)}
@@ -291,7 +322,7 @@ export function CatalogGrid({
             </p>
             <button
               type="submit"
-              disabled={pending}
+              disabled={pending || !pickupSlot}
               className="bg-olive px-6 py-2.5 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
             >
               {pending ? texts["catalogo.cart.pending"] : texts["catalogo.cart.place_order"]}

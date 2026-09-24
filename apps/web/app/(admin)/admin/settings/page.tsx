@@ -1,6 +1,5 @@
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
-import { MAX_PICKUP_WINDOW_HOURS } from "@/lib/site-settings";
 import { SettingsForm } from "./settings-form";
 import { FruitsManager } from "./fruits-manager";
 
@@ -27,7 +26,6 @@ export default async function AdminSettingsPage() {
         initialUrl={settings?.homeBackgroundUrl ?? ""}
         initialHeadline={settings?.homeHeadline ?? ""}
         initialSubtext={settings?.homeSubtext ?? ""}
-        initialPickupHours={Math.min(settings?.pickupWindowHours ?? MAX_PICKUP_WINDOW_HOURS, MAX_PICKUP_WINDOW_HOURS)}
       />
 
       <h2 className="mb-3 mt-12 font-[family-name:var(--font-display)] text-xl text-olive">
