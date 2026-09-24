@@ -25,10 +25,12 @@ export function PhotoEditorLauncher({
   productName,
   sourceUrl,
   onSaved,
+  texts: t,
 }: {
   productName: string;
   sourceUrl: string | null;
   onSaved: (photoUrl: string) => void;
+  texts: Record<string, string>;
 }) {
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -70,10 +72,10 @@ export function PhotoEditorLauncher({
         className="font-[family-name:var(--font-form)] text-sm text-olive underline underline-offset-4 disabled:no-underline disabled:text-stone"
       >
         {!canEdit
-          ? "Pegá una URL de foto para poder editarla"
+          ? t["admin.photo.pegar_url_primero"]
           : open
-            ? "Ocultar editor de foto"
-            : "Abrir editor de foto"}
+            ? t["admin.photo.ocultar_editor"]
+            : t["admin.photo.abrir_editor"]}
       </button>
 
       {error && (
@@ -86,7 +88,7 @@ export function PhotoEditorLauncher({
         <div className="mt-3">
           {uploading && (
             <p className="mb-2 font-[family-name:var(--font-form)] text-sm text-stone">
-              Subiendo imagen editada…
+              {t["admin.photo.subiendo_editada"]}
             </p>
           )}
           <ProductPhotoEditor

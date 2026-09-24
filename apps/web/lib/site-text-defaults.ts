@@ -453,6 +453,31 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "agricultor.nav.agricultor_default", label: "Texto por defecto sin nombre", default: "Agricultor" },
     ],
   },
+  {
+    title: "Agricultor — Pedidos",
+    fields: [
+      { key: "agricultor.pedidos.heading", label: "Título de la página", default: "Pedidos" },
+      { key: "agricultor.pedidos.subtext", label: "Subtítulo de la página", multiline: true, default: "Quién apartó tus productos, para que sepas qué preparar cuando pasen a recogerlo en la feria." },
+      { key: "agricultor.pedidos.empty", label: "Aviso sin pedidos", default: "Todavía no hay apartados de tus productos." },
+      { key: "agricultor.pedidos.cliente_default", label: "Texto por defecto sin nombre de cliente", default: "Cliente" },
+      { key: "agricultor.pedidos.antes_del_prefix", label: "Texto antes de la fecha límite", default: "antes del" },
+    ],
+  },
+  {
+    title: "Admin — Foto y punto de recogida (compartido)",
+    fields: [
+      { key: "admin.photo.tomar_foto", label: "Botón \"Tomar foto\" (app nativa)", default: "Tomar foto" },
+      { key: "admin.photo.subiendo", label: "Botón mientras sube", default: "Subiendo…" },
+      { key: "admin.photo.elegir_archivo", label: "Botón \"Elegir archivo\" (app nativa)", default: "Elegir archivo" },
+      { key: "admin.photo.subir_foto", label: "Botón \"Subir foto\" (web)", default: "Subir foto" },
+      { key: "admin.photo.punto_recogida", label: "Etiqueta \"Punto de recogida\"", default: "Punto de recogida" },
+      { key: "admin.photo.km_del_centro_suffix", label: "Sufijo de distancia (\"km del centro\")", default: "km del centro" },
+      { key: "admin.photo.pegar_url_primero", label: "Aviso si falta pegar una URL para editar", default: "Pegá una URL de foto para poder editarla" },
+      { key: "admin.photo.ocultar_editor", label: "Botón \"Ocultar editor de foto\"", default: "Ocultar editor de foto" },
+      { key: "admin.photo.abrir_editor", label: "Botón \"Abrir editor de foto\"", default: "Abrir editor de foto" },
+      { key: "admin.photo.subiendo_editada", label: "Aviso subiendo imagen editada", default: "Subiendo imagen editada…" },
+    ],
+  },
 ];
 
 export const SITE_TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(

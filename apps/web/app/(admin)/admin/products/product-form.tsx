@@ -131,7 +131,7 @@ export function ProductForm({
 
         <div>
           <label className={label}>{t["admin.products.form_foto"]}</label>
-          <PhotoUpload onPhotoUrl={setPhotoUrl} />
+          <PhotoUpload onPhotoUrl={setPhotoUrl} texts={t} />
           <div className="mt-3 flex flex-col gap-2">
             <label className={label} htmlFor="photoUrl">
               {t["admin.products.form_pegar_url"]}
@@ -150,6 +150,7 @@ export function ProductForm({
               productName={product?.name ?? "Producto"}
               sourceUrl={photoUrl}
               onSaved={(url) => setPhotoUrl(url)}
+              texts={t}
             />
           )}
         </div>
@@ -248,6 +249,7 @@ export function ProductForm({
           pickupPoints={pickupPoints}
           value={pickupPointId}
           onChange={setPickupPointId}
+          texts={t}
         />
 
         <label className="flex items-center gap-2 font-[family-name:var(--font-form)] text-sm text-olive">

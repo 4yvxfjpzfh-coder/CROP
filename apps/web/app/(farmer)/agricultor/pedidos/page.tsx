@@ -1,5 +1,6 @@
 import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
+import { getSiteTexts } from "@/lib/site-text";
 import { colones } from "../productos/types";
 import { formatPickupDeadline } from "@/lib/format";
 import { formatQuantity } from "@/lib/units";
@@ -7,15 +8,16 @@ import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badg
 
 export const dynamic = "force-dynamic";
 
-const statusLabel: Record<string, string> = {
-  RESERVED: "Apartado",
-  PICKED_UP: "Recogido",
-  CANCELLED: "Cancelado",
-  EXPIRED: "Vencido",
-};
-
 export default async function FarmerOrdersPage() {
   const actor = await requireFarmer("redirect");
+  const t = await getSiteTexts();
+
+  const statusLabel: Record<string, string> = {
+    RESERVED: t["admin.pedidos.status_reserved"],
+    PICKED_UP: t["admin.pedidos.status_picked_up"],
+    CANCELLED: t["admin.pedidos.status_cancelled"],
+    EXPIRED: t["admin.pedidos.status_expired"],
+  };
 
   // Pedidos que incluyen al menos un producto de este agricultor. Se muestra
   // solo la info de SUS renglones, no de otros productos que compartan orden.
@@ -36,16 +38,15 @@ export default async function FarmerOrdersPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Pedidos
+        {t["agricultor.pedidos.heading"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
-        Quién apartó tus productos, para que sepas qué preparar cuando pasen a
-        recogerlo en la feria.
+        {t["agricultor.pedidos.subtext"]}
       </p>
 
       {orders.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-          Todavía no hay apartados de tus productos.
+          {t["agricultor.pedidos.empty"]}
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -64,13 +65,13 @@ export default async function FarmerOrdersPage() {
                   <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                 </div>
                 <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
-                  {order.user.name ?? order.user.email ?? "Cliente"} ·{" "}
+                  {order.user.name ?? order.user.email ?? t["agricultor.pedidos.cliente_default"]} ·{" "}
                   {colones(order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0))}
                   {order.items[0]?.product.pickupPoint?.name
                     ? ` · ${order.items[0].product.pickupPoint.name}`
                     : ""}
                   {order.status === "RESERVED" && !expired
-                    ? ` · antes del ${formatPickupDeadline(order.pickupBy)}`
+                    ? ` · ${t["agricultor.pedidos.antes_del_prefix"]} ${formatPickupDeadline(order.pickupBy)}`
                     : ""}
                 </div>
               </li>

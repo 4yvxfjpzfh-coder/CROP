@@ -18,11 +18,13 @@ export function PickupPointField({
   value,
   onChange,
   name = "pickupPointId",
+  texts: t,
 }: {
   pickupPoints: AdminPickupPoint[];
   value: string | null;
   onChange: (id: string) => void;
   name?: string;
+  texts: Record<string, string>;
 }) {
   const [selected, setSelected] = useState<string | null>(value);
 
@@ -34,7 +36,7 @@ export function PickupPointField({
   return (
     <fieldset className="border-0 p-0">
       <legend className="mb-2 font-[family-name:var(--font-form)] text-sm text-stone">
-        Punto de recogida
+        {t["admin.photo.punto_recogida"]}
       </legend>
       <input type="hidden" name={name} value={selected ?? ""} />
 
@@ -60,7 +62,7 @@ export function PickupPointField({
                 </span>
                 {km != null && (
                   <span className="shrink-0 bg-olive px-2 py-0.5 text-[11px] font-medium text-cream">
-                    {km} km del centro
+                    {km} {t["admin.photo.km_del_centro_suffix"]}
                   </span>
                 )}
               </span>

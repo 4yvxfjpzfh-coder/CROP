@@ -3,11 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import { captureNativePhoto, isNativeApp } from "@/lib/native";
 
+const PHOTO_UPLOAD_DEFAULTS: Record<string, string> = {
+  "admin.photo.tomar_foto": "Tomar foto",
+  "admin.photo.subiendo": "Subiendo…",
+  "admin.photo.elegir_archivo": "Elegir archivo",
+  "admin.photo.subir_foto": "Subir foto",
+};
+
 export function PhotoUpload({
   onPhotoUrl,
+  texts,
 }: {
   onPhotoUrl: (url: string) => void;
+  // Opcional: las pantallas de Apariencia (fondo del home, frutas del
+  // carrusel) también usan este mismo selector pero no pasan por el
+  // sistema de textos editables (son configuración, no contenido), así
+  // que caen a estos valores fijos en vez de exigirles el prop.
+  texts?: Record<string, string>;
 }) {
+  const t = texts ?? PHOTO_UPLOAD_DEFAULTS;
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [capturing, setCapturing] = useState(false);
@@ -85,7 +99,7 @@ export function PhotoUpload({
             disabled={busy}
             className="bg-olive px-3 py-2 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
           >
-            {busy ? "Subiendo…" : "Tomar foto"}
+            {busy ? t["admin.photo.subiendo"] : t["admin.photo.tomar_foto"]}
           </button>
         )}
         <button
@@ -98,7 +112,7 @@ export function PhotoUpload({
               : "bg-olive px-3 py-2 font-[family-name:var(--font-form)] text-sm text-cream disabled:opacity-60"
           }
         >
-          {native ? "Elegir archivo" : busy ? "Subiendo…" : "Subir foto"}
+          {native ? t["admin.photo.elegir_archivo"] : busy ? t["admin.photo.subiendo"] : t["admin.photo.subir_foto"]}
         </button>
         <input
           ref={fileRef}
