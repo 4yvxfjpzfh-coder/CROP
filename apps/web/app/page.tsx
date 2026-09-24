@@ -49,6 +49,7 @@ export default async function Home() {
 
   const headline = settings.homeHeadline || DEFAULT_HEADLINE;
   const subtext = settings.homeSubtext || DEFAULT_SUBTEXT;
+  const heroImageUrl = settings.heroImageUrl || "/demo/hero-cosecha.svg";
   const fruits: FruitSlide[] =
     dbFruits.length > 0
       ? dbFruits.map((f) => ({ name: f.name, img: f.imageUrl, blurb: f.blurb }))
@@ -147,7 +148,7 @@ export default async function Home() {
               <div className="rounded-sm bg-ink-200 p-6 shadow-[0_0_60px_-15px_rgba(45,122,74,0.5)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/demo/hero-cosecha.svg"
+                  src={heroImageUrl}
                   alt={t["home.hero.image_alt"]}
                   className="aspect-square w-full object-contain"
                 />

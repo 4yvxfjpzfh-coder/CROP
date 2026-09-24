@@ -112,7 +112,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "catalogo.cart.success_prefix", label: "Mensaje al hacer un pedido (antes de la fecha)", default: "Pedido listo. Recogé antes del" },
       { key: "catalogo.error.invalid_product", label: "Error: producto inválido", default: "Producto inválido" },
       { key: "catalogo.error.invalid_slot", label: "Error: hora de recogida inválida", default: "Elegí una hora de recogida del próximo miércoles." },
-      { key: "catalogo.error.below_minimum", label: "Error: no llega al mínimo de compra", default: "No se alcanza el mínimo de compra de ₡4,000." },
+      { key: "catalogo.error.below_minimum", label: "Error: no llega al mínimo de compra", default: "No se alcanza el mínimo de compra de ₡3,000." },
       { key: "catalogo.error.too_many_active_prefix", label: "Error: demasiados apartados (antes del número)", default: "Ya tenés" },
       { key: "catalogo.error.too_many_active_suffix", label: "Error: demasiados apartados (después del número)", default: "apartados activos. Recogé alguno o esperá a que venza antes de apartar más.", multiline: true },
       { key: "catalogo.error.too_many_products_prefix", label: "Error: demasiados productos distintos en un pedido (antes del número)", default: "Un pedido puede tener como máximo" },

@@ -292,6 +292,9 @@ enum OrderStatus {
 model SiteSettings {
   id                String   @id @default("default")
   homeBackgroundUrl String?
+  // Foto grande junto al título del hero del home. Si está vacía, se usa la
+  // ilustración de excedente por defecto (apps/web/public/demo/hero-cosecha.svg).
+  heroImageUrl      String?
   // Titular y bajada del hero del home. Si están vacíos, se usa el texto
   // por defecto (hardcodeado en app/page.tsx) para que el home nunca quede
   // en blanco por un settings sin configurar.

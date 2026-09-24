@@ -24,6 +24,7 @@ export default async function AdminSettingsPage() {
       </p>
       <SettingsForm
         initialUrl={settings?.homeBackgroundUrl ?? ""}
+        initialHeroImageUrl={settings?.heroImageUrl ?? ""}
         initialHeadline={settings?.homeHeadline ?? ""}
         initialSubtext={settings?.homeSubtext ?? ""}
         initialBrandTextColor={settings?.brandTextColor ?? "#1f2a22"}

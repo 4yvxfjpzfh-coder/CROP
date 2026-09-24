@@ -12,16 +12,19 @@ const DEFAULT_OLIVE = "#1f2a22";
 
 export function SettingsForm({
   initialUrl,
+  initialHeroImageUrl,
   initialHeadline,
   initialSubtext,
   initialBrandTextColor,
 }: {
   initialUrl: string;
+  initialHeroImageUrl: string;
   initialHeadline: string;
   initialSubtext: string;
   initialBrandTextColor: string;
 }) {
   const [url, setUrl] = useState(initialUrl);
+  const [heroUrl, setHeroUrl] = useState(initialHeroImageUrl);
   const [textColor, setTextColor] = useState(initialBrandTextColor);
   const [state, formAction, pending] = useActionState<SettingsResult | null, FormData>(
     saveHomeSettings,
@@ -82,6 +85,34 @@ export function SettingsForm({
         <div className="border border-cream-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={url} alt="Vista previa" className="aspect-video w-full object-cover" />
+        </div>
+      )}
+
+      <div>
+        <label className={label}>Foto grande del hero (junto al título)</label>
+        <PhotoUpload onPhotoUrl={setHeroUrl} />
+        <div className="mt-3 flex flex-col gap-2">
+          <label className={label} htmlFor="heroImageUrl">
+            O pegá una URL
+          </label>
+          <input
+            id="heroImageUrl"
+            name="heroImageUrl"
+            value={heroUrl}
+            onChange={(e) => setHeroUrl(e.target.value)}
+            placeholder="https://…"
+            className={field}
+          />
+        </div>
+        <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
+          Dejalo vacío para volver a la ilustración de excedente por defecto.
+        </p>
+      </div>
+
+      {heroUrl && (
+        <div className="border border-cream-200 bg-cream p-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={heroUrl} alt="Vista previa" className="aspect-square w-full max-w-[200px] object-contain" />
         </div>
       )}
 

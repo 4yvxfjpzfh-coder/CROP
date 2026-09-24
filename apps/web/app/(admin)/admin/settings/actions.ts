@@ -25,6 +25,7 @@ export async function saveHomeSettings(
   }
 
   const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
+  const heroImageUrl = String(formData.get("heroImageUrl") ?? "").trim();
   const homeHeadline = String(formData.get("homeHeadline") ?? "").trim();
   const homeSubtext = String(formData.get("homeSubtext") ?? "").trim();
   const brandTextColorRaw = String(formData.get("brandTextColor") ?? "").trim();
@@ -41,6 +42,7 @@ export async function saveHomeSettings(
     where: { id: "default" },
     update: {
       homeBackgroundUrl: homeBackgroundUrl || null,
+      heroImageUrl: heroImageUrl || null,
       homeHeadline: homeHeadline || null,
       homeSubtext: homeSubtext || null,
       brandTextColor,
@@ -48,6 +50,7 @@ export async function saveHomeSettings(
     create: {
       id: "default",
       homeBackgroundUrl: homeBackgroundUrl || null,
+      heroImageUrl: heroImageUrl || null,
       homeHeadline: homeHeadline || null,
       homeSubtext: homeSubtext || null,
       brandTextColor,

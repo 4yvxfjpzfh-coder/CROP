@@ -3,6 +3,7 @@ import { MAX_PICKUP_WINDOW_HOURS } from "./pickup-window";
 
 export type SiteSettingsData = {
   homeBackgroundUrl: string | null;
+  heroImageUrl: string | null;
   homeHeadline: string | null;
   homeSubtext: string | null;
   pickupWindowHours: number;
@@ -19,6 +20,7 @@ export { MAX_PICKUP_WINDOW_HOURS };
 
 const DEFAULTS: SiteSettingsData = {
   homeBackgroundUrl: null,
+  heroImageUrl: null,
   homeHeadline: null,
   homeSubtext: null,
   pickupWindowHours: MAX_PICKUP_WINDOW_HOURS,
@@ -46,6 +48,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
     if (!settings) return DEFAULTS;
     return {
       homeBackgroundUrl: settings.homeBackgroundUrl,
+      heroImageUrl: settings.heroImageUrl,
       homeHeadline: settings.homeHeadline,
       homeSubtext: settings.homeSubtext,
       pickupWindowHours: Math.min(settings.pickupWindowHours, MAX_PICKUP_WINDOW_HOURS),

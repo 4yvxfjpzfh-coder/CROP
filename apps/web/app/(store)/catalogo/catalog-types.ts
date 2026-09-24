@@ -33,7 +33,7 @@ export function serviceFeeCents(subtotalCents: number): number {
 
 // Mínimo de compra: el subtotal de productos (sin contar el cargo por
 // servicio) tiene que llegar a esto antes de poder mandar el pedido.
-export const MIN_ORDER_CENTS = 400000;
+export const MIN_ORDER_CENTS = 300000;
 
 export const colones = (cents: number) =>
   new Intl.NumberFormat("es-CR", {
