@@ -53,14 +53,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             isValidHexColor ya se corrió al leer el settings, pero se repite
             acá (defensa en profundidad: esto se imprime tal cual en HTML).
             Se cubren TODOS los tonos de texto usados sobre fondo claro
-            (olive/stone/sienna/gold-text) para que el color de marca cambie
-            el texto de toda la app de verdad, no solo el principal.
+            (olive/stone/sienna/gold-text y la escala neutral-400..900 de las
+            páginas de perfil/soporte/legales/mis apartados) para que el
+            color de marca cambie el texto de toda la app de verdad, no solo
+            el principal.
             text-cream/paper/metal/emerald quedan fuera a propósito: son
             texto claro sobre fondos oscuros (sidebar, botones, home) -- si
             se pintaran del mismo color de marca (típicamente oscuro),
             quedarían ilegibles encima de esos mismos fondos oscuros. */}
         {brandTextColor && isValidHexColor(brandTextColor) && (
-          <style>{`.text-olive,.text-stone,.text-sienna,.text-gold-text{color:${brandTextColor} !important}`}</style>
+          <style>{`.text-olive,.text-stone,.text-sienna,.text-gold-text,.text-neutral-400,.text-neutral-500,.text-neutral-600,.text-neutral-700,.text-neutral-800,.text-neutral-900{color:${brandTextColor} !important}`}</style>
         )}
       </head>
       {/* suppressHydrationWarning: extensiones como Grammarly inyectan sus

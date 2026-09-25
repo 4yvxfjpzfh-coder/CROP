@@ -13,21 +13,88 @@ function refreshHome() {
   revalidatePath("/admin/settings");
 }
 
-export async function saveHomeSettings(
-  _prev: SettingsResult | null,
-  formData: FormData,
-): Promise<SettingsResult> {
+async function guard(): Promise<SettingsResult | null> {
   try {
     await requireAdmin("throw");
+    return null;
   } catch (err) {
     if (err instanceof AdminAccessError) return { ok: false, error: err.message };
     throw err;
   }
+}
 
-  const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
-  const heroImageUrl = String(formData.get("heroImageUrl") ?? "").trim();
+// Antes había un solo formulario gigante con un único botón "Guardar" al
+// final -- si alguien subía una foto o elegía un color pero no bajaba hasta
+// ese botón (fácil de no ver, sobre todo en el celular), nada se guardaba y
+// no había forma de saber por qué. Cada sección ahora es su propio form con
+// su propio botón inmediato debajo, y su propia acción que solo toca su
+// campo -- así una sección nunca puede pisar el valor de otra por accidente.
+
+export async function saveHeadlineSubtext(
+  _prev: SettingsResult | null,
+  formData: FormData,
+): Promise<SettingsResult> {
+  const denied = await guard();
+  if (denied) return denied;
+
   const homeHeadline = String(formData.get("homeHeadline") ?? "").trim();
   const homeSubtext = String(formData.get("homeSubtext") ?? "").trim();
+
+  await prisma.siteSettings.upsert({
+    where: { id: "default" },
+    update: { homeHeadline: homeHeadline || null, homeSubtext: homeSubtext || null },
+    create: { id: "default", homeHeadline: homeHeadline || null, homeSubtext: homeSubtext || null },
+  });
+
+  refreshHome();
+  return { ok: true };
+}
+
+export async function saveBackgroundPhoto(
+  _prev: SettingsResult | null,
+  formData: FormData,
+): Promise<SettingsResult> {
+  const denied = await guard();
+  if (denied) return denied;
+
+  const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
+
+  await prisma.siteSettings.upsert({
+    where: { id: "default" },
+    update: { homeBackgroundUrl: homeBackgroundUrl || null },
+    create: { id: "default", homeBackgroundUrl: homeBackgroundUrl || null },
+  });
+
+  refreshHome();
+  return { ok: true };
+}
+
+export async function saveHeroImage(
+  _prev: SettingsResult | null,
+  formData: FormData,
+): Promise<SettingsResult> {
+  const denied = await guard();
+  if (denied) return denied;
+
+  const heroImageUrl = String(formData.get("heroImageUrl") ?? "").trim();
+
+  await prisma.siteSettings.upsert({
+    where: { id: "default" },
+    update: { heroImageUrl: heroImageUrl || null },
+    create: { id: "default", heroImageUrl: heroImageUrl || null },
+  });
+
+  refreshHome();
+  return { ok: true };
+}
+
+export async function saveBrandTextColor(
+  _prev: SettingsResult | null,
+  formData: FormData,
+): Promise<SettingsResult> {
+  const denied = await guard();
+  if (denied) return denied;
+
   const brandTextColorRaw = String(formData.get("brandTextColor") ?? "").trim();
   if (brandTextColorRaw && !isValidHexColor(brandTextColorRaw)) {
     return { ok: false, error: "El color tiene que ser un hex válido, ej. #1f2a22" };
@@ -40,21 +107,8 @@ export async function saveHomeSettings(
 
   await prisma.siteSettings.upsert({
     where: { id: "default" },
-    update: {
-      homeBackgroundUrl: homeBackgroundUrl || null,
-      heroImageUrl: heroImageUrl || null,
-      homeHeadline: homeHeadline || null,
-      homeSubtext: homeSubtext || null,
-      brandTextColor,
-    },
-    create: {
-      id: "default",
-      homeBackgroundUrl: homeBackgroundUrl || null,
-      heroImageUrl: heroImageUrl || null,
-      homeHeadline: homeHeadline || null,
-      homeSubtext: homeSubtext || null,
-      brandTextColor,
-    },
+    update: { brandTextColor },
+    create: { id: "default", brandTextColor },
   });
 
   refreshHome();
@@ -65,12 +119,8 @@ export async function addHomeFruit(
   _prev: SettingsResult | null,
   formData: FormData,
 ): Promise<SettingsResult> {
-  try {
-    await requireAdmin("throw");
-  } catch (err) {
-    if (err instanceof AdminAccessError) return { ok: false, error: err.message };
-    throw err;
-  }
+  const denied = await guard();
+  if (denied) return denied;
 
   const name = String(formData.get("name") ?? "").trim();
   const imageUrl = String(formData.get("imageUrl") ?? "").trim();
@@ -87,12 +137,8 @@ export async function addHomeFruit(
 }
 
 export async function removeHomeFruit(id: string): Promise<SettingsResult> {
-  try {
-    await requireAdmin("throw");
-  } catch (err) {
-    if (err instanceof AdminAccessError) return { ok: false, error: err.message };
-    throw err;
-  }
+  const denied = await guard();
+  if (denied) return denied;
 
   await prisma.homeFruit.delete({ where: { id } });
   refreshHome();
