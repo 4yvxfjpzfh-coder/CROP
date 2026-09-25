@@ -12,7 +12,9 @@ const productInput = z.object({
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
   quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
-  discountPriceCents: z.coerce.number().int().min(0),
+  // El formulario pide el precio en colones normales, no en centavos --
+  // se convierte a centavos acá antes de guardar.
+  priceColones: z.coerce.number().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
 }).refine((data) => data.unit !== "UNIDAD" || Number.isInteger(data.quantity), {
@@ -31,7 +33,7 @@ function parse(formData: FormData) {
     photoUrl: formData.get("photoUrl") ?? "",
     unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
-    discountPriceCents: formData.get("discountPriceCents"),
+    priceColones: formData.get("discountPriceCents"),
     pickupPointId: formData.get("pickupPointId"),
     isActive: formData.get("isActive") === "on" || formData.get("isActive") === "true",
   });
@@ -58,6 +60,7 @@ export async function createOwnProduct(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
   const data = parsed.data;
+  const priceCents = Math.round(data.priceColones * 100);
 
   const product = await retryOnUniqueConflict(() =>
     prisma.$transaction(async (tx) => {
@@ -72,8 +75,8 @@ export async function createOwnProduct(
           photoUrl: data.photoUrl || null,
           unit: data.unit,
           quantity: data.quantity,
-          originalPriceCents: data.discountPriceCents,
-          discountPriceCents: data.discountPriceCents,
+          originalPriceCents: priceCents,
+          discountPriceCents: priceCents,
           pickupPointId: data.pickupPointId,
           isActive: data.isActive,
         },
@@ -100,6 +103,7 @@ export async function updateOwnProduct(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
   const data = parsed.data;
+  const priceCents = Math.round(data.priceColones * 100);
 
   // updateMany con el dueño en el where: si no es suyo, no actualiza nada
   // (en vez de un update directo que ignoraría la propiedad).
@@ -111,8 +115,8 @@ export async function updateOwnProduct(
       photoUrl: data.photoUrl || null,
       unit: data.unit,
       quantity: data.quantity,
-      originalPriceCents: data.discountPriceCents,
-      discountPriceCents: data.discountPriceCents,
+      originalPriceCents: priceCents,
+      discountPriceCents: priceCents,
       pickupPointId: data.pickupPointId,
       isActive: data.isActive,
     },

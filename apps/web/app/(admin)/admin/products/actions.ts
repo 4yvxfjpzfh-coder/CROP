@@ -17,7 +17,11 @@ const productInput = z.object({
   ripenessNote: z.string().trim().max(80).optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
   quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
-  discountPriceCents: z.coerce.number().int().min(0),
+  // El formulario pide el precio en colones normales (ej. 9000 = ₡9,000),
+  // no en centavos -- se convierte a centavos acá, una sola vez, antes de
+  // guardar. Antes el campo guardaba el número tal cual como centavos, así
+  // que escribir "9000" terminaba guardando ₡90 en vez de ₡9,000.
+  priceColones: z.coerce.number().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
 }).refine((data) => data.unit !== "UNIDAD" || Number.isInteger(data.quantity), {
@@ -40,7 +44,7 @@ function parse(formData: FormData) {
     ripenessNote: formData.get("ripenessNote") ?? "",
     unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
-    discountPriceCents: formData.get("discountPriceCents"),
+    priceColones: formData.get("discountPriceCents"),
     pickupPointId: formData.get("pickupPointId"),
     isActive: formData.get("isActive") === "on" || formData.get("isActive") === "true",
   });
@@ -71,6 +75,7 @@ export async function createProduct(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
   const data = parsed.data;
+  const priceCents = Math.round(data.priceColones * 100);
 
   const pickupPoint = await prisma.pickupPoint.findUnique({
     where: { id: data.pickupPointId },
@@ -98,8 +103,8 @@ export async function createProduct(
           // mano, se guarda igual a discountPriceCents (no hay concepto de
           // "antes/ahora" en la interfaz, así que tampoco tiene sentido
           // guardar dos valores distintos).
-          originalPriceCents: data.discountPriceCents,
-          discountPriceCents: data.discountPriceCents,
+          originalPriceCents: priceCents,
+          discountPriceCents: priceCents,
           pickupPointId: pickupPoint.id,
           isActive: data.isActive,
         },
@@ -113,7 +118,7 @@ export async function createProduct(
     entityType: "Product",
     entityId: product.id,
     summary: `Creó "${product.name}" (${pickupPoint.name})`,
-    metadata: { quantity: data.quantity, discountPriceCents: data.discountPriceCents },
+    metadata: { quantity: data.quantity, discountPriceCents: priceCents },
   });
 
   revalidatePath("/admin/products");
@@ -135,6 +140,7 @@ export async function updateProduct(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
   const data = parsed.data;
+  const priceCents = Math.round(data.priceColones * 100);
 
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return { ok: false, error: "El producto no existe" };
@@ -159,8 +165,8 @@ export async function updateProduct(
           ripenessNote: data.ripenessNote || null,
           unit: data.unit,
           quantity: data.quantity,
-          originalPriceCents: data.discountPriceCents,
-          discountPriceCents: data.discountPriceCents,
+          originalPriceCents: priceCents,
+          discountPriceCents: priceCents,
           pickupPointId: data.pickupPointId,
           isActive: data.isActive,
         },
@@ -176,7 +182,7 @@ export async function updateProduct(
     summary: `Editó "${product.name}"`,
     metadata: {
       before: { quantity: existing.quantity, discountPriceCents: existing.discountPriceCents },
-      after: { quantity: data.quantity, discountPriceCents: data.discountPriceCents },
+      after: { quantity: data.quantity, discountPriceCents: priceCents },
     },
   });
 

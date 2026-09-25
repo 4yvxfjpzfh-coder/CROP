@@ -217,15 +217,16 @@ export function ProductForm({
           </div>
           <div>
             <label className={label} htmlFor="discountPriceCents">
-              {t["admin.products.form_excedente_prefix"]} (¢{unit === "KG" ? "/kg" : ""})
+              {t["admin.products.form_excedente_prefix"]} (₡{unit === "KG" ? "/kg" : ""})
             </label>
             <input
               id="discountPriceCents"
               name="discountPriceCents"
               type="number"
               min={0}
+              step={1}
               required
-              defaultValue={product?.discountPriceCents ?? 0}
+              defaultValue={product ? Math.round(product.discountPriceCents / 100) : ""}
               className={field}
             />
           </div>
