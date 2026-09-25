@@ -17,7 +17,6 @@ const productInput = z.object({
   ripenessNote: z.string().trim().max(80).optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
   quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
-  originalPriceCents: z.coerce.number().int().min(0),
   discountPriceCents: z.coerce.number().int().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
@@ -41,7 +40,6 @@ function parse(formData: FormData) {
     ripenessNote: formData.get("ripenessNote") ?? "",
     unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
-    originalPriceCents: formData.get("originalPriceCents"),
     discountPriceCents: formData.get("discountPriceCents"),
     pickupPointId: formData.get("pickupPointId"),
     isActive: formData.get("isActive") === "on" || formData.get("isActive") === "true",
@@ -96,7 +94,11 @@ export async function createProduct(
           ripenessNote: data.ripenessNote || null,
           unit: data.unit,
           quantity: data.quantity,
-          originalPriceCents: data.originalPriceCents,
+          // Un solo precio: originalPriceCents ya no lo pone el admin a
+          // mano, se guarda igual a discountPriceCents (no hay concepto de
+          // "antes/ahora" en la interfaz, así que tampoco tiene sentido
+          // guardar dos valores distintos).
+          originalPriceCents: data.discountPriceCents,
           discountPriceCents: data.discountPriceCents,
           pickupPointId: pickupPoint.id,
           isActive: data.isActive,
@@ -157,7 +159,7 @@ export async function updateProduct(
           ripenessNote: data.ripenessNote || null,
           unit: data.unit,
           quantity: data.quantity,
-          originalPriceCents: data.originalPriceCents,
+          originalPriceCents: data.discountPriceCents,
           discountPriceCents: data.discountPriceCents,
           pickupPointId: data.pickupPointId,
           isActive: data.isActive,

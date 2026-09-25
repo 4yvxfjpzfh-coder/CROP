@@ -199,7 +199,7 @@ export function ProductForm({
           </select>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={label} htmlFor="quantity">
               {t["admin.products.form_cantidad_prefix"]} {unit === "KG" ? "(kg)" : "(unidades)"}
@@ -212,20 +212,6 @@ export function ProductForm({
               step={unit === "KG" ? 0.25 : 1}
               required
               defaultValue={product?.quantity ?? 0}
-              className={field}
-            />
-          </div>
-          <div>
-            <label className={label} htmlFor="originalPriceCents">
-              {t["admin.products.form_referencia_prefix"]} (¢{unit === "KG" ? "/kg" : ""})
-            </label>
-            <input
-              id="originalPriceCents"
-              name="originalPriceCents"
-              type="number"
-              min={0}
-              required
-              defaultValue={product?.originalPriceCents ?? 0}
               className={field}
             />
           </div>
