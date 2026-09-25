@@ -79,16 +79,33 @@ export async function placeOrder(
   }
 
   const pickupSlot = String(formData.get("pickupSlot") ?? "");
-  const pickupBy = resolvePickupDeadline(pickupSlot);
-  if (!pickupBy) {
-    return { ok: false, error: t["catalogo.error.invalid_slot"] };
-  }
 
   const productIds = [...byProduct.keys()];
   const [activeReservations, products] = await Promise.all([
     prisma.order.count({ where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } } }),
-    prisma.product.findMany({ where: { id: { in: productIds } } }),
+    prisma.product.findMany({
+      where: { id: { in: productIds } },
+      include: { pickupPoint: { select: { pickupDay: true } } },
+    }),
   ]);
+
+  // El día de recogida lo define el punto de recogida, no un valor fijo. El
+  // carrito solo puede traer productos de una misma feria (la UI ya separa
+  // el catálogo por feria), así que si los productos del carrito terminan
+  // apuntando a más de un día distinto, algo no cuadra y se rechaza en vez
+  // de adivinar cuál usar.
+  const pickupDays = new Set(
+    products.map((p) => p.pickupPoint?.pickupDay).filter((d): d is number => d != null),
+  );
+  if (pickupDays.size !== 1) {
+    return { ok: false, error: t["catalogo.error.invalid_product"] };
+  }
+  const pickupDay = [...pickupDays][0];
+
+  const pickupBy = resolvePickupDeadline(pickupDay, pickupSlot);
+  if (!pickupBy) {
+    return { ok: false, error: t["catalogo.error.invalid_slot"] };
+  }
   if (activeReservations >= MAX_ACTIVE_RESERVATIONS_PER_USER) {
     return {
       ok: false,

@@ -181,6 +181,11 @@ model PickupPoint {
   latitude  Float?
   longitude Float?
   isActive  Boolean  @default(true)
+  // Día de la semana en que se recoge en esta feria: 0=domingo ... 6=sábado.
+  // Default 3 (miércoles) porque así funcionaba la app antes de que este
+  // campo existiera, cuando el día estaba fijo en el código para todas las
+  // ferias por igual.
+  pickupDay Int      @default(3)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

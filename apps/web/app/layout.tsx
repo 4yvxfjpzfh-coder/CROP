@@ -46,14 +46,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <head>
-        {/* Tailwind "@theme inline" hornea el color de .text-olive directo
-            en el CSS compilado (color: #1f2a22), no como var(--color-olive)
-            -- así que una variable CSS en :root no lo pisaría. Esta regla
-            suelta, cargada después de globals.css, sí gana por orden.
+        {/* Tailwind "@theme inline" hornea los colores directo en el CSS
+            compilado (color: #1f2a22), no como var(--color-olive) -- así que
+            una variable CSS en :root no los pisaría. Esta regla suelta,
+            cargada después de globals.css, sí gana por orden.
             isValidHexColor ya se corrió al leer el settings, pero se repite
-            acá (defensa en profundidad: esto se imprime tal cual en HTML). */}
+            acá (defensa en profundidad: esto se imprime tal cual en HTML).
+            Se cubren TODOS los tonos de texto usados sobre fondo claro
+            (olive/stone/sienna/gold-text) para que el color de marca cambie
+            el texto de toda la app de verdad, no solo el principal.
+            text-cream/paper/metal/emerald quedan fuera a propósito: son
+            texto claro sobre fondos oscuros (sidebar, botones, home) -- si
+            se pintaran del mismo color de marca (típicamente oscuro),
+            quedarían ilegibles encima de esos mismos fondos oscuros. */}
         {brandTextColor && isValidHexColor(brandTextColor) && (
-          <style>{`.text-olive{color:${brandTextColor} !important}`}</style>
+          <style>{`.text-olive,.text-stone,.text-sienna,.text-gold-text{color:${brandTextColor} !important}`}</style>
         )}
       </head>
       {/* suppressHydrationWarning: extensiones como Grammarly inyectan sus

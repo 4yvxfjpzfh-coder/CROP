@@ -119,6 +119,7 @@ export default async function CatalogoFeriaPage({
       feriaName={pickupPoint.shortName}
       backHref="/catalogo"
       mapsUrl={mapsUrl}
+      pickupDay={pickupPoint.pickupDay}
       texts={t}
     />
   );

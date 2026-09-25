@@ -165,6 +165,7 @@ export function CatalogGrid({
   feriaName,
   backHref = "/",
   mapsUrl,
+  pickupDay,
   texts,
 }: {
   products: CatalogProduct[];
@@ -172,6 +173,7 @@ export function CatalogGrid({
   feriaName?: string;
   backHref?: string;
   mapsUrl?: string;
+  pickupDay: number;
   texts: Record<string, string>;
 }) {
   const [cart, setCart] = useState<Record<string, number>>({});
@@ -183,8 +185,9 @@ export function CatalogGrid({
 
   const productMap = useMemo(() => new Map(products.map((p) => [p.id, p])), [products]);
   // Se calcula una sola vez al cargar la página: las franjas son siempre las
-  // del próximo miércoles, no cambian mientras el carrito está abierto.
-  const pickupSlots = useMemo(() => getPickupSlots(), []);
+  // del próximo día de feria de este punto de recogida, no cambian mientras
+  // el carrito está abierto.
+  const pickupSlots = useMemo(() => getPickupSlots(pickupDay), [pickupDay]);
 
   useEffect(() => {
     if (state?.ok) {

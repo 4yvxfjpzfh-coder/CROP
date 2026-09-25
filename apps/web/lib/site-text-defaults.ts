@@ -435,6 +435,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "admin.nav.agricultores", label: "Enlace Agricultores", default: "Agricultores" },
       { key: "admin.nav.catalogo", label: "Enlace Catálogo 3D", default: "Catálogo 3D" },
       { key: "admin.nav.apartados", label: "Enlace Apartados", default: "Apartados" },
+      { key: "admin.nav.puntos_recogida", label: "Enlace Puntos de recogida", default: "Puntos de recogida" },
       { key: "admin.nav.apariencia", label: "Enlace Apariencia", default: "Apariencia" },
       { key: "admin.nav.textos", label: "Enlace Textos", default: "Textos" },
       { key: "admin.nav.registro_cambios", label: "Enlace Registro de cambios", default: "Registro de cambios" },
