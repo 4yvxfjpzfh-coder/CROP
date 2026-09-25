@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
-import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
+import { requireFarmer, FarmerAccessError } from "@/lib/farmer-guard";
 
 export const runtime = "nodejs";
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
-const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp"]);
+// image/heic y image/heif: formato por defecto de la cámara en iPhones
+// ("Alta eficiencia") -- sin esto, cualquier foto sacada directo con la
+// cámara de un iPhone se rechazaba de plano al subirla.
+const ALLOWED = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+  "image/gif",
+]);
 
 /**
  * Recibe el PNG que exporta ProductPhotoEditor (onExport -> multipart "file")
@@ -23,11 +33,14 @@ const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp"]);
  * registran el AdminAuditLog correspondiente.
  */
 export async function POST(request: Request) {
+  // requireFarmer acepta rol FARMER o ADMIN -- esta ruta la usan ambos
+  // paneles (el mismo componente PhotoUpload). Antes exigía requireAdmin y
+  // por eso a un agricultor la subida le fallaba siempre con 403.
   let actor;
   try {
-    actor = await requireAdmin("throw");
+    actor = await requireFarmer("throw");
   } catch (err) {
-    if (err instanceof AdminAccessError) {
+    if (err instanceof FarmerAccessError) {
       return NextResponse.json({ error: "Acceso denegado" }, { status: 403 });
     }
     throw err;
