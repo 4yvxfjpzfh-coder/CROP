@@ -3,12 +3,14 @@ import Link from "next/link";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { getSiteTexts } from "@/lib/site-text";
 import { signOutAction } from "@/lib/auth-actions";
+import { NoCacheReload } from "@/components/no-cache-reload";
 
 export default async function FarmerLayout({ children }: { children: ReactNode }) {
   const [actor, t] = await Promise.all([requireFarmer("redirect"), getSiteTexts()]);
 
   return (
     <div className="flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive">
+      <NoCacheReload />
       <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream print:hidden">
         <div>
           <Link href="/agricultor" className="block">

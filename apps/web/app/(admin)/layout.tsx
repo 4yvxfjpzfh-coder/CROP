@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
 import { signOutAction } from "@/lib/auth-actions";
 import { AdminNav } from "./admin/admin-nav";
+import { NoCacheReload } from "@/components/no-cache-reload";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   // Verificación autoritativa del lado del servidor (rol en DB + allowlist).
@@ -12,6 +13,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive">
+      <NoCacheReload />
       <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream print:hidden">
         <div>
           <Link href="/admin" className="block">
