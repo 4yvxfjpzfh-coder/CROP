@@ -48,6 +48,19 @@ function crDateTimeToUtc(year: number, month: number, day: number, crHour: numbe
   return new Date(Date.UTC(year, month, day, crHour + CR_UTC_OFFSET_HOURS, 0, 0));
 }
 
+/**
+ * Rango UTC [inicio, fin) de un día calendario en Costa Rica, a partir de un
+ * string "YYYY-MM-DD" (el que entrega un <input type="date">). Sirve para
+ * filtrar por "pickupBy" cayendo ese día en hora de Costa Rica, sin
+ * confundirlo con el día en UTC (que puede ser distinto cerca de medianoche).
+ */
+export function crDayRangeUtc(isoDate: string): { start: Date; end: Date } {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const start = crDateTimeToUtc(year, month - 1, day, 0);
+  const end = new Date(start.getTime() + 24 * 3600 * 1000);
+  return { start, end };
+}
+
 /** Franjas horarias del próximo día de feria (7am a 4pm, de hora en hora). */
 export function getPickupSlots(pickupDay: number, now: Date = new Date()): PickupSlot[] {
   const { year, month, day } = nextPickupDayCR(now, pickupDay);

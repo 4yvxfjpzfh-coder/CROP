@@ -49,6 +49,24 @@ export async function makeFarmer(
   return { ok: true };
 }
 
+/** Guarda el número de mesa/puesto del agricultor en la feria (texto libre, ej. "3" o "A3"). */
+export async function updateTableNumber(userId: string, tableNumber: string): Promise<FarmerActionResult> {
+  try {
+    await requireAdmin("throw");
+  } catch (err) {
+    if (err instanceof AdminAccessError) return { ok: false, error: err.message };
+    throw err;
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { tableNumber: tableNumber.trim() || null },
+  });
+
+  revalidatePath("/admin/agricultores");
+  return { ok: true };
+}
+
 /** Quita el rol FARMER (vuelve a USER). No borra ni desvincula sus productos. */
 export async function removeFarmerRole(userId: string): Promise<FarmerActionResult> {
   let actor;

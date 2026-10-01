@@ -29,6 +29,25 @@ async function guard(): Promise<SettingsResult | null> {
 // no había forma de saber por qué. Cada sección ahora es su propio form con
 // su propio botón inmediato debajo, y su propia acción que solo toca su
 // campo -- así una sección nunca puede pisar el valor de otra por accidente.
+//
+// runUpsert además atrapa cualquier excepción (ej. la DB de Neon se durmió
+// y tarda en responder) y la devuelve como texto en vez de dejar que se
+// pierda en un error genérico de Next.js: así, si esto vuelve a fallar en
+// producción, el mensaje de error real queda visible en la pantalla del
+// admin en vez de que parezca que "no pasó nada".
+async function runUpsert(data: Record<string, unknown>): Promise<SettingsResult> {
+  try {
+    await prisma.siteSettings.upsert({
+      where: { id: "default" },
+      update: data,
+      create: { id: "default", ...data },
+    });
+  } catch (err) {
+    return { ok: false, error: `No se pudo guardar: ${err instanceof Error ? err.message : String(err)}` };
+  }
+  refreshHome();
+  return { ok: true };
+}
 
 export async function saveHeadlineSubtext(
   _prev: SettingsResult | null,
@@ -40,14 +59,7 @@ export async function saveHeadlineSubtext(
   const homeHeadline = String(formData.get("homeHeadline") ?? "").trim();
   const homeSubtext = String(formData.get("homeSubtext") ?? "").trim();
 
-  await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: { homeHeadline: homeHeadline || null, homeSubtext: homeSubtext || null },
-    create: { id: "default", homeHeadline: homeHeadline || null, homeSubtext: homeSubtext || null },
-  });
-
-  refreshHome();
-  return { ok: true };
+  return runUpsert({ homeHeadline: homeHeadline || null, homeSubtext: homeSubtext || null });
 }
 
 export async function saveBackgroundPhoto(
@@ -59,14 +71,7 @@ export async function saveBackgroundPhoto(
 
   const homeBackgroundUrl = String(formData.get("homeBackgroundUrl") ?? "").trim();
 
-  await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: { homeBackgroundUrl: homeBackgroundUrl || null },
-    create: { id: "default", homeBackgroundUrl: homeBackgroundUrl || null },
-  });
-
-  refreshHome();
-  return { ok: true };
+  return runUpsert({ homeBackgroundUrl: homeBackgroundUrl || null });
 }
 
 export async function saveHeroImage(
@@ -78,14 +83,7 @@ export async function saveHeroImage(
 
   const heroImageUrl = String(formData.get("heroImageUrl") ?? "").trim();
 
-  await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: { heroImageUrl: heroImageUrl || null },
-    create: { id: "default", heroImageUrl: heroImageUrl || null },
-  });
-
-  refreshHome();
-  return { ok: true };
+  return runUpsert({ heroImageUrl: heroImageUrl || null });
 }
 
 export async function saveBrandTextColor(
@@ -105,14 +103,7 @@ export async function saveBrandTextColor(
   const brandTextColor =
     brandTextColorRaw && brandTextColorRaw.toLowerCase() !== "#1f2a22" ? brandTextColorRaw : null;
 
-  await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: { brandTextColor },
-    create: { id: "default", brandTextColor },
-  });
-
-  refreshHome();
-  return { ok: true };
+  return runUpsert({ brandTextColor });
 }
 
 export async function addHomeFruit(
@@ -127,10 +118,14 @@ export async function addHomeFruit(
   const blurb = String(formData.get("blurb") ?? "").trim();
   if (!name || !imageUrl) return { ok: false, error: "Nombre e imagen son obligatorios" };
 
-  const agg = await prisma.homeFruit.aggregate({ _max: { position: true } });
-  await prisma.homeFruit.create({
-    data: { name, imageUrl, blurb, position: (agg._max.position ?? 0) + 1 },
-  });
+  try {
+    const agg = await prisma.homeFruit.aggregate({ _max: { position: true } });
+    await prisma.homeFruit.create({
+      data: { name, imageUrl, blurb, position: (agg._max.position ?? 0) + 1 },
+    });
+  } catch (err) {
+    return { ok: false, error: `No se pudo guardar: ${err instanceof Error ? err.message : String(err)}` };
+  }
 
   refreshHome();
   return { ok: true };
@@ -140,7 +135,12 @@ export async function removeHomeFruit(id: string): Promise<SettingsResult> {
   const denied = await guard();
   if (denied) return denied;
 
-  await prisma.homeFruit.delete({ where: { id } });
+  try {
+    await prisma.homeFruit.delete({ where: { id } });
+  } catch (err) {
+    return { ok: false, error: `No se pudo quitar: ${err instanceof Error ? err.message : String(err)}` };
+  }
+
   refreshHome();
   return { ok: true };
 }

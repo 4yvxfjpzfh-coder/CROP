@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
 import { MakeFarmerForm } from "./make-farmer-form";
 import { RemoveFarmerButton } from "./remove-farmer-button";
+import { TableNumberField } from "./table-number-field";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ export default async function AdminFarmersPage() {
       id: true,
       email: true,
       name: true,
+      tableNumber: true,
       _count: { select: { farmerProducts: true } },
     },
   });
@@ -42,13 +44,14 @@ export default async function AdminFarmersPage() {
       ) : (
         <ul className="divide-y divide-cream-200 border-y border-cream-200">
           {farmers.map((f) => (
-            <li key={f.id} className="flex items-center gap-4 py-3">
+            <li key={f.id} className="flex flex-wrap items-center gap-4 py-3">
               <span className="flex-1 font-[family-name:var(--font-form)] text-sm text-olive">
                 {f.name ?? f.email}
                 <span className="ml-2 text-xs text-stone">
                   {f.email} · {f._count.farmerProducts} {t["admin.agricultores.productos_suffix"]}
                 </span>
               </span>
+              <TableNumberField userId={f.id} initialValue={f.tableNumber ?? ""} texts={t} />
               <RemoveFarmerButton userId={f.id} texts={t} />
             </li>
           ))}

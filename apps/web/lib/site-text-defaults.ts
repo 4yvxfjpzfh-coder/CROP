@@ -362,6 +362,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
     fields: [
       { key: "admin.pedidos.heading", label: "Título de la página", default: "Apartados" },
       { key: "admin.pedidos.subtext", label: "Subtítulo de la página", default: "Apartados activos y recogidos, en una carpeta por cliente. Los cancelados o vencidos no se muestran acá.", multiline: true },
+      { key: "admin.pedidos.exportar_link", label: "Enlace \"Exportar para imprimir\"", default: "Exportar para imprimir" },
       { key: "admin.pedidos.empty", label: "Aviso sin apartados", default: "Todavía no hay apartados." },
       { key: "admin.pedidos.cliente_prefix", label: "Prefijo \"Cliente #\"", default: "Cliente" },
       { key: "admin.pedidos.creado_prefix", label: "Texto antes de la fecha de creación", default: "creado" },
@@ -392,6 +393,9 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "admin.agricultores.ninguno", label: "Aviso sin agricultores", default: "Ninguno todavía." },
       { key: "admin.agricultores.productos_suffix", label: "Sufijo \"producto(s)\"", default: "producto(s)" },
       { key: "admin.agricultores.quitar_rol", label: "Botón \"Quitar rol\"", default: "Quitar rol" },
+      { key: "admin.agricultores.mesa_label", label: "Etiqueta campo mesa", default: "Mesa" },
+      { key: "admin.agricultores.mesa_placeholder", label: "Placeholder campo mesa", default: "Sin asignar" },
+      { key: "admin.agricultores.mesa_guardar", label: "Botón guardar mesa", default: "Guardar" },
       { key: "admin.agricultores.seguro", label: "Confirmación ¿Seguro?", default: "¿Seguro?" },
       { key: "admin.agricultores.si_quitar", label: "Botón \"Sí, quitar\"", default: "Sí, quitar" },
       { key: "admin.agricultores.cancelar", label: "Botón Cancelar", default: "Cancelar" },

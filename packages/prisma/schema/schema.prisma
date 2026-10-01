@@ -54,6 +54,12 @@ model User {
   lockedUntil      DateTime?
   // Consentimiento de Política de Privacidad + Términos aceptado en el registro.
   consentedAt   DateTime?
+  // Número de mesa/puesto del agricultor en la feria (rol FARMER). Lo asigna
+  // el admin a mano desde /admin/agricultores cuando organiza el espacio
+  // físico -- queda vacío hasta entonces. Se usa en la hoja de pedidos para
+  // imprimir (/admin/pedidos/exportar), para que quien recoge sepa en qué
+  // mesa buscar cada producto.
+  tableNumber   String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
@@ -59,9 +60,17 @@ export default async function AdminOrdersPage() {
 
   return (
     <section>
-      <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        {t["admin.pedidos.heading"]}
-      </h1>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
+          {t["admin.pedidos.heading"]}
+        </h1>
+        <Link
+          href="/admin/pedidos/exportar"
+          className="border border-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:bg-cream-200"
+        >
+          {t["admin.pedidos.exportar_link"]}
+        </Link>
+      </div>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         {t["admin.pedidos.subtext"]}
       </p>
