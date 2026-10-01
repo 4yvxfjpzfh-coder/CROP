@@ -4,7 +4,7 @@ import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { DeleteAccount } from "./delete-account";
-import { signOutAction } from "./actions";
+import { signOutAction } from "@/lib/auth-actions";
 
 export const dynamic = "force-dynamic";
 

@@ -6,10 +6,6 @@ import { auth, signOut } from "@/auth";
 
 export type DeleteAccountResult = { ok: false; error: string };
 
-export async function signOutAction(): Promise<void> {
-  await signOut({ redirectTo: "/" });
-}
-
 /**
  * "Eliminar mi cuenta" — requerido por las políticas de Apple.
  *

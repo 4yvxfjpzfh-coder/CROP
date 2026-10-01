@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { linkifyText } from "@/components/linkify-text";
+import { signOutAction } from "@/lib/auth-actions";
 import { confirmConsent } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -43,12 +43,14 @@ export default async function WelcomePage() {
         </button>
       </form>
 
-      <Link
-        href="/api/auth/signout"
-        className="text-center text-xs text-neutral-500 underline underline-offset-2"
-      >
-        {t["welcome.decline"]}
-      </Link>
+      <form action={signOutAction}>
+        <button
+          type="submit"
+          className="w-full text-center text-xs text-neutral-500 underline underline-offset-2"
+        >
+          {t["welcome.decline"]}
+        </button>
+      </form>
     </main>
   );
 }

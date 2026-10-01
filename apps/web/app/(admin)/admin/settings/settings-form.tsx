@@ -48,6 +48,9 @@ function HeadlineSubtextSection({
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4 border-b border-cream-200 pb-8">
       <div>
+        <h3 className="mb-2 font-[family-name:var(--font-display)] text-lg text-olive">
+          1. Título y texto de la portada
+        </h3>
         <label className={label} htmlFor="homeHeadline">
           Título principal del home
         </label>
@@ -89,7 +92,13 @@ function BackgroundPhotoSection({ initialUrl }: { initialUrl: string }) {
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4 border-b border-cream-200 py-8">
       <div>
-        <label className={label}>Foto de fondo (inicio y catálogo)</label>
+        <h3 className="mb-1 font-[family-name:var(--font-display)] text-lg text-olive">
+          3. Fondo detrás de todo
+        </h3>
+        <p className="mb-2 font-[family-name:var(--font-form)] text-xs text-stone">
+          La textura/color que cubre TODA la pantalla de fondo, de lado a
+          lado, en el inicio y el catálogo. No es la foto grande del hero.
+        </p>
         <PhotoUpload onPhotoUrl={setUrl} />
         <div className="mt-3 flex flex-col gap-2">
           <label className={label} htmlFor="homeBackgroundUrl">
@@ -106,8 +115,8 @@ function BackgroundPhotoSection({ initialUrl }: { initialUrl: string }) {
         </div>
         <p className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
           Dejalo vacío para volver al patrón de hojas por defecto. Después de
-          subir o pegar la foto, tocá &quot;Guardar foto de fondo&quot; acá
-          abajo — subir la foto sola todavía no la deja puesta.
+          subir o pegar la foto, tocá &quot;Guardar fondo&quot; acá abajo —
+          subir la foto sola todavía no la deja puesta.
         </p>
       </div>
 
@@ -120,7 +129,7 @@ function BackgroundPhotoSection({ initialUrl }: { initialUrl: string }) {
 
       <StatusMessage state={state} />
       <button type="submit" disabled={pending} className={saveBtn}>
-        {pending ? "Guardando…" : "Guardar foto de fondo"}
+        {pending ? "Guardando…" : "Guardar fondo"}
       </button>
     </form>
   );
@@ -135,7 +144,13 @@ function HeroImageSection({ initialUrl }: { initialUrl: string }) {
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4 border-b border-cream-200 py-8">
       <div>
-        <label className={label}>Foto grande del hero (junto al título)</label>
+        <h3 className="mb-1 font-[family-name:var(--font-display)] text-lg text-olive">
+          2. Foto principal (lo primero que se ve, junto al título)
+        </h3>
+        <p className="mb-2 font-[family-name:var(--font-form)] text-xs text-stone">
+          Esta es la foto grande, cuadrada, al lado del título de la
+          portada — la primera imagen que ve cualquiera que abre la app.
+        </p>
         <PhotoUpload onPhotoUrl={setUrl} />
         <div className="mt-3 flex flex-col gap-2">
           <label className={label} htmlFor="heroImageUrl">
@@ -181,8 +196,11 @@ function BrandColorSection({ initialColor }: { initialColor: string }) {
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4 pt-8">
       <div>
+        <h3 className="mb-2 font-[family-name:var(--font-display)] text-lg text-olive">
+          4. Color de letra de toda la marca
+        </h3>
         <label className={label} htmlFor="brandTextColor">
-          Color de letra de toda la marca
+          Color
         </label>
         <div className="flex items-center gap-3">
           <input
@@ -247,8 +265,8 @@ export function SettingsForm({
   return (
     <div className="flex flex-col">
       <HeadlineSubtextSection initialHeadline={initialHeadline} initialSubtext={initialSubtext} />
-      <BackgroundPhotoSection initialUrl={initialUrl} />
       <HeroImageSection initialUrl={initialHeroImageUrl} />
+      <BackgroundPhotoSection initialUrl={initialUrl} />
       <BrandColorSection initialColor={initialBrandTextColor} />
     </div>
   );

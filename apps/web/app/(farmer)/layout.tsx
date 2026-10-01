@@ -2,13 +2,14 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { getSiteTexts } from "@/lib/site-text";
+import { signOutAction } from "@/lib/auth-actions";
 
 export default async function FarmerLayout({ children }: { children: ReactNode }) {
   const [actor, t] = await Promise.all([requireFarmer("redirect"), getSiteTexts()]);
 
   return (
     <div className="flex min-h-dvh bg-cream font-[family-name:var(--font-form)] text-olive">
-      <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream">
+      <aside className="flex w-64 shrink-0 flex-col justify-between bg-olive px-6 py-8 text-cream print:hidden">
         <div>
           <Link href="/agricultor" className="block">
             <span className="font-[family-name:var(--font-display)] text-2xl uppercase tracking-tight">
@@ -32,9 +33,14 @@ export default async function FarmerLayout({ children }: { children: ReactNode }
           <Link href="/" className="mt-2 block text-cream underline underline-offset-4">
             {t["admin.nav.salir_panel"]}
           </Link>
-          <Link href="/api/auth/signout" className="mt-1 block text-cream underline underline-offset-4">
-            {t["admin.nav.cerrar_sesion"]}
-          </Link>
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              className="mt-1 block w-full text-left text-cream underline underline-offset-4"
+            >
+              {t["admin.nav.cerrar_sesion"]}
+            </button>
+          </form>
         </div>
       </aside>
 

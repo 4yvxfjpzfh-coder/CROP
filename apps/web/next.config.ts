@@ -23,7 +23,23 @@ const nextConfig: NextConfig = {
   // (ej. el celular, usando la IP que muestra "pnpm dev" como "Network").
   allowedDevOrigins: ["192.168.0.145", "192.168.41.2"],
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // El panel de admin/agricultor cambia seguido (textos, fotos, precios)
+      // y hay reportes de ver una versión vieja pegada ahí por días, incluso
+      // después de desplegar el arreglo -- probablemente la cache del
+      // WebView nativo (Capacitor) o de algún proxy intermedio, ya que estas
+      // rutas ya son "force-dynamic" del lado de Next. Este header no deja
+      // lugar a dudas: nadie en el camino debe guardar una copia.
+      {
+        source: "/admin/:path*",
+        headers: [{ key: "Cache-Control", value: "no-store, must-revalidate" }],
+      },
+      {
+        source: "/agricultor/:path*",
+        headers: [{ key: "Cache-Control", value: "no-store, must-revalidate" }],
+      },
+    ];
   },
 };
 

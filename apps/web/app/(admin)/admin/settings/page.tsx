@@ -31,7 +31,7 @@ export default async function AdminSettingsPage() {
       />
 
       <h2 className="mb-3 mt-12 font-[family-name:var(--font-display)] text-xl text-olive">
-        Frutas del carrusel del home
+        5. Fotos del carrusel (las frutas que se deslizan abajo del todo)
       </h2>
       <p className="mb-4 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         Si no agregás ninguna, el home usa el set por defecto (cacao, café,

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
+import { signOutAction } from "@/lib/auth-actions";
 import { AdminNav } from "./admin/admin-nav";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
@@ -30,9 +31,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <Link href="/" className="mt-2 block text-cream underline underline-offset-4">
             {t["admin.nav.salir_panel"]}
           </Link>
-          <Link href="/api/auth/signout" className="mt-1 block text-cream underline underline-offset-4">
-            {t["admin.nav.cerrar_sesion"]}
-          </Link>
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              className="mt-1 block w-full text-left text-cream underline underline-offset-4"
+            >
+              {t["admin.nav.cerrar_sesion"]}
+            </button>
+          </form>
         </div>
       </aside>
 
