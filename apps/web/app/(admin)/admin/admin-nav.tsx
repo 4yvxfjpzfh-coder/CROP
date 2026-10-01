@@ -11,6 +11,7 @@ export function AdminNav({ texts: t }: { texts: Record<string, string> }) {
     { href: "/admin/agricultores", label: t["admin.nav.agricultores"] },
     { href: "/admin/catalogo", label: t["admin.nav.catalogo"] },
     { href: "/admin/pedidos", label: t["admin.nav.apartados"] },
+    { href: "/admin/pedidos/exportar", label: "Hoja de feria" },
     { href: "/admin/puntos-recogida", label: t["admin.nav.puntos_recogida"] },
     { href: "/admin/settings", label: t["admin.nav.apariencia"] },
     { href: "/admin/textos", label: t["admin.nav.textos"] },
@@ -20,7 +21,11 @@ export function AdminNav({ texts: t }: { texts: Record<string, string> }) {
   return (
     <nav className="mt-10 flex flex-col gap-1 text-sm">
       {links.map((link) => {
-        const active = pathname === link.href || pathname.startsWith(link.href + "/");
+        // Gana el link más específico: /admin/pedidos/exportar no marca también /admin/pedidos.
+        const matches = (href: string) => pathname === href || pathname.startsWith(href + "/");
+        const active =
+          matches(link.href) &&
+          !links.some((other) => other.href.length > link.href.length && matches(other.href));
         return (
           <Link
             key={link.href}
