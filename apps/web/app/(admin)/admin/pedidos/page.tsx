@@ -7,6 +7,7 @@ import { formatPickupDeadline } from "@/lib/format";
 import { formatQuantity } from "@/lib/units";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 import { markPickedUp } from "./actions";
+import { RefreshButton } from "./refresh-button";
 
 export const dynamic = "force-dynamic";
 
@@ -69,12 +70,15 @@ export default async function AdminOrdersPage() {
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-olive">
           {t["admin.pedidos.heading"]}
         </h1>
-        <Link
-          href="/admin/pedidos/exportar"
-          className="border border-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:bg-cream-200"
-        >
-          {t["admin.pedidos.exportar_link"]}
-        </Link>
+        <div className="flex gap-2">
+          <RefreshButton />
+          <Link
+            href="/admin/pedidos/exportar"
+            className="border border-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-olive hover:bg-cream-200"
+          >
+            {t["admin.pedidos.exportar_link"]}
+          </Link>
+        </div>
       </div>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         {t["admin.pedidos.subtext"]}
