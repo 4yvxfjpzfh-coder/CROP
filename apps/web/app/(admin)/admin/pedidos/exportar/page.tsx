@@ -8,15 +8,27 @@ export const dynamic = "force-dynamic";
 
 type OrderRow = Awaited<ReturnType<typeof loadOrders>>[number];
 
+// Semana de lunes a domingo (hora CR) que contiene `date`.
+function weekRange(date: string) {
+  const [y, m, d] = date.split("-").map(Number);
+  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); // 0 = domingo
+  const monday = new Date(Date.UTC(y, m - 1, d - ((dow + 6) % 7)));
+  const sunday = new Date(monday.getTime() + 6 * 24 * 3600 * 1000);
+  const iso = (x: Date) => x.toISOString().slice(0, 10);
+  const { start } = crDayRangeUtc(iso(monday));
+  const { end } = crDayRangeUtc(iso(sunday));
+  return { start, end, mondayIso: iso(monday), sundayIso: iso(sunday) };
+}
+
 async function loadOrders(pickupPointId: string, date: string) {
-  const { start, end } = crDayRangeUtc(date);
+  const { start, end } = weekRange(date);
   return prisma.order.findMany({
     where: {
       status: { in: ["RESERVED", "PICKED_UP"] },
       pickupBy: { gte: start, lt: end },
       items: { some: { product: { pickupPointId } } },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { pickupBy: "asc" },
     include: {
       user: { select: { customerNumber: true, name: true, email: true } },
       items: {
@@ -70,7 +82,8 @@ export default async function ExportarPedidosPage({
         Exportar pedidos para imprimir
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone print:hidden">
-        Elegí la feria y el día de recogida para armar la hoja. Después tocá
+        Elegí la feria y cualquier día de la semana (se toma de lunes a
+        domingo) para armar la hoja. Después tocá
         &quot;Imprimir&quot; — el navegador se encarga del resto.
       </p>
 
@@ -98,7 +111,7 @@ export default async function ExportarPedidosPage({
         </div>
         <div>
           <label className="mb-1 block font-[family-name:var(--font-form)] text-sm text-stone" htmlFor="date">
-            Día de recogida
+            Semana (cualquier día)
           </label>
           <input
             id="date"
@@ -121,23 +134,24 @@ export default async function ExportarPedidosPage({
       {orders && (
         <>
           <h2 className="mb-4 font-[family-name:var(--font-display)] text-xl text-olive">
-            {selectedPoint?.shortName} — {date}
+            {selectedPoint?.shortName} — semana del {weekRange(date!).mondayIso} al {weekRange(date!).sundayIso}
           </h2>
 
           {orders.length === 0 ? (
             <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-              No hay pedidos para esa feria en ese día.
+              No hay pedidos para esa feria en esa semana.
             </p>
           ) : (
             <table className="w-full border-collapse font-[family-name:var(--font-form)] text-sm">
               <thead>
                 <tr className="border-b-2 border-olive text-left">
                   <th className="py-2 pr-3">Cliente</th>
-                  <th className="py-2 pr-3">Desglose por agricultor (mesa)</th>
+                  <th className="py-2 pr-3">Mesa</th>
                   <th className="py-2 pr-3">Total</th>
-                  <th className="py-2 pr-3">Hora estipulada</th>
+                  <th className="py-2 pr-3">Desglose por agricultor</th>
                   <th className="py-2 pr-3">Recogido</th>
                   <th className="py-2 pr-3">Entregado</th>
+                  <th className="py-2 pr-3">Hora de entrega</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,6 +161,8 @@ export default async function ExportarPedidosPage({
                   const scheduled = new Date(order.pickupBy.getTime() - PICKUP_GRACE_HOURS * 3600 * 1000);
                   const scheduledLabel = scheduled.toLocaleString("es-CR", {
                     timeZone: "America/Costa_Rica",
+                    weekday: "short",
+                    day: "numeric",
                     hour: "numeric",
                     minute: "2-digit",
                   });
@@ -157,18 +173,22 @@ export default async function ExportarPedidosPage({
                       </td>
                       <td className="py-2 pr-3">
                         {breakdown.map((b, i) => (
-                          <div key={i}>
-                            {b.label}
-                            {b.tableNumber ? ` (Mesa ${b.tableNumber})` : ""}: {colones(b.cents)}
-                          </div>
+                          <div key={i}>{b.tableNumber ?? "—"}</div>
                         ))}
                       </td>
                       <td className="py-2 pr-3 font-medium">{colones(totalCents)}</td>
-                      <td className="py-2 pr-3">{scheduledLabel}</td>
+                      <td className="py-2 pr-3">
+                        {breakdown.map((b, i) => (
+                          <div key={i}>
+                            {b.label}: {colones(b.cents)}
+                          </div>
+                        ))}
+                      </td>
                       <td className="py-2 pr-3 text-center text-base">☐</td>
                       <td className="py-2 pr-3 text-center text-base">
                         {order.status === "PICKED_UP" ? "✓" : "☐"}
                       </td>
+                      <td className="py-2 pr-3">{scheduledLabel}</td>
                     </tr>
                   );
                 })}
