@@ -77,7 +77,7 @@ export default async function MyReservationsPage() {
             <h1 className="text-2xl font-semibold text-paper">{t["apartados.heading"]}</h1>
             {customer && (
               <p className="mt-1 text-sm text-metal">
-                {t["apartados.codigo_cliente_prefix"]} #{customer.customerNumber}
+                {t["apartados.codigo_cliente_prefix"]} #{String(customer.customerNumber).padStart(3, "0")}
               </p>
             )}
           </div>

@@ -153,7 +153,7 @@ export default async function ExportarPedidosPage({
                   return (
                     <tr key={order.id} className="border-b border-cream-200 align-top">
                       <td className="py-2 pr-3">
-                        #{order.user.customerNumber} {order.user.name ?? order.user.email ?? ""}
+                        #{String(order.user.customerNumber).padStart(3, "0")} {order.user.name ?? order.user.email ?? ""}
                       </td>
                       <td className="py-2 pr-3">
                         {breakdown.map((b, i) => (

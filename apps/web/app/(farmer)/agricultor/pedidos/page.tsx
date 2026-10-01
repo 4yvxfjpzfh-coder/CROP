@@ -21,19 +21,22 @@ export default async function FarmerOrdersPage() {
 
   // Pedidos que incluyen al menos un producto de este agricultor. Se muestra
   // solo la info de SUS renglones, no de otros productos que compartan orden.
-  const orders = await prisma.order.findMany({
-    where: { items: { some: { product: { farmerId: actor.id } } } },
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: { select: { name: true, email: true } },
-      items: {
-        where: { product: { farmerId: actor.id } },
-        include: {
-          product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
+  const [orders, linkedProductCount] = await Promise.all([
+    prisma.order.findMany({
+      where: { items: { some: { product: { farmerId: actor.id } } } },
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { name: true, email: true, customerNumber: true } },
+        items: {
+          where: { product: { farmerId: actor.id } },
+          include: {
+            product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.product.count({ where: { farmerId: actor.id } }),
+  ]);
 
   return (
     <section>
@@ -43,6 +46,14 @@ export default async function FarmerOrdersPage() {
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         {t["agricultor.pedidos.subtext"]}
       </p>
+
+      {linkedProductCount === 0 && (
+        <p className="mb-4 border-l-2 border-gold bg-gold/10 px-3 py-2 font-[family-name:var(--font-form)] text-sm text-olive">
+          Ningún producto del catálogo está vinculado a tu cuenta todavía. El
+          administrador tiene que editar tus productos y seleccionarte como
+          agricultor para que aparezcan tus pedidos acá.
+        </p>
+      )}
 
       {orders.length === 0 ? (
         <p className="font-[family-name:var(--font-form)] text-sm text-stone">
@@ -65,7 +76,7 @@ export default async function FarmerOrdersPage() {
                   <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
                 </div>
                 <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
-                  {order.user.name ?? order.user.email ?? t["agricultor.pedidos.cliente_default"]} ·{" "}
+                  #{String(order.user.customerNumber).padStart(3, "0")} {order.user.name ?? order.user.email ?? t["agricultor.pedidos.cliente_default"]} ·{" "}
                   {colones(order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0))}
                   {order.items[0]?.product.pickupPoint?.name
                     ? ` · ${order.items[0].product.pickupPoint.name}`

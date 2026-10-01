@@ -21,14 +21,19 @@ export default async function AdminOrdersPage() {
     EXPIRED: t["admin.pedidos.status_expired"],
   };
 
-  // Cancelados y vencidos no se muestran acá — siguen en la base, solo se
-  // sacan de esta lista para no acumular ruido.
+  // Se muestran todos los RESERVED (con y sin pickupBy en el futuro) para
+  // que el admin no pierda visibilidad si el cron todavía no los marcó como
+  // EXPIRED. Los PICKED_UP de los últimos 30 días también aparecen.
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 3600 * 1000);
   const orders = await prisma.order.findMany({
     where: {
-      OR: [{ status: "PICKED_UP" }, { status: "RESERVED", pickupBy: { gte: new Date() } }],
+      OR: [
+        { status: "RESERVED" },
+        { status: "PICKED_UP", updatedAt: { gte: thirtyDaysAgo } },
+      ],
     },
     orderBy: { createdAt: "desc" },
-    take: 200,
+    take: 250,
     include: {
       user: { select: { id: true, name: true, email: true, customerNumber: true } },
       items: {
@@ -84,7 +89,7 @@ export default async function AdminOrdersPage() {
           {customerGroups.map(([userId, group]) => (
             <details key={userId} open className="border border-cream-200">
               <summary className="cursor-pointer bg-cream-200/40 px-4 py-3 font-[family-name:var(--font-form)] text-sm font-medium text-olive">
-                {t["admin.pedidos.cliente_prefix"]} #{group.customerNumber} — {group.label} ({group.orders.length})
+                {t["admin.pedidos.cliente_prefix"]} #{String(group.customerNumber).padStart(3, "0")} — {group.label} ({group.orders.length})
               </summary>
               <ul className="flex flex-col gap-3 p-4">
                 {group.orders.map((order) => {

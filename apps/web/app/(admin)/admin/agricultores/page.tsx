@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
@@ -23,6 +24,9 @@ export default async function AdminFarmersPage() {
     },
   });
 
+  // Para saber cuántos productos NO tienen agricultor vinculado todavía.
+  const unlinkedProductCount = await prisma.product.count({ where: { farmerId: null, isActive: true } });
+
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
@@ -31,6 +35,18 @@ export default async function AdminFarmersPage() {
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         {t["admin.agricultores.subtext"]}
       </p>
+
+      {unlinkedProductCount > 0 && (
+        <p className="mb-6 border-l-2 border-sienna bg-sienna/10 px-3 py-2 font-[family-name:var(--font-form)] text-sm text-sienna">
+          Hay {unlinkedProductCount} producto{unlinkedProductCount !== 1 ? "s" : ""} activo
+          {unlinkedProductCount !== 1 ? "s" : ""} sin agricultor vinculado — los agricultores no
+          verán esos pedidos hasta que los vincules.{" "}
+          <Link href="/admin/products" className="underline underline-offset-2">
+            Ir a Productos para vincularlos
+          </Link>
+          .
+        </p>
+      )}
 
       <MakeFarmerForm texts={t} />
 
