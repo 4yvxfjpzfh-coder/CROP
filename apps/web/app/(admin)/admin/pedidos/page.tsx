@@ -80,8 +80,11 @@ export default async function AdminOrdersPage() {
           </Link>
         </div>
       </div>
-      <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
+      <p className="mb-2 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         {t["admin.pedidos.subtext"]}
+      </p>
+      <p className="mb-6 font-[family-name:var(--font-form)] text-xs text-stone">
+        {orders.length} pedido{orders.length !== 1 ? "s" : ""} encontrado{orders.length !== 1 ? "s" : ""} · cargado a las {new Date().toLocaleTimeString("es-CR", { timeZone: "America/Costa_Rica", hour: "2-digit", minute: "2-digit", second: "2-digit" })} hora CR
       </p>
 
       {customerGroups.length === 0 ? (
