@@ -154,6 +154,7 @@ export async function FeriaSheet({
                   <th className="py-2 pr-3">Mesa</th>
                   <th className="py-2 pr-3">Total</th>
                   <th className="py-2 pr-3">Desglose por agricultor</th>
+                  <th className="py-2 pr-3">Pago</th>
                   <th className="py-2 pr-3">Recogido</th>
                   <th className="py-2 pr-3">Entregado</th>
                   <th className="py-2 pr-3">Hora de entrega</th>
@@ -188,6 +189,10 @@ export async function FeriaSheet({
                             {b.label}: {colones(b.cents)}
                           </div>
                         ))}
+                      </td>
+                      <td className="whitespace-nowrap py-2 pr-3">
+                        <div>☐ Efectivo</div>
+                        <div>☐ SINPE</div>
                       </td>
                       <td className="py-2 pr-3 text-center text-base">☐</td>
                       <td className="py-2 pr-3 text-center text-base">
