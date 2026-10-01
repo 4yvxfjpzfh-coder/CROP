@@ -26,6 +26,9 @@ export default async function FarmerLayout({ children }: { children: ReactNode }
             <Link href="/agricultor/pedidos" className="border-l-2 border-transparent py-2 pl-3 text-stone hover:text-cream">
               {t["agricultor.nav.pedidos"]}
             </Link>
+            <Link href="/agricultor/hoja" className="border-l-2 border-transparent py-2 pl-3 text-stone hover:text-cream">
+              Hoja de feria
+            </Link>
           </nav>
         </div>
 
