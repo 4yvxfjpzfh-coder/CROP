@@ -12,7 +12,7 @@ export default async function AdminTextosPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Textos
+        {texts["admin.nav.textos"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         Todo el texto que ve un cliente: menús, botones, la portada, el

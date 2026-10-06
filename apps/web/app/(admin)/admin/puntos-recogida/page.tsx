@@ -1,10 +1,12 @@
 import { prisma } from "@crop/prisma";
+import { getSiteTexts } from "@/lib/site-text";
 import { requireAdmin } from "@/lib/admin-guard";
 import { PickupDayForm } from "./pickup-day-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function PuntosRecogidaPage() {
+  const t = await getSiteTexts();
   await requireAdmin("redirect");
 
   const pickupPoints = await prisma.pickupPoint.findMany({
@@ -14,7 +16,7 @@ export default async function PuntosRecogidaPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Puntos de recogida
+        {t["admin.nav.puntos_recogida"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         Cada feria tiene su propio día de recogida — por ejemplo, Santa Ana

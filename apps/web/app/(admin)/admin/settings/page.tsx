@@ -1,4 +1,5 @@
 import { prisma } from "@crop/prisma";
+import { getSiteTexts } from "@/lib/site-text";
 import { requireAdmin } from "@/lib/admin-guard";
 import { SettingsForm } from "./settings-form";
 import { FruitsManager } from "./fruits-manager";
@@ -6,6 +7,7 @@ import { FruitsManager } from "./fruits-manager";
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
+  const t = await getSiteTexts();
   await requireAdmin("redirect");
 
   const [settings, fruits] = await Promise.all([
@@ -16,7 +18,7 @@ export default async function AdminSettingsPage() {
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
-        Apariencia
+        {t["admin.nav.apariencia"]}
       </h1>
       <p className="mb-8 max-w-lg font-[family-name:var(--font-form)] text-sm text-stone">
         Todo lo de acá se aplica en la página de inicio (y la foto de fondo,

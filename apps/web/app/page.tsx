@@ -2,7 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { getSiteSettings, getHomeFruits } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
-import { getLang, translateMany } from "@/lib/i18n";
+import { getLang, translateMany, translateFields } from "@/lib/i18n";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel, type FruitSlide } from "@/components/fruit-carousel";
@@ -16,6 +16,10 @@ export const dynamic = "force-dynamic";
 const DEFAULT_HEADLINE = "El excedente de la feria, antes de que se pierda.";
 const DEFAULT_SUBTEXT =
   "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en la feria del agricultor. Sin pagos en línea.";
+
+const DEFAULT_HEADLINE_EN = "The market's surplus, before it goes to waste.";
+const DEFAULT_SUBTEXT_EN =
+  "Cacao, coffee, banana, pineapple and more — straight from Costa Rican farmers. You reserve what you need online and pick it up at the farmers market. No online payments.";
 
 const DEFAULT_FRUITS: FruitSlide[] = [
   {
@@ -40,6 +44,14 @@ const DEFAULT_FRUITS: FruitSlide[] = [
   },
 ];
 
+/** Textos del carrusel de demo en inglés, por nombre de fruta. */
+const DEFAULT_FRUIT_BLURBS_EN: Record<string, string> = {
+  Cacao: "Ground cacao, just processed on the farm — surplus from the last harvest.",
+  "Café": "Highland coffee, small lots left over from the last shipment.",
+  Banano: "Ripe banana, ready to eat today — surplus price.",
+  "Piña": "Extra sweet pineapples from this week's harvest.",
+};
+
 export default async function Home() {
   const [session, settings, dbFruits, t] = await Promise.all([
     auth(),
@@ -51,8 +63,8 @@ export default async function Home() {
   // El titular y el subtitulo los escribe el admin en espanol: se traducen
   // al idioma elegido y la traduccion queda guardada para la proxima visita.
   const lang = await getLang();
-  const rawHeadline = settings.homeHeadline || DEFAULT_HEADLINE;
-  const rawSubtext = settings.homeSubtext || DEFAULT_SUBTEXT;
+  const rawHeadline = settings.homeHeadline || (lang === "en" ? DEFAULT_HEADLINE_EN : DEFAULT_HEADLINE);
+  const rawSubtext = settings.homeSubtext || (lang === "en" ? DEFAULT_SUBTEXT_EN : DEFAULT_SUBTEXT);
   const tr = await translateMany([rawHeadline, rawSubtext], lang);
   const headline = tr.get(rawHeadline.trim()) ?? rawHeadline;
   const subtext = tr.get(rawSubtext.trim()) ?? rawSubtext;
@@ -60,7 +72,7 @@ export default async function Home() {
   const fruits: FruitSlide[] =
     dbFruits.length > 0
       ? dbFruits.map((f) => ({ name: f.name, img: f.imageUrl, blurb: f.blurb }))
-      : DEFAULT_FRUITS;
+      : DEFAULT_FRUITS.map((f) => ({ ...f, blurb: (lang === "en" && DEFAULT_FRUIT_BLURBS_EN[f.name]) || f.blurb }));
 
   const steps = [
     { n: "1", title: t["home.how.step1.title"], text: t["home.how.step1.text"] },
