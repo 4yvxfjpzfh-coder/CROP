@@ -286,6 +286,7 @@ export function CatalogGrid({
           // z-[60]: por encima del aviso de cookies (z-50, fijo abajo en toda
           // la tienda) — si no, el aviso tapa el botón "Hacer pedido" hasta
           // que alguien lo cierra, y el carrito queda imposible de enviar.
+          data-bottom-bar
           className="fixed inset-x-0 bottom-0 z-[60] border-t border-cream-200 bg-cream/95 px-6 py-4 backdrop-blur"
         >
           <input type="hidden" name="items" value={itemsJson} />

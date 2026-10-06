@@ -347,3 +347,19 @@ model SiteText {
   value     String   @db.Text
   updatedAt DateTime @updatedAt
 }
+
+/// Memoria de traducciones. Cada texto se traduce una sola vez por idioma y
+/// queda guardado acá, así el botón de traducir es instantáneo y gratis a
+/// partir de la segunda vez. Si el texto original cambia, cambia su hash y
+/// se traduce de nuevo solo.
+model Translation {
+  id         String   @id @default(cuid())
+  lang       String // idioma destino, ej. "en"
+  sourceHash String // sha256 del texto original, para no indexar textos largos
+  source     String // texto original (para depurar y para re-traducir)
+  value      String // traducción
+  createdAt  DateTime @default(now())
+
+  @@unique([lang, sourceHash])
+  @@index([lang])
+}

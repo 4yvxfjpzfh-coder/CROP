@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const STORAGE_KEY = "crop-cookie-consent";
+export const COOKIE_CONSENT_KEY = "crop-cookie-consent";
+/** Lo escucha el boton de traducir para subirse mientras el aviso tapa la esquina. */
+export const COOKIE_CONSENT_EVENT = "crop:cookie-consent";
+const STORAGE_KEY = COOKIE_CONSENT_KEY;
 
 /**
  * Aviso de cookies. Crop solo usa las cookies estrictamente necesarias para
@@ -36,10 +39,11 @@ export function CookieConsent({
   function accept() {
     localStorage.setItem(STORAGE_KEY, "accepted");
     setVisible(false);
+    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-cream-200 bg-olive px-6 py-4 text-cream">
+    <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-50 border-t border-cream-200 bg-olive px-6 py-4 text-cream">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 font-[family-name:var(--font-form)] text-sm">
         <p className="max-w-2xl leading-relaxed">
           {body}{" "}

@@ -3,10 +3,11 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang, translateMany } from "@/lib/i18n";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { formatPickupDeadline } from "@/lib/format";
 import { colones, serviceFeeCents } from "../(store)/catalogo/catalog-types";
-import { formatQuantity } from "@/lib/units";
+import { formatOrderLine } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 import { SiteBackground } from "@/components/site-background";
@@ -55,6 +56,14 @@ export default async function MyReservationsPage() {
   // Un solo total para todos los apartados listados, no uno por uno: la
   // suma de todos los productos de todas las órdenes, más un único cargo
   // por servicio del 11% (no uno por cada apartado).
+// Los nombres de producto los escribe el agricultor: se traducen en una
+  // sola llamada para todo el listado y quedan guardados para la próxima.
+  const lang = await getLang();
+  const names = await translateMany(
+    orders.flatMap((o) => o.items.map((i) => i.product.name)),
+    lang,
+  );
+
   const grandSubtotal = orders.reduce(
     (sum, order) => sum + order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0),
     0,
@@ -116,7 +125,7 @@ export default async function MyReservationsPage() {
                       <div className="flex items-baseline justify-between">
                         <span className="text-sm font-medium text-neutral-900">
                           {order.items
-                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                            .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
                             .join(", ")}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />

@@ -2,9 +2,10 @@ import Link from "next/link";
 import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang, translateMany } from "@/lib/i18n";
 import { colones } from "../products/types";
 import { formatPickupDeadline } from "@/lib/format";
-import { formatQuantity } from "@/lib/units";
+import { formatOrderLine } from "@/lib/units";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 import { markPickedUp } from "./actions";
 import { RefreshButton } from "./refresh-button";
@@ -44,6 +45,14 @@ export default async function AdminOrdersPage() {
       },
     },
   });
+
+// Los nombres de producto los escribe el agricultor: se traducen en una
+  // sola llamada para todo el listado y quedan guardados para la próxima.
+  const lang = await getLang();
+  const names = await translateMany(
+    orders.flatMap((o) => o.items.map((i) => i.product.name)),
+    lang,
+  );
 
   // Carpeta por cliente: mantiene el orden general (más reciente primero)
   // porque `orders` ya viene ordenado y Map conserva el orden de inserción.
@@ -108,7 +117,7 @@ export default async function AdminOrdersPage() {
                       <div className="flex items-baseline justify-between gap-4">
                         <span className="font-[family-name:var(--font-form)] text-sm text-olive">
                           {order.items
-                            .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                            .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
                             .join(", ")}
                         </span>
                         <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />

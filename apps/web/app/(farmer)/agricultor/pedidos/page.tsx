@@ -1,9 +1,10 @@
 import { prisma } from "@crop/prisma";
 import { requireFarmer } from "@/lib/farmer-guard";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang, translateMany } from "@/lib/i18n";
 import { colones } from "../productos/types";
 import { formatPickupDeadline } from "@/lib/format";
-import { formatQuantity } from "@/lib/units";
+import { formatOrderLine } from "@/lib/units";
 import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +39,14 @@ export default async function FarmerOrdersPage() {
     prisma.product.count({ where: { farmerId: actor.id } }),
   ]);
 
+// Los nombres de producto los escribe el agricultor: se traducen en una
+  // sola llamada para todo el listado y quedan guardados para la próxima.
+  const lang = await getLang();
+  const names = await translateMany(
+    orders.flatMap((o) => o.items.map((i) => i.product.name)),
+    lang,
+  );
+
   return (
     <section>
       <h1 className="mb-2 font-[family-name:var(--font-display)] text-3xl text-olive">
@@ -70,7 +79,7 @@ export default async function FarmerOrdersPage() {
                 <div className="flex items-baseline justify-between">
                   <span className="font-[family-name:var(--font-form)] text-sm text-olive">
                     {order.items
-                      .map((i) => `${formatQuantity(i.quantity, i.product.unit)} de ${i.product.name}`)
+                      .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
                       .join(", ")}
                   </span>
                   <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { getSiteSettings, getHomeFruits } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang, translateMany } from "@/lib/i18n";
 import { Reveal } from "@/components/motion/reveal";
 import { Press } from "@/components/motion/press";
 import { FruitCarousel, type FruitSlide } from "@/components/fruit-carousel";
@@ -47,8 +48,14 @@ export default async function Home() {
     getSiteTexts(),
   ]);
 
-  const headline = settings.homeHeadline || DEFAULT_HEADLINE;
-  const subtext = settings.homeSubtext || DEFAULT_SUBTEXT;
+  // El titular y el subtitulo los escribe el admin en espanol: se traducen
+  // al idioma elegido y la traduccion queda guardada para la proxima visita.
+  const lang = await getLang();
+  const rawHeadline = settings.homeHeadline || DEFAULT_HEADLINE;
+  const rawSubtext = settings.homeSubtext || DEFAULT_SUBTEXT;
+  const tr = await translateMany([rawHeadline, rawSubtext], lang);
+  const headline = tr.get(rawHeadline.trim()) ?? rawHeadline;
+  const subtext = tr.get(rawSubtext.trim()) ?? rawSubtext;
   const heroImageUrl = settings.heroImageUrl || "/demo/hero-cosecha.svg";
   const fruits: FruitSlide[] =
     dbFruits.length > 0

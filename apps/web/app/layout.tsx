@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { CookieConsent } from "@/components/cookie-consent";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getBrandTextColor, isValidHexColor } from "@/lib/site-settings";
 import "./globals.css";
 
@@ -39,10 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [t, brandTextColor] = await Promise.all([getSiteTexts(), getBrandTextColor()]);
+  const [t, brandTextColor, lang] = await Promise.all([getSiteTexts(), getBrandTextColor(), getLang()]);
   return (
     <html
-      lang="es"
+      lang={lang}
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <head>
@@ -73,6 +75,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         className="flex min-h-full flex-col bg-cream font-[family-name:var(--font-form)] text-olive"
       >
         {children}
+        <LanguageSwitcher lang={lang} />
         <CookieConsent
           body={t["cookie.body"]}
           acceptLabel={t["cookie.accept"]}

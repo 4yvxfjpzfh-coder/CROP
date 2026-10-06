@@ -5,6 +5,7 @@ import { CatalogGrid } from "../catalog-grid";
 import type { CatalogProduct } from "../catalog-types";
 import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
+import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
 
 export const dynamic = "force-dynamic";
@@ -59,7 +60,13 @@ export default async function CatalogoFeriaPage({
     take: 200,
   });
 
-  const items: CatalogProduct[] = products.map((p) => ({
+  // Nombre, descripcion y nota se traducen al idioma elegido (una sola
+  // llamada para todo el catalogo, y queda en memoria para la proxima).
+  // providerName y farmer.name NO se traducen: son nombres propios.
+  const lang = await getLang();
+  const translated = await translateFields(products, ["name", "description", "ripenessNote"], lang);
+
+  const items: CatalogProduct[] = translated.map((p) => ({
     id: p.id,
     name: p.name,
     description: p.description,

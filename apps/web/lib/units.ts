@@ -13,13 +13,25 @@ export function unitSuffix(unit: ProductUnit): string {
   return unit === "KG" ? "kg" : "u";
 }
 
-export function formatQuantity(quantity: number, unit: ProductUnit): string {
+export function formatQuantity(quantity: number, unit: ProductUnit, lang: "es" | "en" = "es"): string {
   if (unit === "KG") {
     const rounded = Math.round(quantity * 100) / 100;
     return `${rounded} kg`;
   }
   const rounded = Math.round(quantity);
+  if (lang === "en") return `${rounded} ${rounded === 1 ? "unit" : "units"}`;
   return `${rounded} ${rounded === 1 ? "unidad" : "unidades"}`;
+}
+
+/** Linea de un pedido: "2 unidades de Tomate" / "2 units of Tomato". */
+export function formatOrderLine(
+  quantity: number,
+  unit: ProductUnit,
+  productName: string,
+  lang: "es" | "en" = "es",
+): string {
+  const connector = lang === "en" ? "of" : "de";
+  return `${formatQuantity(quantity, unit, lang)} ${connector} ${productName}`;
 }
 
 /** Precio unitario mostrado junto al nombre del producto: "₡500" o "₡500 / kg". */
