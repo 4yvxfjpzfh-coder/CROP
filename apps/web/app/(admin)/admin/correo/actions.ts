@@ -2,7 +2,7 @@
 
 import { requireAdmin } from "@/lib/admin-guard";
 import { getSiteTexts } from "@/lib/site-text";
-import { sendLaunchEmail, type SendReport } from "@/lib/marketing-email";
+import { sendLaunchEmail, hasVerifiedSender, type SendReport } from "@/lib/marketing-email";
 
 export type CorreoState = { mensaje?: string; error?: string; reporte?: SendReport };
 
@@ -31,6 +31,14 @@ export async function enviarLanzamiento(_: CorreoState | null, form: FormData): 
       return { error: `No se pudo mandar a ${to}. ¿Esa dirección tiene cuenta en ${brand}?`, reporte };
     return { mensaje: `Prueba enviada a ${to}. Revisá también spam.`, reporte };
   }
+
+  // Envío real. Se bloquea sin remitente propio: mandarle a toda la base
+  // desde el dominio de pruebas de Resend cae en spam y no se puede deshacer.
+  if (!hasVerifiedSender())
+    return {
+      error:
+        "Falta RESEND_FROM_EMAIL con un dominio verificado en Resend. Sin eso el correo sale desde onboarding@resend.dev y cae en spam. La prueba a una dirección sí funciona.",
+    };
 
   // Envío real
   if (String(form.get("confirmacion") ?? "").trim().toUpperCase() !== "ENVIAR")

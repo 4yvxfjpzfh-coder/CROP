@@ -13,6 +13,18 @@ import { sendEmail } from "./email";
  * forma de recuperarse.
  */
 
+/**
+ * ¿Hay un remitente propio configurado?
+ *
+ * Sin RESEND_FROM_EMAIL los correos salen desde onboarding@resend.dev, el
+ * dominio de pruebas de Resend: solo llega a la cuenta dueña de la API key y
+ * lo demás cae en spam. Sirve para probar, no para lanzar.
+ */
+export function hasVerifiedSender() {
+  const from = process.env.RESEND_FROM_EMAIL?.trim();
+  return !!from && !from.includes("resend.dev");
+}
+
 export function siteUrl() {
   return process.env.AUTH_URL || "http://localhost:3000";
 }

@@ -3,7 +3,7 @@ import { getSiteTexts } from "@/lib/site-text";
 import { prisma } from "@crop/prisma";
 import { isAutoTranslateConfigured } from "@/lib/i18n";
 import { LaunchEmailForm } from "./form";
-import { launchEmailHtml, siteUrl } from "@/lib/marketing-email";
+import { launchEmailHtml, siteUrl, hasVerifiedSender } from "@/lib/marketing-email";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +23,7 @@ export default async function CorreoPage() {
   ]);
   const destinatarios = Math.max(0, conCorreo - dadosDeBaja);
   const configurado = !!process.env.RESEND_API_KEY;
+  const remitentePropio = hasVerifiedSender();
 
   const preview = launchEmailHtml({
     name: "Ana",
@@ -42,6 +43,14 @@ export default async function CorreoPage() {
       {!configurado && (
         <p className="mb-6 border-l-4 border-sienna bg-cream-200/60 px-4 py-3 font-[family-name:var(--font-form)] text-sm text-olive">
           Falta <code>RESEND_API_KEY</code>: no se va a mandar nada. La prueba en seco igual funciona.
+        </p>
+      )}
+
+      {configurado && !remitentePropio && (
+        <p className="mb-6 max-w-lg border-l-4 border-sienna bg-cream-200/60 px-4 py-3 font-[family-name:var(--font-form)] text-sm text-olive">
+          Falta <code>RESEND_FROM_EMAIL</code> con un dominio verificado en Resend. Hasta entonces el envío
+          masivo está bloqueado: saldría desde <code>onboarding@resend.dev</code> y caería en spam. La prueba a
+          una dirección sí funciona.
         </p>
       )}
 
