@@ -203,6 +203,25 @@ export async function deleteProduct(
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return { ok: false, error: "El producto no existe" };
 
+  // Si ya tiene apartados no se puede borrar: el historial de pedidos lo
+  // necesita. En ese caso se oculta del catálogo, que es lo que se buscaba.
+  const apartados = await prisma.orderItem.count({ where: { productId: id } });
+  if (apartados > 0) {
+    await prisma.product.update({ where: { id }, data: { isActive: false } });
+    await recordAdminAudit({
+      actor: g.actor,
+      action: "PRODUCT_UPDATE",
+      entityType: "Product",
+      entityId: id,
+      summary: `Ocultó "${existing.name}" (tiene apartados, no se puede borrar)`,
+    });
+    revalidatePath("/admin/products");
+    return {
+      ok: false,
+      error: `"${existing.name}" tiene ${apartados} apartado${apartados === 1 ? "" : "s"}, así que no se puede borrar. Lo ocultamos del catálogo.`,
+    };
+  }
+
   await prisma.product.delete({ where: { id } });
 
   await recordAdminAudit({
