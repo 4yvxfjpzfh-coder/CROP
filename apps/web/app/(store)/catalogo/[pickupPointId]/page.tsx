@@ -7,6 +7,7 @@ import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
+import { productPhotoSrc } from "@/lib/product-photo";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +72,7 @@ export default async function CatalogoFeriaPage({
     name: p.name,
     description: p.description,
     providerName: p.providerName,
-    photoUrl: p.photoUrl,
+    photoUrl: productPhotoSrc(p),
     harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString() : null,
     ripenessNote: p.ripenessNote,
     unit: p.unit,
