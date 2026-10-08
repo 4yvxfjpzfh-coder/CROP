@@ -1,3 +1,5 @@
+import { cache } from "react";
+import { createHash } from "node:crypto";
 import { prisma } from "@crop/prisma";
 import { MAX_PICKUP_WINDOW_HOURS } from "./pickup-window";
 
@@ -42,13 +44,25 @@ export function isValidHexColor(value: string): boolean {
  * el plan gratis de Neon), se usan los valores por defecto en vez de romper
  * la página entera por esto.
  */
-export async function getSiteSettings(): Promise<SiteSettingsData> {
+/**
+ * Las imágenes subidas desde el admin quedan como data URI (cientos de KB).
+ * A las páginas públicas se les da una URL corta que las sirve aparte con
+ * caché; sin esto cada página pesaba y tardaba muchísimo.
+ */
+function lightImage(value: string | null, path: string): string | null {
+  if (!value || !value.startsWith("data:")) return value;
+  const v = createHash("sha1").update(value).digest("hex").slice(0, 10);
+  return `/api/imagen/${path}?v=${v}`;
+}
+
+// cache(): varias partes de la misma página la piden; así se lee una sola vez.
+export const getSiteSettings = cache(async function getSiteSettings(): Promise<SiteSettingsData> {
   try {
     const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
     if (!settings) return DEFAULTS;
     return {
-      homeBackgroundUrl: settings.homeBackgroundUrl,
-      heroImageUrl: settings.heroImageUrl,
+      homeBackgroundUrl: lightImage(settings.homeBackgroundUrl, "ajuste/fondo"),
+      heroImageUrl: lightImage(settings.heroImageUrl, "ajuste/hero"),
       homeHeadline: settings.homeHeadline,
       homeSubtext: settings.homeSubtext,
       pickupWindowHours: Math.min(settings.pickupWindowHours, MAX_PICKUP_WINDOW_HOURS),
@@ -61,7 +75,7 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
     console.error("[site-settings] no se pudo leer SiteSettings:", err);
     return DEFAULTS;
   }
-}
+});
 
 /** Solo la foto de fondo — usado en /catalogo, que no necesita el resto. */
 export async function getHomeBackgroundUrl(): Promise<string | null> {
@@ -81,7 +95,12 @@ export type HomeFruitData = { id: string; name: string; imageUrl: string; blurb:
 export async function getHomeFruits(): Promise<HomeFruitData[]> {
   try {
     const fruits = await prisma.homeFruit.findMany({ orderBy: { position: "asc" } });
-    return fruits.map((f) => ({ id: f.id, name: f.name, imageUrl: f.imageUrl, blurb: f.blurb }));
+    return fruits.map((f) => ({
+      id: f.id,
+      name: f.name,
+      imageUrl: lightImage(f.imageUrl, `fruta/${f.id}`) ?? f.imageUrl,
+      blurb: f.blurb,
+    }));
   } catch (err) {
     console.error("[site-settings] no se pudo leer HomeFruit:", err);
     return [];
