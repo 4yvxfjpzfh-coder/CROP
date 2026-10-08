@@ -7,7 +7,6 @@ import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
-import { productPhotoSrc } from "@/lib/product-photo";
 
 export const dynamic = "force-dynamic";
 
@@ -58,8 +57,16 @@ export default async function CatalogoFeriaPage({
       pickupPoint: { select: { shortName: true } },
       farmer: { select: { name: true } },
     },
+    // La foto puede pesar megas (data URI): no se trae aquí, se sirve aparte
+    // desde /api/foto. Solo hace falta saber cuáles tienen una.
+    omit: { photoUrl: true },
     take: 200,
   });
+  const withPhoto = await prisma.product.findMany({
+    where: { id: { in: products.map((p) => p.id) }, photoUrl: { not: null } },
+    select: { id: true },
+  });
+  const hasPhoto = new Set(withPhoto.map((p) => p.id));
 
   // Nombre, descripcion y nota se traducen al idioma elegido (una sola
   // llamada para todo el catalogo, y queda en memoria para la proxima).
@@ -72,7 +79,7 @@ export default async function CatalogoFeriaPage({
     name: p.name,
     description: p.description,
     providerName: p.providerName,
-    photoUrl: productPhotoSrc(p),
+    photoUrl: hasPhoto.has(p.id) ? `/api/foto/${p.id}?v=${p.updatedAt.getTime()}` : null,
     harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString() : null,
     ripenessNote: p.ripenessNote,
     unit: p.unit,
