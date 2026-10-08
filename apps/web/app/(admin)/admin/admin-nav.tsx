@@ -15,6 +15,7 @@ export function AdminNav({ texts: t }: { texts: Record<string, string> }) {
     { href: "/admin/puntos-recogida", label: t["admin.nav.puntos_recogida"] },
     { href: "/admin/settings", label: t["admin.nav.apariencia"] },
     { href: "/admin/textos", label: t["admin.nav.textos"] },
+    { href: "/admin/correo", label: "Correo de lanzamiento" },
     { href: "/admin/audit", label: t["admin.nav.registro_cambios"] },
   ];
 

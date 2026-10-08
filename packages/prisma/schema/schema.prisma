@@ -54,6 +54,13 @@ model User {
   lockedUntil      DateTime?
   // Consentimiento de Política de Privacidad + Términos aceptado en el registro.
   consentedAt   DateTime?
+  // Baja de los correos de novedades. Null = sigue suscrito. Los correos
+  // transaccionales (recuperar contraseña) se mandan igual: no son marketing,
+  // y darse de baja de ellos dejaría la cuenta sin forma de recuperarse.
+  marketingOptOutAt DateTime?
+  // Token del enlace "darse de baja" del pie de cada correo. Secreto de un
+  // solo propósito: con él se puede dar de baja y nada más.
+  unsubscribeToken  String?   @unique
   // Número de mesa/puesto del agricultor en la feria (rol FARMER). Lo asigna
   // el admin a mano desde /admin/agricultores cuando organiza el espacio
   // físico -- queda vacío hasta entonces. Se usa en la hoja de pedidos para

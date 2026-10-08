@@ -482,6 +482,41 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "admin.photo.subiendo_editada", label: "Aviso subiendo imagen editada", default: "Subiendo imagen editada…" },
     ],
   },
+  {
+    title: "Menores y bajas de correo",
+    fields: [
+      { key: "legal.menores.heading", label: "Título de la política de menores", default: "Política sobre Menores de Edad" },
+      {
+        key: "legal.menores.body",
+        label: "Cuerpo de la política de menores",
+        multiline: true,
+        default:
+          `1. Edad mínima
+Crop está pensado para personas de 13 años en adelante. No dirigimos el servicio a menores de 13 años y no recopilamos a sabiendas datos personales de ellos.
+
+2. Si tenés entre 13 y 18 años
+Podés usar Crop con el permiso de tu madre, padre o encargado. Los apartados son reservas de producto, no compras: no se cobra nada en línea y el pago, si aplica, lo hace la persona adulta al recoger en la feria.
+
+3. Hijos e hijas de agricultores
+Cuando un menor colabora con el puesto de su familia, trabaja siempre bajo la cuenta de la persona adulta responsable. No creamos cuentas a nombre de menores de 13 años.
+
+4. Si creés que un menor de 13 nos dio sus datos
+Escribinos a ldqg33@gmail.com o gboydt@icloud.com y borramos la cuenta y los datos de esa persona. No pedimos ninguna prueba ni ponemos trabas: basta con avisarnos.
+
+5. Qué datos guardamos
+Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No usamos los datos de nadie para publicidad ni para seguimiento, ni los vendemos o compartimos con terceros.`,
+      },
+      { key: "footer.menores", label: "Enlace \"Menores\" en el pie", default: "Menores" },
+      { key: "baja.heading", label: "Título de la página de baja de correos", default: "Darse de baja" },
+      { key: "baja.listo", label: "Aviso de baja hecha", default: "Listo. No vas a recibir más correos de novedades en" },
+      { key: "baja.sigue_transaccional", label: "Aclaración sobre correos que siguen llegando", default: "Los correos necesarios para tu cuenta, como recuperar la contraseña, te van a seguir llegando: sin ellos no podrías recuperar el acceso." },
+      { key: "baja.volver_a_suscribirme", label: "Botón \"Volver a suscribirme\"", default: "Me di de baja sin querer, volver a suscribirme" },
+      { key: "baja.resuscrito", label: "Aviso de resuscripción", default: "Listo, volviste a quedar suscrito a los correos de novedades." },
+      { key: "baja.sin_token", label: "Aviso si falta el token", default: "Este enlace está incompleto. Usá el enlace \"Darme de baja\" que viene al pie del correo." },
+      { key: "baja.token_invalido", label: "Aviso si el token no sirve", default: "Este enlace no es válido o ya venció. Escribinos a soporte y te damos de baja a mano." },
+    ],
+  },
+
 ];
 
 export const SITE_TEXT_DEFAULTS: Record<string, string> = Object.fromEntries(

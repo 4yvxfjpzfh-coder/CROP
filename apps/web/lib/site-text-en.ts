@@ -375,4 +375,29 @@ After uploading you can crop it and adjust brightness/contrast with the editor b
   "admin.photo.ocultar_editor": "Hide photo editor",
   "admin.photo.abrir_editor": "Open photo editor",
   "admin.photo.subiendo_editada": "Uploading edited image…",
+
+  // ── Menores y bajas de correo ─────────────────────────────────────────
+  "legal.menores.heading": "Policy on Minors",
+  "legal.menores.body": `1. Minimum age
+Crop is intended for people aged 13 and over. We do not direct the service at children under 13 and we do not knowingly collect personal data from them.
+
+2. If you are between 13 and 18
+You may use Crop with the permission of your parent or guardian. Reservations set product aside; they are not purchases. Nothing is charged online, and any payment is made by the responsible adult at pickup.
+
+3. Farmers' children
+When a minor helps at their family's stall, they work under the account of the responsible adult. We do not create accounts in the name of children under 13.
+
+4. If you believe a child under 13 gave us their data
+Write to us at ldqg33@gmail.com or gboydt@icloud.com and we will delete that person's account and data. We ask for no proof and put no obstacles in the way: telling us is enough.
+
+5. What data we keep
+The same as for any account: name, email and the reservations made. We do not use anyone's data for advertising or tracking, and we do not sell or share it with third parties.`,
+  "footer.menores": "Minors",
+  "baja.heading": "Unsubscribe",
+  "baja.listo": "Done. You will not receive any more news emails at",
+  "baja.sigue_transaccional": "Emails your account needs, such as password recovery, will still reach you: without them you could not get back in.",
+  "baja.volver_a_suscribirme": "I unsubscribed by mistake, subscribe me again",
+  "baja.resuscrito": "Done, you are subscribed to the news emails again.",
+  "baja.sin_token": "This link is incomplete. Use the “Unsubscribe” link at the bottom of the email.",
+  "baja.token_invalido": "This link is invalid or has expired. Write to support and we will unsubscribe you by hand.",
 };
