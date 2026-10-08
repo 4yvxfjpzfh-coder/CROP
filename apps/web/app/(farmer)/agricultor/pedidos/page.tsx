@@ -36,7 +36,7 @@ export default async function FarmerOrdersPage() {
         },
       },
     }),
-    prisma.product.count({ where: { farmerId: actor.id } }),
+    prisma.product.count({ where: { farmerId: actor.id, deletedAt: null } }),
   ]);
 
 // Los nombres de producto los escribe el agricultor: se traducen en una

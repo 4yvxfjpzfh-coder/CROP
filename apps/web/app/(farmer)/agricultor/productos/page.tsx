@@ -10,7 +10,7 @@ export default async function FarmerProductsPage() {
 
   const [products, pickupPoints, texts] = await Promise.all([
     prisma.product.findMany({
-      where: { farmerId: actor.id },
+      where: { farmerId: actor.id, deletedAt: null },
       orderBy: { createdAt: "desc" },
       include: { pickupPoint: { select: { id: true, shortName: true } } },
     }),

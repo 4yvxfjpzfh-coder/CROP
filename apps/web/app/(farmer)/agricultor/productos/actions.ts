@@ -140,9 +140,16 @@ export async function deleteOwnProduct(
   const id = String(formData.get("id") ?? "");
   if (!id) return { ok: false, error: "Falta el id del producto" };
 
-  const result = await prisma.product.deleteMany({ where: { id, farmerId: g.actor.id } });
-  if (result.count === 0) {
-    return { ok: false, error: "Este producto no te pertenece" };
+  const own = await prisma.product.findFirst({ where: { id, farmerId: g.actor.id }, select: { id: true } });
+  if (!own) return { ok: false, error: "Este producto no te pertenece" };
+
+  // Con apartados no se puede borrar de verdad (el historial los necesita):
+  // se archiva y desaparece de las listas, igual que cuando borra el admin.
+  const apartados = await prisma.orderItem.count({ where: { productId: id } });
+  if (apartados > 0) {
+    await prisma.product.update({ where: { id }, data: { deletedAt: new Date(), isActive: false } });
+  } else {
+    await prisma.product.delete({ where: { id } });
   }
 
   revalidatePath("/agricultor/productos");

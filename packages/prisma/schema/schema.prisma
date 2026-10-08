@@ -130,6 +130,9 @@ model VerificationToken {
 
 model Product {
   id                 String       @id @default(cuid())
+  // Borrado por el admin. Si tenía apartados no se puede borrar de verdad
+  // (el historial los necesita), así que se archiva y se esconde en todo lado.
+  deletedAt          DateTime?
   // businessId es opcional: el admin puede publicar excedente antes de tener
   // registrado al agricultor como Business.
   businessId         String?
