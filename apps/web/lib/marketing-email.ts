@@ -2,6 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { prisma } from "@crop/prisma";
 import { sendEmail } from "./email";
+import { getSiteUrl } from "@/lib/site-url";
 
 /**
  * Correos de novedades (no transaccionales).
@@ -26,7 +27,7 @@ export function hasVerifiedSender() {
 }
 
 export function siteUrl() {
-  return process.env.AUTH_URL || "http://localhost:3000";
+  return getSiteUrl();
 }
 
 /** Token estable por persona. Se crea la primera vez que hace falta. */

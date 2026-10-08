@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.AUTH_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const now = new Date();
   return [
     { url: siteUrl, lastModified: now, changeFrequency: "weekly", priority: 1 },

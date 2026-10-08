@@ -6,6 +6,7 @@ import { getLang } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { getBrandTextColor, isValidHexColor } from "@/lib/site-settings";
 import "./globals.css";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const siteUrl = process.env.AUTH_URL || "http://localhost:3000";
+const siteUrl = getSiteUrl();
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getSiteTexts();
