@@ -1,0 +1,15 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#FBE3E1"/>
+  <!-- fresa -->
+  <path d="M150 250 C85 215 65 150 85 115 C105 85 195 85 215 115 C235 150 215 215 150 250 Z" fill="#D7383B"/>
+  <path d="M150 250 C120 225 100 180 105 130 C100 175 115 220 150 250 Z" fill="#B82A2E"/>
+  <g fill="#F6E27A">
+    <ellipse cx="120" cy="140" rx="4" ry="6"/><ellipse cx="150" cy="130" rx="4" ry="6"/>
+    <ellipse cx="180" cy="140" rx="4" ry="6"/><ellipse cx="135" cy="170" rx="4" ry="6"/>
+    <ellipse cx="165" cy="170" rx="4" ry="6"/><ellipse cx="195" cy="170" rx="4" ry="6"/>
+    <ellipse cx="110" cy="175" rx="4" ry="6"/><ellipse cx="150" cy="200" rx="4" ry="6"/>
+    <ellipse cx="125" cy="205" rx="4" ry="6"/><ellipse cx="178" cy="203" rx="4" ry="6"/>
+  </g>
+  <path d="M150 105 L115 85 L140 95 L130 65 L150 92 L170 65 L160 95 L185 85 Z" fill="#3E8E41"/>
+  <rect x="146" y="50" width="8" height="40" rx="4" fill="#2F6E32"/>
+</svg>

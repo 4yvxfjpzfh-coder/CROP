@@ -8,6 +8,7 @@ export type AdminProduct = {
   // ISO date (yyyy-mm-dd) o null; formato listo para <input type="date">.
   harvestedAt: string | null;
   ripenessNote: string | null;
+  category: string | null;
   unit: "UNIDAD" | "KG";
   quantity: number;
   originalPriceCents: number;

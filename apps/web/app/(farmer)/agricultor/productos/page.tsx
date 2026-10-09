@@ -26,6 +26,7 @@ export default async function FarmerProductsPage() {
         description: p.description,
         providerName: p.providerName,
         photoUrl: p.photoUrl,
+        category: p.category,
         unit: p.unit,
         quantity: p.quantity,
         originalPriceCents: p.originalPriceCents,

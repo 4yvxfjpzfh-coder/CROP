@@ -9,6 +9,8 @@ import { formatPickupDeadline } from "@/lib/format";
 import { schedulePickupReminder, shareContent, hapticTap } from "@/lib/native";
 import { getPickupSlots } from "@/lib/pickup-schedule";
 import { SiteBackground } from "@/components/site-background";
+import { CATEGORIES, type CategoryId } from "@/lib/categories";
+import { CatalogFilters, categoryLabel, matchesSearch } from "./catalog-sections";
 
 function ProductCard({
   product,
@@ -40,7 +42,7 @@ function ProductCard({
   }
 
   return (
-    <div className="flex flex-col border border-cream-200 bg-white">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-sm transition hover:shadow-md">
       <div className="aspect-[3/2] w-full overflow-hidden bg-olive/5">
         {product.photoUrl ? (
           // Fotos con URL arbitraria (pegadas a mano por admin/agricultor): un
@@ -119,7 +121,7 @@ function ProductCard({
                 onChange(Math.min(max, step));
               }}
               disabled={max <= 0}
-              className="w-full bg-olive px-3 py-1.5 font-[family-name:var(--font-form)] text-xs text-cream disabled:opacity-40"
+              className="w-full rounded-full bg-olive px-3 py-2 font-[family-name:var(--font-form)] text-xs text-cream disabled:opacity-40"
             >
               {texts["catalogo.cart.add"]}
             </button>
@@ -167,6 +169,7 @@ export function CatalogGrid({
   mapsUrl,
   pickupDay,
   texts,
+  lang = "es",
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
@@ -175,7 +178,10 @@ export function CatalogGrid({
   mapsUrl?: string;
   pickupDay: number;
   texts: Record<string, string>;
+  lang?: string;
 }) {
+  const [query, setQuery] = useState("");
+  const [section, setSection] = useState<CategoryId | null>(null);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [pickupSlot, setPickupSlot] = useState("");
   const [state, formAction, pending] = useActionState<PlaceOrderResult | null, FormData>(
@@ -206,6 +212,33 @@ export function CatalogGrid({
       return next;
     });
   }
+
+  const counts = useMemo(() => {
+    const c: Partial<Record<CategoryId, number>> = {};
+    for (const p of products) c[p.category] = (c[p.category] ?? 0) + 1;
+    return c;
+  }, [products]);
+  const filtered = products.filter(
+    (p) => (section === null || p.category === section) && matchesSearch(p, query),
+  );
+  // Sin filtros se agrupa por sección; con búsqueda o sección elegida, una
+  // sola grilla con lo que coincide.
+  const grouped = section === null && !query.trim();
+  const groups = grouped
+    ? CATEGORIES.map((c) => ({ id: c.id, items: filtered.filter((p) => p.category === c.id) })).filter(
+        (g) => g.items.length > 0,
+      )
+    : [{ id: null as CategoryId | null, items: filtered }];
+
+  const renderCard = (p: CatalogProduct) => (
+    <ProductCard
+      key={p.id}
+      product={p}
+      quantityInCart={cart[p.id] ?? 0}
+      onChange={(q) => setQuantity(p.id, q)}
+      texts={texts}
+    />
+  );
 
   const cartEntries = Object.entries(cart);
   const totalCents = cartEntries.reduce((sum, [id, qty]) => {
@@ -268,15 +301,57 @@ export function CatalogGrid({
         </div>
       )}
 
-      <main className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-6 py-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {products.map((p) => (
-          <ProductCard
-            key={p.id}
-            product={p}
-            quantityInCart={cart[p.id] ?? 0}
-            onChange={(q) => setQuantity(p.id, q)}
-            texts={texts}
-          />
+      <div className="pt-2">
+        <CatalogFilters
+          query={query}
+          onQuery={setQuery}
+          selected={section}
+          onSelect={setSection}
+          counts={counts}
+          lang={lang}
+        />
+      </div>
+
+      <main className="mx-auto max-w-6xl px-6 py-6">
+        {filtered.length === 0 && (
+          <div className="rounded-2xl bg-white/90 px-6 py-10 text-center">
+            <p className="font-[family-name:var(--font-form)] text-sm text-stone">
+              {lang === "en" ? "Nothing matches" : "No encontramos nada con"} “{query}”.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setSection(null);
+              }}
+              className="mt-3 font-[family-name:var(--font-form)] text-sm text-olive underline underline-offset-2"
+            >
+              {lang === "en" ? "See everything" : "Ver todo"}
+            </button>
+          </div>
+        )}
+        {groups.map((g) => (
+          <section key={g.id ?? "todo"} className="mb-10">
+            {g.id && (
+              <h2
+                className={
+                  "mb-4 flex items-center gap-3 font-[family-name:var(--font-display)] text-2xl " +
+                  (backgroundUrl ? "text-cream drop-shadow" : "text-olive")
+                }
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={CATEGORIES.find((c) => c.id === g.id)!.image}
+                  alt=""
+                  className="size-10 rounded-full border-2 border-white object-cover shadow"
+                />
+                {categoryLabel(g.id, lang)}
+              </h2>
+            )}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {g.items.map(renderCard)}
+            </div>
+          </section>
         ))}
       </main>
 

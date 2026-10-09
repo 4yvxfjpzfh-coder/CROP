@@ -1,0 +1,12 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#F6E7B8"/>
+  <!-- cuña de queso -->
+  <path d="M55 190 L245 190 L245 120 L95 95 Z" fill="#F2C94C"/>
+  <path d="M55 190 L95 95 L245 120 L245 130 L100 107 L65 190 Z" fill="#E0B23A"/>
+  <path d="M55 190 L245 190 L245 215 L55 215 Z" fill="#D9A62E"/>
+  <circle cx="130" cy="160" r="14" fill="#E0B23A"/>
+  <circle cx="190" cy="150" r="9" fill="#E0B23A"/>
+  <circle cx="205" cy="180" r="11" fill="#E0B23A"/>
+  <circle cx="100" cy="200" r="7" fill="#C38F20"/>
+  <circle cx="170" cy="203" r="6" fill="#C38F20"/>
+</svg>

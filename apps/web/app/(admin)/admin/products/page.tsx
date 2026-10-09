@@ -37,6 +37,7 @@ export default async function ProductsPage() {
         photoUrl: p.photoUrl,
         harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString().slice(0, 10) : null,
         ripenessNote: p.ripenessNote,
+        category: p.category,
         unit: p.unit,
         quantity: p.quantity,
         originalPriceCents: p.originalPriceCents,

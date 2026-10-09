@@ -4,6 +4,7 @@ export type FarmerProduct = {
   description: string | null;
   providerName: string | null;
   photoUrl: string | null;
+  category: string | null;
   unit: "UNIDAD" | "KG";
   quantity: number;
   originalPriceCents: number;

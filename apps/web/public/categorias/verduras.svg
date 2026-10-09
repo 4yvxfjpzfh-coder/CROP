@@ -1,0 +1,11 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#E3F0D8"/>
+  <!-- lechuga -->
+  <circle cx="115" cy="175" r="70" fill="#7CB342"/>
+  <circle cx="115" cy="175" r="50" fill="#9CCC65"/>
+  <path d="M115 125 C95 150 95 200 115 225 M115 125 C135 150 135 200 115 225" stroke="#689F38" stroke-width="5" fill="none"/>
+  <!-- zanahoria -->
+  <path d="M205 105 L235 120 L180 255 Z" fill="#F57C00"/>
+  <path d="M200 140 L215 146 M195 170 L208 176 M189 200 L200 205" stroke="#D65E00" stroke-width="4"/>
+  <path d="M220 110 L210 60 L225 100 L245 62 L232 108 Z" fill="#43A047"/>
+</svg>

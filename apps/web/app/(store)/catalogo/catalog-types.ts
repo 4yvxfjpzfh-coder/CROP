@@ -1,3 +1,5 @@
+import type { CategoryId } from "@/lib/categories";
+
 export type CatalogProduct = {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ export type CatalogProduct = {
   pickupShortName: string | null;
   // "Manzana — Juan García #1", null si no hay agricultor vinculado con código.
   code: string | null;
+  category: CategoryId;
 };
 
 // Tope por producto dentro de un mismo pedido: 10 unidades o 10 kg. Se

@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type AdminFarmer, type AdminPickupPoint, type AdminProduct } from "./types";
 import { productCode } from "@/lib/units";
+import { CategorySelect } from "@/components/category-select";
 import { PickupPointField } from "./pickup-point-field";
 import { PhotoEditorLauncher } from "./photo-editor-launcher";
 import { PhotoUpload } from "./photo-upload";
@@ -182,6 +183,8 @@ export function ProductForm({
             />
           </div>
         </div>
+
+        <CategorySelect defaultValue={product?.category} className={field} labelClassName={label} />
 
         <div>
           <label className={label} htmlFor="unit">

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { CATEGORY_IDS, type CategoryId } from "@/lib/categories";
 import { prisma } from "@crop/prisma";
 import { requireFarmer, FarmerAccessError } from "@/lib/farmer-guard";
 import { nextFarmerSeq, retryOnUniqueConflict } from "@/lib/units";
@@ -17,6 +18,7 @@ const productInput = z.object({
   priceColones: z.coerce.number().min(0),
   pickupPointId: z.string().trim().min(1, "Selecciona un punto de recogida"),
   isActive: z.coerce.boolean().optional().default(true),
+  category: z.enum(CATEGORY_IDS as [CategoryId, ...CategoryId[]]).optional().or(z.literal("")),
 }).refine((data) => data.unit !== "UNIDAD" || Number.isInteger(data.quantity), {
   message: "La cantidad en unidades tiene que ser un número entero",
   path: ["quantity"],
@@ -36,6 +38,7 @@ function parse(formData: FormData) {
     priceColones: formData.get("discountPriceCents"),
     pickupPointId: formData.get("pickupPointId"),
     isActive: formData.get("isActive") === "on" || formData.get("isActive") === "true",
+    category: formData.get("category") ?? "",
   });
 }
 
@@ -79,6 +82,7 @@ export async function createOwnProduct(
           discountPriceCents: priceCents,
           pickupPointId: data.pickupPointId,
           isActive: data.isActive,
+          category: data.category || null,
         },
       });
     }),
@@ -119,6 +123,7 @@ export async function updateOwnProduct(
       discountPriceCents: priceCents,
       pickupPointId: data.pickupPointId,
       isActive: data.isActive,
+      category: data.category || null,
     },
   });
 

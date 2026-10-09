@@ -7,6 +7,7 @@ import { getHomeBackgroundUrl } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
+import { categoryOf } from "@/lib/categories";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,8 @@ export default async function CatalogoFeriaPage({
   // Nombre, descripcion y nota se traducen al idioma elegido (una sola
   // llamada para todo el catalogo, y queda en memoria para la proxima).
   // providerName y farmer.name NO se traducen: son nombres propios.
+  // La sección se calcula con el nombre original (antes de traducir).
+  const categoryById = new Map(products.map((p) => [p.id, categoryOf(p)]));
   const lang = await getLang();
   const translated = await translateFields(products, ["name", "description", "ripenessNote"], lang);
 
@@ -87,6 +90,7 @@ export default async function CatalogoFeriaPage({
     originalPriceCents: p.originalPriceCents,
     discountPriceCents: p.discountPriceCents,
     pickupShortName: p.pickupPoint?.shortName ?? null,
+    category: categoryById.get(p.id) ?? "otros",
     code: productCode({
       name: p.name,
       farmerName: p.farmer?.name ?? p.providerName ?? null,
@@ -136,6 +140,7 @@ export default async function CatalogoFeriaPage({
       mapsUrl={mapsUrl}
       pickupDay={pickupPoint.pickupDay}
       texts={t}
+      lang={lang}
     />
   );
 }

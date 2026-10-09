@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type FarmerPickupPoint, type FarmerProduct } from "./types";
 import { productCode } from "@/lib/units";
+import { CategorySelect } from "@/components/category-select";
 import { PickupPointField } from "@/app/(admin)/admin/products/pickup-point-field";
 import { PhotoUpload } from "@/app/(admin)/admin/products/photo-upload";
 import { PhotoEditorLauncher } from "@/app/(admin)/admin/products/photo-editor-launcher";
@@ -131,6 +132,8 @@ export function FarmerProductForm({
             />
           )}
         </div>
+
+        <CategorySelect defaultValue={product?.category} className={field} labelClassName={label} />
 
         <div>
           <label className={label} htmlFor="unit">

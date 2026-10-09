@@ -1,0 +1,15 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#E7E1F2"/>
+  <!-- canasta tejida -->
+  <path d="M95 130 C95 60 205 60 205 130" stroke="#8D6E63" stroke-width="12" fill="none"/>
+  <path d="M60 130 L240 130 L215 235 L85 235 Z" fill="#A1887F"/>
+  <g stroke="#795548" stroke-width="6">
+    <path d="M67 158 L233 158"/><path d="M74 186 L226 186"/><path d="M80 212 L220 212"/>
+  </g>
+  <g stroke="#BCAAA4" stroke-width="5">
+    <path d="M100 130 L108 235"/><path d="M135 130 L138 235"/><path d="M165 130 L162 235"/><path d="M200 130 L192 235"/>
+  </g>
+  <!-- ovillo -->
+  <circle cx="225" cy="95" r="26" fill="#7E57C2"/>
+  <path d="M203 85 C215 100 235 100 247 85 M205 105 C220 92 235 92 248 103" stroke="#5E35B1" stroke-width="4" fill="none"/>
+</svg>

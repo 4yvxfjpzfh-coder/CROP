@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { CATEGORY_IDS, type CategoryId } from "@/lib/categories";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
 import { recordAdminAudit } from "@/lib/audit";
@@ -15,6 +16,7 @@ const productInput = z.object({
   photoUrl: z.string().trim().url("URL de foto inválida").optional().or(z.literal("")),
   harvestedAt: z.string().trim().optional().or(z.literal("")),
   ripenessNote: z.string().trim().max(80).optional().or(z.literal("")),
+  category: z.enum(CATEGORY_IDS as [CategoryId, ...CategoryId[]]).optional().or(z.literal("")),
   unit: z.enum(["UNIDAD", "KG"]).optional().default("UNIDAD"),
   quantity: z.coerce.number().finite("Cantidad inválida").min(0, "La cantidad no puede ser negativa"),
   // El formulario pide el precio en colones normales (ej. 9000 = ₡9,000),
@@ -42,6 +44,7 @@ function parse(formData: FormData) {
     photoUrl: formData.get("photoUrl") ?? "",
     harvestedAt: formData.get("harvestedAt") ?? "",
     ripenessNote: formData.get("ripenessNote") ?? "",
+    category: formData.get("category") ?? "",
     unit: formData.get("unit") || "UNIDAD",
     quantity: formData.get("quantity"),
     priceColones: formData.get("discountPriceCents"),
@@ -97,6 +100,7 @@ export async function createProduct(
           photoUrl: data.photoUrl || null,
           harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
           ripenessNote: data.ripenessNote || null,
+          category: data.category || null,
           unit: data.unit,
           quantity: data.quantity,
           // Un solo precio: originalPriceCents ya no lo pone el admin a
@@ -163,6 +167,7 @@ export async function updateProduct(
           photoUrl: data.photoUrl || null,
           harvestedAt: data.harvestedAt ? new Date(data.harvestedAt) : null,
           ripenessNote: data.ripenessNote || null,
+          category: data.category || null,
           unit: data.unit,
           quantity: data.quantity,
           originalPriceCents: priceCents,
