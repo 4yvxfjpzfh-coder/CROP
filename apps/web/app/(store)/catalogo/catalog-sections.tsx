@@ -63,7 +63,7 @@ export function CatalogFilters({
         <div className="-mx-6 mt-5 flex gap-3 overflow-x-auto px-6 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 lg:grid-cols-7">
           <SectionTile
             label={en ? "All" : "Todo"}
-            image="/categorias/otros.svg"
+            image="/categorias/todo.svg"
             count={Object.values(counts).reduce((a, b) => a + (b ?? 0), 0)}
             active={selected === null}
             onClick={() => onSelect(null)}

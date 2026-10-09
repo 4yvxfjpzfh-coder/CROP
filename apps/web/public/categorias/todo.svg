@@ -1,0 +1,14 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#DDE7D3"/>
+  <!-- mosaico: un poquito de cada sección -->
+  <rect x="45" y="45" width="95" height="95" rx="18" fill="#FBE3E1"/>
+  <rect x="160" y="45" width="95" height="95" rx="18" fill="#F6E7B8"/>
+  <rect x="45" y="160" width="95" height="95" rx="18" fill="#E3F0D8"/>
+  <rect x="160" y="160" width="95" height="95" rx="18" fill="#F7E4D4"/>
+  <path d="M92 125 C70 112 64 90 70 80 C77 70 107 70 114 80 C120 90 114 112 92 125 Z" fill="#D7383B"/>
+  <path d="M92 74 L80 64 L92 69 L104 64 Z" fill="#3E8E41"/>
+  <path d="M175 120 L240 120 L240 96 L190 88 Z" fill="#F2C94C"/>
+  <circle cx="92" cy="208" r="28" fill="#7CB342"/>
+  <rect x="180" y="200" width="56" height="34" rx="6" fill="#C98B5A"/>
+  <path d="M180 204 C180 190 236 190 236 204 Z" fill="#FFF6EC"/>
+</svg>
