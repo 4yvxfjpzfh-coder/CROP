@@ -1,4 +1,4 @@
-import { prisma, OrderStatus } from "@crop/prisma";
+import { prisma, OrderStatus, PaymentStatus } from "@crop/prisma";
 
 const DEFAULT_LIMIT = 100;
 
@@ -31,6 +31,10 @@ export async function releaseExpiredOrders(
     where: {
       status: OrderStatus.RESERVED,
       pickupBy: { lt: new Date() },
+      // Un pedido con un pago de PayPal pagado o en proceso nunca se libera
+      // solo: ya se cobró (o se podría estar cobrando) plata de verdad, así
+      // que esto lo resuelve el admin a mano, no un cron automático.
+      paymentStatus: { notIn: [PaymentStatus.PENDING, PaymentStatus.PAID] },
       ...(businessId ? { businessId } : {}),
     },
     select: { id: true },

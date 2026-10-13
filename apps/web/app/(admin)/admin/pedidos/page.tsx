@@ -6,7 +6,7 @@ import { getLang, translateMany } from "@/lib/i18n";
 import { colones } from "../products/types";
 import { formatPickupDeadline } from "@/lib/format";
 import { formatOrderLine } from "@/lib/units";
-import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
+import { OrderStatusBadge, PaymentBadge, orderCardClass } from "@/components/order-status-badge";
 import { markPickedUp } from "./actions";
 import { RefreshButton } from "./refresh-button";
 
@@ -120,7 +120,10 @@ export default async function AdminOrdersPage() {
                             .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
                             .join(", ")}
                         </span>
-                        <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                          <PaymentBadge paymentStatus={order.paymentStatus} texts={t} />
+                        </div>
                       </div>
                       <div className="mt-1 font-[family-name:var(--font-form)] text-xs text-stone">
                         {colones(order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0))}

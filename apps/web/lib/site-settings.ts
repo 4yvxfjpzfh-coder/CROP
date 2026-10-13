@@ -10,7 +10,20 @@ export type SiteSettingsData = {
   homeSubtext: string | null;
   pickupWindowHours: number;
   brandTextColor: string | null;
+  usdExchangeRate: number;
 };
+
+// Tope duro para el tipo de cambio: evita que un typo en /admin/settings
+// (ej. escribir 5.2 en vez de 520, o un 0) deje el cobro de PayPal en un
+// monto absurdo. 100–2000 cubre con margen cualquier valor real del
+// colón frente al dólar.
+export const MIN_USD_EXCHANGE_RATE = 100;
+export const MAX_USD_EXCHANGE_RATE = 2000;
+export const DEFAULT_USD_EXCHANGE_RATE = 520;
+
+export function isValidExchangeRate(value: number): boolean {
+  return Number.isFinite(value) && value >= MIN_USD_EXCHANGE_RATE && value <= MAX_USD_EXCHANGE_RATE;
+}
 
 // Tope duro: los apartados vencen a más tardar 2 horas después de hacerse.
 // El admin puede poner menos horas, pero nunca más, incluso si en la base
@@ -27,6 +40,7 @@ const DEFAULTS: SiteSettingsData = {
   homeSubtext: null,
   pickupWindowHours: MAX_PICKUP_WINDOW_HOURS,
   brandTextColor: null,
+  usdExchangeRate: DEFAULT_USD_EXCHANGE_RATE,
 };
 
 // Formato estricto #RRGGBB: esto se inyecta directo en una etiqueta <style>
@@ -70,6 +84,9 @@ export const getSiteSettings = cache(async function getSiteSettings(): Promise<S
         settings.brandTextColor && isValidHexColor(settings.brandTextColor)
           ? settings.brandTextColor
           : null,
+      usdExchangeRate: isValidExchangeRate(settings.usdExchangeRate)
+        ? settings.usdExchangeRate
+        : DEFAULT_USD_EXCHANGE_RATE,
     };
   } catch (err) {
     console.error("[site-settings] no se pudo leer SiteSettings:", err);
@@ -87,6 +104,16 @@ export async function getHomeBackgroundUrl(): Promise<string | null> {
 export async function getBrandTextColor(): Promise<string | null> {
   const settings = await getSiteSettings();
   return settings.brandTextColor;
+}
+
+/**
+ * Convierte un monto en céntimos de colón a un string USD con 2 decimales,
+ * como lo pide la API de PayPal (ej. "12.34"). Redondea hacia arriba al
+ * centavo de dólar para no cobrar de menos por redondeo.
+ */
+export function colonesCentsToUsdString(colonesCents: number, rate: number): string {
+  const usd = colonesCents / 100 / rate;
+  return (Math.ceil(usd * 100) / 100).toFixed(2);
 }
 
 export type HomeFruitData = { id: string; name: string; imageUrl: string; blurb: string };

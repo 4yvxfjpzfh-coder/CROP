@@ -283,6 +283,21 @@ model Order {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  // Pago en línea con PayPal (opcional -- el default sigue siendo pagar en
+  // efectivo/SINPE al recoger). paypalOrderId se guarda recién cuando el
+  // pago se confirma (capturado o pendiente), nunca al solo crear el botón:
+  // así un intento de pago abandonado no deja el pedido trabado sin poder
+  // vencer. Ver lib/paypal.ts.
+  paymentMethod   PaymentMethod @default(EFECTIVO)
+  paymentStatus   PaymentStatus @default(NONE)
+  paypalOrderId   String?       @unique
+  paypalCaptureId String?
+  // Tipo de cambio ₡/USD que se usó para este cobro puntual -- se guarda al
+  // momento de pagar para que el monto cobrado quede trazable aunque el
+  // tipo de cambio de SiteSettings cambie después.
+  fxRateUsed      Float?
+  paidAt          DateTime?
+
   items       OrderItem[]
 
   @@index([userId, createdAt])
@@ -311,6 +326,25 @@ enum OrderStatus {
   EXPIRED
 }
 
+// Cómo se paga (o se va a pagar) un pedido. EFECTIVO es el default histórico:
+// nada se cobra en línea, se paga en efectivo o SINPE al recoger.
+enum PaymentMethod {
+  EFECTIVO
+  PAYPAL
+}
+
+// Estado del cobro en línea. NONE = nunca se intentó pagar en línea (el
+// default de todo pedido en efectivo). El cron que libera apartados vencidos
+// (releaseExpiredOrders) nunca toca un pedido en PENDING o PAID -- ver
+// packages/trpc/src/service/orders.ts.
+enum PaymentStatus {
+  NONE
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 // Fila única (id fijo "default") con preferencias editables desde
 // /admin/settings: fondo, texto del home y ventana de recogida.
 model SiteSettings {
@@ -333,6 +367,11 @@ model SiteSettings {
   // se inyecta directo en una etiqueta <style>, así que nunca se guarda sin
   // validar.
   brandTextColor    String?
+  // Colones por 1 USD, usado solo para convertir el total a dólares al
+  // cobrar con PayPal (PayPal no acepta colones como moneda de cobro). El
+  // admin lo actualiza a mano con el tipo de cambio de referencia del BCCR;
+  // no se llama a ninguna API externa para esto.
+  usdExchangeRate   Float    @default(520)
   updatedAt         DateTime @updatedAt
 }
 

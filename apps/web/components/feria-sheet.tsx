@@ -191,8 +191,17 @@ export async function FeriaSheet({
                         ))}
                       </td>
                       <td className="whitespace-nowrap py-2 pr-3">
-                        <div>☐ Efectivo</div>
-                        <div>☐ SINPE</div>
+                        {order.paymentStatus === "PAID" ? (
+                          <div className="font-medium">✓ Ya pagado (PayPal)</div>
+                        ) : (
+                          <>
+                            <div>☐ Efectivo</div>
+                            <div>☐ SINPE</div>
+                            {order.paymentStatus === "PENDING" && (
+                              <div className="text-[11px] text-stone">(pago PayPal en proceso — revisar antes de cobrar)</div>
+                            )}
+                          </>
+                        )}
                       </td>
                       <td className="py-2 pr-3 text-center text-base">☐</td>
                       <td className="py-2 pr-3 text-center text-base">

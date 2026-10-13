@@ -7,6 +7,7 @@ import {
   saveBackgroundPhoto,
   saveHeroImage,
   saveBrandTextColor,
+  saveExchangeRate,
   type SettingsResult,
 } from "./actions";
 
@@ -249,18 +250,61 @@ function BrandColorSection({ initialColor }: { initialColor: string }) {
   );
 }
 
+function ExchangeRateSection({ initialRate }: { initialRate: number }) {
+  const [rate, setRate] = useState(String(initialRate));
+  const [state, formAction, pending] = useActionState<SettingsResult | null, FormData>(
+    saveExchangeRate,
+    null,
+  );
+  return (
+    <form action={formAction} className="flex max-w-lg flex-col gap-4 border-t border-cream-200 pt-8">
+      <div>
+        <h3 className="mb-1 font-[family-name:var(--font-display)] text-lg text-olive">
+          6. Tipo de cambio para pagos con PayPal
+        </h3>
+        <p className="mb-2 font-[family-name:var(--font-form)] text-xs text-stone">
+          PayPal no acepta colones: cuando alguien paga en línea, el total se
+          convierte a dólares con este número. Revisá el tipo de cambio de
+          referencia del BCCR de vez en cuando y actualizalo acá — esto no se
+          actualiza solo.
+        </p>
+        <label className={label} htmlFor="usdExchangeRate">
+          Colones por 1 dólar
+        </label>
+        <input
+          id="usdExchangeRate"
+          name="usdExchangeRate"
+          type="number"
+          min={100}
+          max={2000}
+          step="0.01"
+          value={rate}
+          onChange={(e) => setRate(e.target.value)}
+          className={field}
+        />
+      </div>
+      <StatusMessage state={state} />
+      <button type="submit" disabled={pending} className={saveBtn}>
+        {pending ? "Guardando…" : "Guardar tipo de cambio"}
+      </button>
+    </form>
+  );
+}
+
 export function SettingsForm({
   initialUrl,
   initialHeroImageUrl,
   initialHeadline,
   initialSubtext,
   initialBrandTextColor,
+  initialExchangeRate,
 }: {
   initialUrl: string;
   initialHeroImageUrl: string;
   initialHeadline: string;
   initialSubtext: string;
   initialBrandTextColor: string;
+  initialExchangeRate: number;
 }) {
   return (
     <div className="flex flex-col">
@@ -268,6 +312,7 @@ export function SettingsForm({
       <HeroImageSection initialUrl={initialHeroImageUrl} />
       <BackgroundPhotoSection initialUrl={initialUrl} />
       <BrandColorSection initialColor={initialBrandTextColor} />
+      <ExchangeRateSection initialRate={initialExchangeRate} />
     </div>
   );
 }

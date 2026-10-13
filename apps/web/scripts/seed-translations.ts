@@ -43,7 +43,7 @@ const PAIRS: [es: string, en: string][] = [
 Escribinos a: ldqg33@gmail.com o gboydt@icloud.com. Respondemos lo antes posible.
 
 2. ¿Cómo aparto un producto?
-Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. No se cobra nada en línea: el pago, si aplica, es directo con el agricultor al recoger.
+Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. Podés pagar ahí mismo en línea con PayPal, o pagar en efectivo o SINPE directo con el agricultor al recoger.
 
 3. ¿Cómo cancelo un apartado?
 Desde Mis apartados podés cancelar cualquier apartado vigente antes de la fecha límite de recogida.

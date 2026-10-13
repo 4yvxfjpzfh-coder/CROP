@@ -39,7 +39,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       {
         key: "meta.description",
         label: "Descripción para buscadores y redes sociales",
-        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Sin pagos en línea.",
+        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Pagás en efectivo, SINPE o en línea con PayPal.",
         multiline: true,
       },
     ],
@@ -76,6 +76,8 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "home.how.step3.text", label: "Paso 3 — texto", default: "Tenés una ventana de tiempo para pasar a buscarlo en el punto de recogida del agricultor.", multiline: true },
       { key: "home.fruits.heading", label: "Título de la sección de frutas", default: "Lo que encontrás hoy" },
       { key: "home.fruits.subtext", label: "Subtítulo de la sección de frutas", default: "Recorré las frutas con las flechas." },
+      { key: "home.categorias.heading", label: "Título de los banners de sección", default: "Comprá por sección" },
+      { key: "home.categorias.subtext", label: "Subtítulo de los banners de sección", default: "Elegí qué buscás y te mostramos en qué ferias hay." },
     ],
   },
   {
@@ -85,6 +87,8 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "catalogo.selector.subtext", label: "Subtítulo del selector de ferias", default: "Cada feria tiene su propio catálogo con el excedente disponible ahí.", multiline: true },
       { key: "catalogo.selector.empty", label: "Mensaje si no hay ferias", default: "Todavía no hay ferias configuradas." },
       { key: "catalogo.selector.count_suffix", label: "Texto tras el número de productos en cada feria", default: "producto(s) disponibles" },
+      { key: "catalogo.selector.quitar_filtro", label: "Enlace para quitar el filtro de sección", default: "Ver todas las ferias" },
+      { key: "catalogo.selector.empty_categoria", label: "Mensaje si ninguna feria tiene esa sección", default: "Ninguna feria tiene productos de esta sección ahora mismo." },
       { key: "catalogo.feria.meta_description", label: "Descripción para buscadores de la página de una feria", default: "Recorré el excedente disponible en esta feria." },
       { key: "catalogo.feria.empty", label: "Mensaje si una feria no tiene excedente", default: "Todavía no hay excedente en esta feria. Volvé pronto." },
       { key: "catalogo.feria.volver", label: "Enlace \"Ver otras ferias\"", default: "Ver otras ferias" },
@@ -160,13 +164,14 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "apartados.error.not_authenticated", label: "Error: no autenticado", default: "No autenticado" },
       { key: "apartados.error.not_found", label: "Error: apartado no encontrado", default: "Apartado no encontrado" },
       { key: "apartados.error.not_cancellable", label: "Error: ya no se puede cancelar", default: "Este apartado ya no se puede cancelar" },
+      { key: "apartados.error.ya_pagado", label: "Error: ya pagado con PayPal, no se puede autocancelar", default: "Ya pagaste este apartado con PayPal, así que no se puede cancelar solo — escribinos a soporte y te ayudamos con el reembolso." },
     ],
   },
   {
     title: "Ingreso y bienvenida",
     fields: [
       { key: "signin.heading_prefix", label: "Título \"Entrar a Crop\" (antes de la marca)", default: "Entrar a" },
-      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en la feria del agricultor. No se cobra en línea.", multiline: true },
+      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en la feria del agricultor. Pagás en efectivo, SINPE o en línea con PayPal.", multiline: true },
       { key: "signin.info_box", label: "Aviso sobre datos de Apple", default: "Al crear tu cuenta con Apple guardamos tu nombre y correo para identificarte y gestionar tus apartados. Podés eliminar tu cuenta y tus datos en cualquier momento desde tu perfil.", multiline: true },
       { key: "signin.checkbox_label", label: "Texto de la casilla de aceptación", default: "He leído y acepto la Política de Privacidad y los Términos de Servicio.", multiline: true },
       { key: "signin.helper_accept_terms", label: "Aviso si falta aceptar términos", default: "Aceptá los términos para continuar." },
@@ -229,14 +234,14 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
         multiline: true,
         hint: 'Una línea que empieza con "N. " se muestra como título de sección; el resto son párrafos. "Mis apartados" se convierte en enlace automáticamente.',
         default:
-          "1. No hay pagos en línea\n" +
-          'Crop no procesa pagos ni cobros a través de la plataforma. Un "apartado" es una reserva de producto, no una compra. Si corresponde algún pago, se realiza directamente con el agricultor al momento de recoger el producto en la feria.\n\n' +
+          "1. Cómo se paga\n" +
+          'Un "apartado" reserva producto, no es una compra en firme. Podés pagarlo en línea con PayPal al momento de apartarlo (lo cobra Crop, en dólares), o en efectivo o SINPE directo con el agricultor al recoger.\n\n' +
           "2. Cancelar un apartado\n" +
-          "Podés cancelar un apartado vigente en cualquier momento antes de la fecha límite de recogida, desde Mis apartados. Las unidades vuelven a estar disponibles de inmediato para otras personas.\n\n" +
+          "Si todavía no lo pagaste en línea, podés cancelar un apartado vigente en cualquier momento antes de la fecha límite de recogida, desde Mis apartados — las unidades vuelven a estar disponibles de inmediato para otras personas. Si ya lo pagaste con PayPal, no se puede autocancelar desde la app: escribinos a los correos de abajo y te ayudamos con el reembolso.\n\n" +
           "3. Apartados vencidos\n" +
-          "Si no recogés el producto antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven al inventario disponible. No hay ninguna penalización por esto.\n\n" +
+          "Si no recogés el producto antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven al inventario disponible. Esto no aplica a un apartado ya pagado con PayPal: ese lo revisa el admin a mano.\n\n" +
           "4. Problemas con un producto\n" +
-          "Como Crop no interviene en el pago ni en la entrega física, un reclamo sobre la calidad o el estado de un producto se resuelve directamente con el agricultor en el punto de recogida. Si el problema es con la plataforma en sí (por ejemplo, un error en la información mostrada), escribinos a: ldqg33@gmail.com o gboydt@icloud.com.",
+          "Crop no interviene en la entrega física: un reclamo sobre la calidad o el estado de un producto se resuelve directamente con el agricultor en el punto de recogida. Si el problema es con un pago hecho por PayPal o con la plataforma en sí (por ejemplo, un error en la información mostrada), escribinos a: ldqg33@gmail.com o gboydt@icloud.com.",
       },
       { key: "legal.privacy.heading", label: "Título — Privacidad", default: "Política de Privacidad" },
       {
@@ -246,7 +251,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
         hint: 'Una línea que empieza con "N. " se muestra como título de sección; el resto son párrafos.',
         default:
           "1. Datos que recopilamos\n" +
-          "Si creás tu cuenta con correo y contraseña, guardamos tu nombre, tu correo y tu contraseña (nunca en texto plano: se guarda cifrada con un algoritmo de un solo sentido, así que ni nosotros podemos leerla). Si entrás con Apple, recibimos tu nombre y tu dirección de correo (o el correo privado de reenvío de Apple, si elegís ocultarlo). Guardamos también los apartados que hacés en la plataforma. Si sos agricultor o administrador, la app puede acceder a tu cámara o galería para subir fotos de los productos que publicás.\n\n" +
+          "Si creás tu cuenta con correo y contraseña, guardamos tu nombre, tu correo y tu contraseña (nunca en texto plano: se guarda cifrada con un algoritmo de un solo sentido, así que ni nosotros podemos leerla). Si entrás con Apple, recibimos tu nombre y tu dirección de correo (o el correo privado de reenvío de Apple, si elegís ocultarlo). Guardamos también los apartados que hacés en la plataforma y, si pagás en línea, si ese apartado está pagado y el monto — nunca los datos de tu tarjeta o cuenta de PayPal, que PayPal no nos comparte. Si sos agricultor o administrador, la app puede acceder a tu cámara o galería para subir fotos de los productos que publicás.\n\n" +
           "2. Uso de los datos\n" +
           "Usamos estos datos únicamente para identificarte, mostrarte tus apartados y coordinar la recogida en la feria del agricultor. No vendemos ni compartimos tus datos con terceros, y no los usamos para publicidad ni seguimiento.\n\n" +
           "3. Conservación y eliminación\n" +
@@ -262,12 +267,14 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
         hint: 'Una línea que empieza con "N. " se muestra como título de sección; el resto son párrafos.',
         default:
           "1. Qué es Crop\n" +
-          "Crop es una plataforma para apartar productos de excedente agrícola y de rescate de comida. No se realizan pagos en línea: el pago, si aplica, ocurre al recoger el producto en el punto de recogida.\n\n" +
+          "Crop es una plataforma para apartar productos de excedente agrícola y de rescate de comida. Un apartado se puede pagar en línea con PayPal, o en efectivo o SINPE al recoger el producto en el punto de recogida.\n\n" +
           "2. Apartados y recogida\n" +
-          "Un apartado reserva unidades por un tiempo limitado. Si no se recoge antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven a estar disponibles.\n\n" +
+          "Un apartado reserva unidades por un tiempo limitado. Si no se recoge antes de la fecha límite, el apartado se libera automáticamente y las unidades vuelven a estar disponibles (excepto uno ya pagado por PayPal, que revisa el admin a mano).\n\n" +
           "3. Tu cuenta\n" +
           "Podés crear tu cuenta con Apple o con tu propio correo y contraseña. Sos responsable de la actividad de tu cuenta y de mantener tu contraseña en secreto. Podés eliminar tu cuenta en cualquier momento desde tu perfil.\n\n" +
-          "4. Disponibilidad y cambios\n" +
+          "4. Pagos con PayPal\n" +
+          "Cuando pagás en línea, el cobro lo procesa PayPal, bajo sus propios términos — Crop no ve ni guarda los datos de tu tarjeta o cuenta. El monto se cobra en dólares (USD), convertido desde colones al tipo de cambio vigente ese día. Un apartado ya pagado no se puede cancelar solo desde la app; escribinos para el reembolso.\n\n" +
+          "5. Disponibilidad y cambios\n" +
           'El servicio se ofrece "tal cual". Podemos modificar o suspender funciones; los cambios materiales se comunicarán con antelación razonable.',
       },
     ],
@@ -286,7 +293,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "1. Contacto\n" +
           "Escribinos a: ldqg33@gmail.com o gboydt@icloud.com. Respondemos lo antes posible.\n\n" +
           "2. ¿Cómo aparto un producto?\n" +
-          'Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. No se cobra nada en línea: el pago, si aplica, es directo con el agricultor al recoger.\n\n' +
+          'Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. Podés pagar ahí mismo en línea con PayPal, o pagar en efectivo o SINPE directo con el agricultor al recoger.\n\n' +
           "3. ¿Cómo cancelo un apartado?\n" +
           "Desde Mis apartados podés cancelar cualquier apartado vigente antes de la fecha límite de recogida.\n\n" +
           "4. Problemas con la cuenta\n" +
@@ -495,7 +502,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
 Crop está pensado para personas de 13 años en adelante. No dirigimos el servicio a menores de 13 años y no recopilamos a sabiendas datos personales de ellos.
 
 2. Si tenés entre 13 y 18 años
-Podés usar Crop con el permiso de tu madre, padre o encargado. Los apartados son reservas de producto, no compras: no se cobra nada en línea y el pago, si aplica, lo hace la persona adulta al recoger en la feria.
+Podés usar Crop con el permiso de tu madre, padre o encargado. Los apartados son reservas de producto: el pago (en efectivo, SINPE, o en línea con PayPal) lo hace la persona adulta responsable.
 
 3. Hijos e hijas de agricultores
 Cuando un menor colabora con el puesto de su familia, trabaja siempre bajo la cuenta de la persona adulta responsable. No creamos cuentas a nombre de menores de 13 años.
@@ -514,6 +521,21 @@ Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No us
       { key: "baja.resuscrito", label: "Aviso de resuscripción", default: "Listo, volviste a quedar suscrito a los correos de novedades." },
       { key: "baja.sin_token", label: "Aviso si falta el token", default: "Este enlace está incompleto. Usá el enlace \"Darme de baja\" que viene al pie del correo." },
       { key: "baja.token_invalido", label: "Aviso si el token no sirve", default: "Este enlace no es válido o ya venció. Escribinos a soporte y te damos de baja a mano." },
+    ],
+  },
+
+  {
+    title: "Pago con PayPal",
+    fields: [
+      { key: "pago.paypal.explicacion", label: "Texto antes del botón de PayPal", default: "Opcional: pagá ahora en línea con PayPal, se cobra en dólares:" },
+      { key: "pago.paypal.o_efectivo", label: "Aclaración de efectivo/SINPE debajo del botón", default: "Si no pagás ahora, pagás en efectivo o SINPE al recoger." },
+      { key: "pago.paypal.pagado", label: "Mensaje cuando el pago se confirma", default: "¡Pagado! Gracias." },
+      { key: "pago.paypal.pendiente", label: "Mensaje de pago en proceso", default: "Tu pago está en proceso, te avisamos cuando se confirme." },
+      { key: "pago.paypal.cancelado", label: "Mensaje si se cancela el pago", default: "Pago cancelado. Podés intentar de nuevo o pagar al recoger." },
+      { key: "pago.paypal.error_generico", label: "Error genérico de PayPal", default: "Hubo un problema con PayPal. Podés intentar de nuevo o pagar en efectivo al recoger." },
+      { key: "pago.estado.pagado_paypal", label: "Insignia: pagado con PayPal", default: "Pagado con PayPal" },
+      { key: "pago.estado.pendiente_paypal", label: "Insignia: pago de PayPal pendiente", default: "Pago pendiente" },
+      { key: "pago.estado.efectivo", label: "Insignia: pago en efectivo/SINPE al recoger", default: "Paga al recoger" },
     ],
   },
 

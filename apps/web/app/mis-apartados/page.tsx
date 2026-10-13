@@ -4,13 +4,14 @@ import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
 import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateMany } from "@/lib/i18n";
-import { getHomeBackgroundUrl } from "@/lib/site-settings";
+import { getSiteSettings } from "@/lib/site-settings";
 import { formatPickupDeadline } from "@/lib/format";
 import { colones, serviceFeeCents } from "../(store)/catalogo/catalog-types";
 import { formatOrderLine } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
-import { OrderStatusBadge, orderCardClass } from "@/components/order-status-badge";
+import { OrderStatusBadge, PaymentBadge, orderCardClass } from "@/components/order-status-badge";
 import { SiteBackground } from "@/components/site-background";
+import { PayPalButton } from "@/components/paypal-button";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export default async function MyReservationsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin?callbackUrl=/mis-apartados");
 
-  const [orders, customer, t, backgroundUrl] = await Promise.all([
+  const [orders, customer, t, settings] = await Promise.all([
     prisma.order.findMany({
       // Cancelados y vencidos no se muestran acá -- siguen en la base, pero
       // desaparecen de la vista apenas se cancelan o se vence la fecha.
@@ -43,8 +44,9 @@ export default async function MyReservationsPage() {
     }),
     prisma.user.findUnique({ where: { id: session.user.id }, select: { customerNumber: true } }),
     getSiteTexts(),
-    getHomeBackgroundUrl(),
+    getSiteSettings(),
   ]);
+  const backgroundUrl = settings.homeBackgroundUrl;
 
   const statusLabel: Record<string, string> = {
     RESERVED: t["apartados.status_reserved"],
@@ -122,13 +124,16 @@ export default async function MyReservationsPage() {
                   const subtotal = order.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0);
                   return (
                     <li key={order.id} className={orderCardClass(displayStatus)}>
-                      <div className="flex items-baseline justify-between">
+                      <div className="flex items-baseline justify-between gap-2">
                         <span className="text-sm font-medium text-neutral-900">
                           {order.items
                             .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
                             .join(", ")}
                         </span>
-                        <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          <OrderStatusBadge status={displayStatus} label={statusLabel[displayStatus] ?? displayStatus} />
+                          <PaymentBadge paymentStatus={order.paymentStatus} texts={t} />
+                        </div>
                       </div>
                       <div className="mt-1 text-xs text-neutral-500">
                         {colones(subtotal)}
@@ -138,8 +143,20 @@ export default async function MyReservationsPage() {
                           : ""}
                       </div>
                       {order.status === "RESERVED" && !expired && (
-                        <div className="mt-2">
-                          <CancelButton orderId={order.id} texts={t} />
+                        <div className="mt-2 flex flex-wrap items-center gap-3">
+                          {/* Pagado o pagándose: cancelar solo no reembolsa, así que el
+                              botón de cancelar se esconde (ver apartados.error.ya_pagado). */}
+                          {order.paymentStatus !== "PAID" && order.paymentStatus !== "PENDING" && (
+                            <>
+                              <CancelButton orderId={order.id} texts={t} />
+                              <PayPalButton
+                                orderId={order.id}
+                                amountColonesCents={subtotal + serviceFeeCents(subtotal)}
+                                usdExchangeRate={settings.usdExchangeRate}
+                                texts={t}
+                              />
+                            </>
+                          )}
                         </div>
                       )}
                     </li>

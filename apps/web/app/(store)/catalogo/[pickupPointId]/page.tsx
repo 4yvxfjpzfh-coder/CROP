@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 import { prisma } from "@crop/prisma";
 import { CatalogGrid } from "../catalog-grid";
 import type { CatalogProduct } from "../catalog-types";
-import { getHomeBackgroundUrl } from "@/lib/site-settings";
+import { getSiteSettings } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
-import { categoryOf } from "@/lib/categories";
+import { categoryOf, isCategoryId } from "@/lib/categories";
 
 export const dynamic = "force-dynamic";
 
@@ -31,11 +31,16 @@ export async function generateMetadata({
 
 export default async function CatalogoFeriaPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ pickupPointId: string }>;
+  searchParams: Promise<{ categoria?: string }>;
 }) {
   const { pickupPointId } = await params;
-  const [backgroundUrl, t] = await Promise.all([getHomeBackgroundUrl(), getSiteTexts()]);
+  const { categoria } = await searchParams;
+  const initialSection = isCategoryId(categoria) ? categoria : null;
+  const [settings, t] = await Promise.all([getSiteSettings(), getSiteTexts()]);
+  const backgroundUrl = settings.homeBackgroundUrl;
 
   const pickupPoint = await prisma.pickupPoint.findUnique({ where: { id: pickupPointId } });
   if (!pickupPoint) notFound();
@@ -141,6 +146,8 @@ export default async function CatalogoFeriaPage({
       pickupDay={pickupPoint.pickupDay}
       texts={t}
       lang={lang}
+      usdExchangeRate={settings.usdExchangeRate}
+      initialSection={initialSection}
     />
   );
 }

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@crop/prisma";
 import { requireAdmin, AdminAccessError } from "@/lib/admin-guard";
-import { isValidHexColor } from "@/lib/site-settings";
+import { isValidHexColor, isValidExchangeRate } from "@/lib/site-settings";
 
 export type SettingsResult = { ok: boolean; error?: string };
 
@@ -104,6 +104,22 @@ export async function saveBrandTextColor(
     brandTextColorRaw && brandTextColorRaw.toLowerCase() !== "#1f2a22" ? brandTextColorRaw : null;
 
   return runUpsert({ brandTextColor });
+}
+
+export async function saveExchangeRate(
+  _prev: SettingsResult | null,
+  formData: FormData,
+): Promise<SettingsResult> {
+  const denied = await guard();
+  if (denied) return denied;
+
+  const raw = String(formData.get("usdExchangeRate") ?? "").trim();
+  const usdExchangeRate = Number(raw);
+  if (!isValidExchangeRate(usdExchangeRate)) {
+    return { ok: false, error: "Poné un número de colones por dólar razonable (entre 100 y 2000)." };
+  }
+
+  return runUpsert({ usdExchangeRate });
 }
 
 export async function addHomeFruit(

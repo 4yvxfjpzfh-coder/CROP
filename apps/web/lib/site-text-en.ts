@@ -14,7 +14,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "brand.tagline": "Costa Rican Opportunities for Producers",
   "meta.title": "Crop — Food rescue and surplus farm produce",
   "meta.description":
-    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the farmers market. No online payments.",
+    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the farmers market. Pay in cash, SINPE, or online with PayPal.",
 
   // ── Menú y botones comunes ────────────────────────────────────────────
   "nav.catalogo": "Catalog",
@@ -37,18 +37,22 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "home.hero.image_alt": "Basket with cacao, coffee and pineapple",
   "home.how.step1.title": "Browse the catalog",
   "home.how.step1.text": "See the surplus available at the market today: real photos, prices and quantities.",
-  "home.how.step2.title": "Reserve without paying online",
-  "home.how.step2.text": "Set aside what you need in one click. Payment, if any, happens at pickup.",
+  "home.how.step2.title": "Reserve in one click",
+  "home.how.step2.text": "Set aside what you need in one click. Pay in cash, SINPE, or online with PayPal.",
   "home.how.step3.title": "Pick it up at the market",
   "home.how.step3.text": "You get a time window to come by the farmer's pickup point and collect it.",
   "home.fruits.heading": "What you'll find today",
   "home.fruits.subtext": "Browse the fruit with the arrows.",
+  "home.categorias.heading": "Shop by section",
+  "home.categorias.subtext": "Pick what you're after and we'll show you which markets have it.",
 
   // ── Catálogo ──────────────────────────────────────────────────────────
   "catalogo.selector.heading": "Choose a market",
   "catalogo.selector.subtext": "Each market has its own catalog with the surplus available there.",
   "catalogo.selector.empty": "No markets have been set up yet.",
   "catalogo.selector.count_suffix": "product(s) available",
+  "catalogo.selector.quitar_filtro": "See all markets",
+  "catalogo.selector.empty_categoria": "No market has products in this section right now.",
   "catalogo.feria.meta_description": "Browse the surplus available at this market.",
   "catalogo.feria.empty": "There's no surplus at this market yet. Check back soon.",
   "catalogo.feria.volver": "See other markets",
@@ -120,10 +124,11 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "apartados.error.not_authenticated": "Not signed in",
   "apartados.error.not_found": "Reservation not found",
   "apartados.error.not_cancellable": "This reservation can no longer be cancelled",
+  "apartados.error.ya_pagado": "You already paid for this reservation with PayPal, so it can't be self-cancelled — write to support and we'll help with the refund.",
 
   // ── Ingreso y bienvenida ──────────────────────────────────────────────
   "signin.heading_prefix": "Sign in to",
-  "signin.subtext": "Reserve surplus farm produce and pick it up at the farmers market. Nothing is charged online.",
+  "signin.subtext": "Reserve surplus farm produce and pick it up at the farmers market. Pay in cash, SINPE, or online with PayPal.",
   "signin.info_box":
     "When you create your account with Apple we store your name and email to identify you and manage your reservations. You can delete your account and your data at any time from your profile.",
   "signin.checkbox_label": "I have read and accept the Privacy Policy and the Terms of Service.",
@@ -179,20 +184,20 @@ export const SITE_TEXT_EN: Record<string, string> = {
   // ── Páginas legales ───────────────────────────────────────────────────
   "legal.draft_notice": "Draft — pending legal review. Last updated: —",
   "legal.reembolsos.heading": "Cancellation and Refund Policy",
-  "legal.reembolsos.body": `1. There are no online payments
-Crop does not process payments or charges through the platform. A "reservation" sets product aside; it is not a purchase. Any payment is made directly with the farmer when you pick the product up at the market.
+  "legal.reembolsos.body": `1. How payment works
+A "reservation" sets product aside; it is not a firm purchase. You can pay it online with PayPal when you reserve it (charged by Crop, in US dollars), or in cash or SINPE directly with the farmer at pickup.
 
 2. Cancelling a reservation
-You can cancel an active reservation at any time before the pickup deadline, from My reservations. The units become available to other people immediately.
+If you haven't paid online yet, you can cancel an active reservation at any time before the pickup deadline, from My reservations — the units become available to other people immediately. If you already paid with PayPal, it can't be self-cancelled from the app: write to the addresses below and we'll help with the refund.
 
 3. Expired reservations
-If you don't pick the product up before the deadline, the reservation is released automatically and the units return to available stock. There is no penalty for this.
+If you don't pick the product up before the deadline, the reservation is released automatically and the units return to available stock. This does not apply to a reservation already paid via PayPal: an admin reviews those by hand.
 
 4. Problems with a product
-Because Crop is not involved in payment or physical delivery, a complaint about the quality or condition of a product is resolved directly with the farmer at the pickup point. If the problem is with the platform itself (for example, an error in the information shown), write to us at: ldqg33@gmail.com or gboydt@icloud.com.`,
+Crop is not involved in physical delivery: a complaint about the quality or condition of a product is resolved directly with the farmer at the pickup point. If the problem is with a PayPal payment or with the platform itself (for example, an error in the information shown), write to us at: ldqg33@gmail.com or gboydt@icloud.com.`,
   "legal.privacy.heading": "Privacy Policy",
   "legal.privacy.body": `1. Data we collect
-If you create your account with an email and password, we store your name, your email and your password (never in plain text: it is stored hashed with a one-way algorithm, so not even we can read it). If you sign in with Apple, we receive your name and your email address (or Apple's private relay address, if you choose to hide it). We also store the reservations you make on the platform. If you are a farmer or an administrator, the app may access your camera or photo library to upload pictures of the products you publish.
+If you create your account with an email and password, we store your name, your email and your password (never in plain text: it is stored hashed with a one-way algorithm, so not even we can read it). If you sign in with Apple, we receive your name and your email address (or Apple's private relay address, if you choose to hide it). We also store the reservations you make on the platform, and, if you pay online, whether that reservation is paid and the amount — never your card or PayPal account details, which PayPal does not share with us. If you are a farmer or an administrator, the app may access your camera or photo library to upload pictures of the products you publish.
 
 2. How we use the data
 We use this data only to identify you, show you your reservations and coordinate pickup at the farmers market. We do not sell or share your data with third parties, and we do not use it for advertising or tracking.
@@ -204,15 +209,18 @@ You can delete your account and your personal data at any time from your profile
 For privacy questions, write to us at: ldqg33@gmail.com or gboydt@icloud.com.`,
   "legal.terms.heading": "Terms of Service",
   "legal.terms.body": `1. What Crop is
-Crop is a platform for reserving surplus farm produce and rescued food. There are no online payments: payment, if any, happens when you pick the product up at the pickup point.
+Crop is a platform for reserving surplus farm produce and rescued food. A reservation can be paid online with PayPal, or in cash or SINPE at pickup.
 
 2. Reservations and pickup
-A reservation holds units for a limited time. If they are not picked up before the deadline, the reservation is released automatically and the units become available again.
+A reservation holds units for a limited time. If they are not picked up before the deadline, the reservation is released automatically and the units become available again (except one already paid via PayPal, which an admin reviews by hand).
 
 3. Your account
 You can create your account with Apple or with your own email and password. You are responsible for the activity on your account and for keeping your password secret. You can delete your account at any time from your profile.
 
-4. Availability and changes
+4. Payments with PayPal
+When you pay online, the charge is processed by PayPal, under its own terms — Crop never sees or stores your card or account details. The amount is charged in US dollars (USD), converted from colones at that day's rate. A reservation that's already paid can't be self-cancelled from the app; write to us for a refund.
+
+5. Availability and changes
 The service is provided "as is". We may modify or suspend features; material changes will be announced with reasonable notice.`,
 
   // ── Soporte ───────────────────────────────────────────────────────────
@@ -222,7 +230,7 @@ The service is provided "as is". We may modify or suspend features; material cha
 Write to us at: ldqg33@gmail.com or gboydt@icloud.com. We reply as soon as we can.
 
 2. How do I reserve a product?
-Open your market's catalog, choose how much you want of each product and confirm the order. Nothing is charged online: payment, if any, is made directly with the farmer at pickup.
+Open your market's catalog, choose how much you want of each product and confirm the order. You can pay right there online with PayPal, or pay in cash or SINPE directly with the farmer at pickup.
 
 3. How do I cancel a reservation?
 From My reservations you can cancel any active reservation before the pickup deadline.
@@ -382,7 +390,7 @@ After uploading you can crop it and adjust brightness/contrast with the editor b
 Crop is intended for people aged 13 and over. We do not direct the service at children under 13 and we do not knowingly collect personal data from them.
 
 2. If you are between 13 and 18
-You may use Crop with the permission of your parent or guardian. Reservations set product aside; they are not purchases. Nothing is charged online, and any payment is made by the responsible adult at pickup.
+You may use Crop with the permission of your parent or guardian. Reservations set product aside. Payment (cash, SINPE, or online with PayPal) is made by the responsible adult.
 
 3. Farmers' children
 When a minor helps at their family's stall, they work under the account of the responsible adult. We do not create accounts in the name of children under 13.
@@ -400,4 +408,14 @@ The same as for any account: name, email and the reservations made. We do not us
   "baja.resuscrito": "Done, you are subscribed to the news emails again.",
   "baja.sin_token": "This link is incomplete. Use the “Unsubscribe” link at the bottom of the email.",
   "baja.token_invalido": "This link is invalid or has expired. Write to support and we will unsubscribe you by hand.",
+
+  "pago.paypal.explicacion": "Optional: pay now online with PayPal, charged in US dollars:",
+  "pago.paypal.o_efectivo": "If you don't pay now, you pay in cash or SINPE at pickup.",
+  "pago.paypal.pagado": "Paid! Thank you.",
+  "pago.paypal.pendiente": "Your payment is processing, we'll let you know once it's confirmed.",
+  "pago.paypal.cancelado": "Payment cancelled. You can try again or pay at pickup.",
+  "pago.paypal.error_generico": "There was a problem with PayPal. You can try again or pay in cash at pickup.",
+  "pago.estado.pagado_paypal": "Paid with PayPal",
+  "pago.estado.pendiente_paypal": "Payment pending",
+  "pago.estado.efectivo": "Pay at pickup",
 };

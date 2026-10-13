@@ -10,16 +10,17 @@ import { TiltOnScroll } from "@/components/motion/tilt-on-scroll";
 import { ParallaxDrift } from "@/components/motion/parallax-drift";
 import { FlipReveal } from "@/components/motion/flip-reveal";
 import { SiteBackground } from "@/components/site-background";
+import { CategoryBanners } from "@/components/category-banners";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULT_HEADLINE = "El excedente de la feria, antes de que se pierda.";
 const DEFAULT_SUBTEXT =
-  "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en la feria del agricultor. Sin pagos en línea.";
+  "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en la feria del agricultor. Pagás en efectivo o SINPE al recoger, o en línea con PayPal si preferís.";
 
 const DEFAULT_HEADLINE_EN = "The market's surplus, before it goes to waste.";
 const DEFAULT_SUBTEXT_EN =
-  "Cacao, coffee, banana, pineapple and more — straight from Costa Rican farmers. You reserve what you need online and pick it up at the farmers market. No online payments.";
+  "Cacao, coffee, banana, pineapple and more — straight from Costa Rican farmers. You reserve what you need online and pick it up at the farmers market. Pay in cash or SINPE at pickup, or online with PayPal if you prefer.";
 
 const DEFAULT_FRUITS: FruitSlide[] = [
   {
@@ -175,6 +176,12 @@ export default async function Home() {
             </TiltOnScroll>
           </Reveal>
         </section>
+
+        <CategoryBanners
+          heading={t["home.categorias.heading"]}
+          subtext={t["home.categorias.subtext"]}
+          lang={lang}
+        />
 
         {/* Cómo funciona — variante B de scroll-3D: flip en eje Y */}
         <section className="border-y border-ink-200 bg-ink-200/40">

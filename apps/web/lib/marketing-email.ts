@@ -84,7 +84,7 @@ export function launchEmailHtml(opts: { name: string | null; brand: string; url:
     <tr><td style="padding:18px 28px 0;font-size:15px;line-height:1.6;">
       <p style="margin:0 0 14px;">${hola}:</p>
       <p style="margin:0 0 14px;">Abrimos ${esc(opts.brand)}. Mirá lo que los agricultores tienen hoy, apartá lo que querés y pasá a recogerlo a la hora que te sirva.</p>
-      <p style="margin:0 0 14px;"><strong>No se paga nada en línea.</strong> El pago, si aplica, es directo con el agricultor cuando recogés.</p>
+      <p style="margin:0 0 14px;">Podés pagar ahí mismo en línea con PayPal, o <strong>en efectivo o SINPE</strong> directo con el agricultor cuando recogés.</p>
       <p style="margin:0 0 6px;">Por qué nos importa: lo que no se vende el día de la feria muchas veces se pierde, y esa pérdida la absorbe el agricultor. Apartando por adelantado, él sabe qué llevar.</p>
     </td></tr>
     <tr><td style="padding:22px 28px 4px;">

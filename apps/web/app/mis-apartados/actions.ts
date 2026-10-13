@@ -28,6 +28,13 @@ export async function cancelOrder(orderId: string): Promise<CancelResult> {
   if (order.status !== "RESERVED") {
     return { ok: false, error: t["apartados.error.not_cancellable"] };
   }
+  // Si ya se pagó (o se está pagando) con PayPal, cancelar acá solo
+  // liberaría el stock sin devolverle la plata a nadie -- no hay reembolso
+  // automático. En ese caso hay que escribir a soporte para que el admin lo
+  // resuelva a mano (reembolso desde el dashboard de PayPal).
+  if (order.paymentStatus === "PAID" || order.paymentStatus === "PENDING") {
+    return { ok: false, error: t["apartados.error.ya_pagado"] };
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });

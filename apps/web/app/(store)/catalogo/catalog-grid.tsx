@@ -11,6 +11,7 @@ import { getPickupSlots } from "@/lib/pickup-schedule";
 import { SiteBackground } from "@/components/site-background";
 import { CATEGORIES, type CategoryId } from "@/lib/categories";
 import { CatalogFilters, categoryLabel, matchesSearch } from "./catalog-sections";
+import { PayPalButton } from "@/components/paypal-button";
 
 function ProductCard({
   product,
@@ -170,6 +171,8 @@ export function CatalogGrid({
   pickupDay,
   texts,
   lang = "es",
+  usdExchangeRate,
+  initialSection = null,
 }: {
   products: CatalogProduct[];
   backgroundUrl: string | null;
@@ -179,9 +182,13 @@ export function CatalogGrid({
   pickupDay: number;
   texts: Record<string, string>;
   lang?: string;
+  usdExchangeRate: number;
+  initialSection?: CategoryId | null;
 }) {
   const [query, setQuery] = useState("");
-  const [section, setSection] = useState<CategoryId | null>(null);
+  // Viene de un banner de sección del inicio (/catalogo?categoria=...): abre
+  // la feria ya filtrada en esa sección en vez de mostrar todo.
+  const [section, setSection] = useState<CategoryId | null>(initialSection);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [pickupSlot, setPickupSlot] = useState("");
   const [state, formAction, pending] = useActionState<PlaceOrderResult | null, FormData>(
@@ -287,10 +294,25 @@ export function CatalogGrid({
 
       {state?.ok && (
         <div className="mx-auto max-w-6xl px-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-l-2 border-gold bg-gold/10 px-4 py-3">
-            <p className="font-[family-name:var(--font-form)] text-sm text-olive">
-              {texts["catalogo.cart.success_prefix"]} {formatPickupDeadline(state.pickupBy)}
-            </p>
+          <div className="flex flex-wrap items-start justify-between gap-4 border-l-2 border-gold bg-gold/10 px-4 py-3">
+            <div>
+              <p className="font-[family-name:var(--font-form)] text-sm text-olive">
+                {texts["catalogo.cart.success_prefix"]} {formatPickupDeadline(state.pickupBy)}
+              </p>
+              <div className="mt-2">
+                <PayPalButton
+                  orderId={state.orderId}
+                  // state.totalCents es el subtotal nada más (así lo devuelve
+                  // placeOrder); acá se le suma el cargo por servicio para
+                  // que el monto mostrado coincida con lo que de verdad se
+                  // va a cobrar (ese mismo cálculo lo repite, server-side,
+                  // /api/paypal/create-order).
+                  amountColonesCents={state.totalCents + serviceFeeCents(state.totalCents)}
+                  usdExchangeRate={usdExchangeRate}
+                  texts={texts}
+                />
+              </div>
+            </div>
             <Link
               href="/mis-apartados"
               className="shrink-0 bg-olive px-4 py-2 font-[family-name:var(--font-form)] text-sm text-cream hover:opacity-90"
