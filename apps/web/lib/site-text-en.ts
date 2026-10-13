@@ -415,6 +415,7 @@ The same as for any account: name, email and the reservations made. We do not us
   "pago.paypal.pendiente": "Your payment is processing, we'll let you know once it's confirmed.",
   "pago.paypal.cancelado": "Payment cancelled. You can try again or pay at pickup.",
   "pago.paypal.error_generico": "There was a problem with PayPal. You can try again or pay in cash at pickup.",
+  "pago.paypal.error_concurrente": "There's already a payment attempt in progress for this order (another tab open?). Wait a moment and try again.",
   "pago.estado.pagado_paypal": "Paid with PayPal",
   "pago.estado.pendiente_paypal": "Payment pending",
   "pago.estado.efectivo": "Pay at pickup",

@@ -533,6 +533,7 @@ Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No us
       { key: "pago.paypal.pendiente", label: "Mensaje de pago en proceso", default: "Tu pago está en proceso, te avisamos cuando se confirme." },
       { key: "pago.paypal.cancelado", label: "Mensaje si se cancela el pago", default: "Pago cancelado. Podés intentar de nuevo o pagar al recoger." },
       { key: "pago.paypal.error_generico", label: "Error genérico de PayPal", default: "Hubo un problema con PayPal. Podés intentar de nuevo o pagar en efectivo al recoger." },
+      { key: "pago.paypal.error_concurrente", label: "Error: ya hay un pago en curso para este pedido", default: "Ya hay un intento de pago en curso para este pedido (¿otra pestaña abierta?). Esperá un momento y volvé a intentar." },
       { key: "pago.estado.pagado_paypal", label: "Insignia: pagado con PayPal", default: "Pagado con PayPal" },
       { key: "pago.estado.pendiente_paypal", label: "Insignia: pago de PayPal pendiente", default: "Pago pendiente" },
       { key: "pago.estado.efectivo", label: "Insignia: pago en efectivo/SINPE al recoger", default: "Paga al recoger" },

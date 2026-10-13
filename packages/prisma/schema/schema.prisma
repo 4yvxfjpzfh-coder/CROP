@@ -284,14 +284,21 @@ model Order {
   updatedAt   DateTime    @updatedAt
 
   // Pago en línea con PayPal (opcional -- el default sigue siendo pagar en
-  // efectivo/SINPE al recoger). paypalOrderId se guarda recién cuando el
-  // pago se confirma (capturado o pendiente), nunca al solo crear el botón:
-  // así un intento de pago abandonado no deja el pedido trabado sin poder
-  // vencer. Ver lib/paypal.ts.
+  // efectivo/SINPE al recoger). paypalOrderId (el definitivo) se guarda
+  // recién cuando el pago se confirma (capturado o pendiente), nunca al
+  // solo crear el botón: así un intento de pago abandonado no deja el
+  // pedido trabado sin poder vencer. Ver lib/paypal.ts.
   paymentMethod   PaymentMethod @default(EFECTIVO)
   paymentStatus   PaymentStatus @default(NONE)
   paypalOrderId   String?       @unique
   paypalCaptureId String?
+  // Candado para que no se puedan crear dos órdenes de PayPal vivas a la vez
+  // para el mismo pedido (dos pestañas, doble clic) -- sin esto, las dos se
+  // podrían llegar a aprobar y cobrar de verdad, cobrando dos veces. Se
+  // libera solo si pasaron más de 20 minutos sin terminar de pagar. Ver
+  // /api/paypal/create-order.
+  paypalPendingOrderId   String?
+  paypalPendingCreatedAt DateTime?
   // Tipo de cambio ₡/USD que se usó para este cobro puntual -- se guarda al
   // momento de pagar para que el monto cobrado quede trazable aunque el
   // tipo de cambio de SiteSettings cambie después.

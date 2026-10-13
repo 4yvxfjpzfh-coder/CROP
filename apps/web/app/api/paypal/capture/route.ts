@@ -59,13 +59,18 @@ export async function POST(request: Request) {
 
   if (result.status === "COMPLETED") {
     const settings = await getSiteSettings();
-    await prisma.order.update({
-      where: { id: order.id },
+    // updateMany con la condición en el where (no un update directo): si dos
+    // capturas llegaran a correr casi al mismo tiempo, solo una gana la
+    // escritura -- defensa extra además del candado de create-order.
+    await prisma.order.updateMany({
+      where: { id: order.id, paymentStatus: { not: "PAID" } },
       data: {
         paymentMethod: "PAYPAL",
         paymentStatus: "PAID",
         paypalOrderId,
         paypalCaptureId: result.captureId,
+        paypalPendingOrderId: null,
+        paypalPendingCreatedAt: null,
         fxRateUsed: settings.usdExchangeRate,
         paidAt: new Date(),
       },

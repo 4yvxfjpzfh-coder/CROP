@@ -54,6 +54,8 @@ export async function POST(request: Request) {
         data: {
           paymentMethod: "PAYPAL",
           paymentStatus: "PAID",
+          paypalPendingOrderId: null,
+          paypalPendingCreatedAt: null,
           paypalCaptureId: captureId ?? order.paypalCaptureId,
           paidAt: order.paidAt ?? new Date(),
         },
