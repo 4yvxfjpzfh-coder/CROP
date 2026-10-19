@@ -124,6 +124,22 @@ export async function createPayPalOrder(opts: {
   }
 }
 
+/**
+ * Estado actual de una orden en PayPal (CREATED, PAYER_ACTION_REQUIRED,
+ * APPROVED, COMPLETED, VOIDED...). null si PayPal no la encuentra o no
+ * responde -- quien llama lo trata como "no se puede reusar".
+ */
+export async function getPayPalOrderStatus(paypalOrderId: string): Promise<string | null> {
+  try {
+    const res = await paypalFetch(`/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return typeof data.status === "string" ? data.status : null;
+  } catch {
+    return null;
+  }
+}
+
 export type CapturePayPalOrderResult =
   | { ok: true; status: "COMPLETED"; captureId: string; customId: string | null; amountUsd: string }
   | { ok: true; status: "PENDING"; captureId: string | null; customId: string | null; amountUsd: string }

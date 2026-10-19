@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@crop/prisma";
 import { auth } from "@/auth";
-import { createPayPalOrder, isPayPalConfigured } from "@/lib/paypal";
+import { createPayPalOrder, getPayPalOrderStatus, isPayPalConfigured } from "@/lib/paypal";
 import { getSiteSettings, colonesCentsToUsdString } from "@/lib/site-settings";
 import { getSiteTexts } from "@/lib/site-text";
 import { serviceFeeCents } from "@/app/(store)/catalogo/catalog-types";
@@ -76,6 +76,22 @@ export async function POST(request: Request) {
     data: { paypalPendingOrderId: "claiming", paypalPendingCreatedAt: new Date() },
   });
   if (claimed.count === 0) {
+    // Hay un intento previo vivo (típico: se cerró la ventana de PayPal sin
+    // pagar). Si esa orden de PayPal todavía no fue aprobada, se reusa la
+    // misma: es una sola orden, así que no hay forma de cobrar dos veces.
+    const pendingId = order.paypalPendingOrderId;
+    if (pendingId && pendingId !== "claiming") {
+      const status = await getPayPalOrderStatus(pendingId);
+      if (status === "CREATED" || status === "PAYER_ACTION_REQUIRED") {
+        const settings = await getSiteSettings();
+        const subtotal = order.items.reduce((s, i) => s + i.quantity * i.unitPriceCents, 0);
+        const amountUsd = colonesCentsToUsdString(
+          Math.round(subtotal + serviceFeeCents(subtotal)),
+          settings.usdExchangeRate,
+        );
+        return NextResponse.json({ ok: true, paypalOrderId: pendingId, amountUsd });
+      }
+    }
     return NextResponse.json({ ok: false, error: t["pago.paypal.error_concurrente"] }, { status: 409 });
   }
 
