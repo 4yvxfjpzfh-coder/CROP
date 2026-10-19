@@ -53,6 +53,9 @@ export function PayPalButton({
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "paid" | "pending" | "cancelled" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  // El SDK de PayPal se traga el error que tira createOrder y llama a
+  // onError sin el motivo; se guarda acá para poder mostrarlo.
+  const lastError = useRef("");
 
   const approxUsd = (Math.ceil((amountColonesCents / 100 / usdExchangeRate) * 100) / 100).toFixed(2);
 
@@ -69,13 +72,17 @@ export function PayPalButton({
             createOrder: async () => {
               setStatus("idle");
               setErrorMsg("");
+              lastError.current = "";
               const res = await fetch("/api/paypal/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ orderId }),
               });
-              const data = await res.json();
-              if (!data.ok) throw new Error(data.error ?? "No se pudo iniciar el pago");
+              const data = await res.json().catch(() => ({ ok: false, error: `HTTP ${res.status}` }));
+              if (!data.ok) {
+                lastError.current = data.error ?? `HTTP ${res.status}`;
+                throw new Error(lastError.current);
+              }
               return data.paypalOrderId;
             },
             onApprove: async (data: { orderID: string }) => {
@@ -95,16 +102,19 @@ export function PayPalButton({
               router.refresh();
             },
             onCancel: () => setStatus("cancelled"),
-            onError: () => {
+            onError: (err: unknown) => {
+              console.error("[paypal] botón", err);
+              const generic = t["pago.paypal.error_generico"] ?? "Hubo un problema con PayPal";
               setStatus("error");
-              setErrorMsg(t["pago.paypal.error_generico"] ?? "Hubo un problema con PayPal");
+              setErrorMsg(lastError.current ? `${generic} (${lastError.current})` : generic);
             },
           })
           .render(containerRef.current);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("[paypal] no cargó el SDK", err);
         setStatus("error");
-        setErrorMsg(t["pago.paypal.error_generico"] ?? "Hubo un problema con PayPal");
+        setErrorMsg(`${t["pago.paypal.error_generico"] ?? "Hubo un problema con PayPal"} (SDK)`);
       });
   }, [clientId, orderId, onPaid, router, t]);
 

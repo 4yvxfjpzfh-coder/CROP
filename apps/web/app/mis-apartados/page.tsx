@@ -20,9 +20,17 @@ export async function generateMetadata() {
   return { title: `${t["apartados.heading"]} — ${t["brand.name"]}` };
 }
 
-export default async function MyReservationsPage() {
+export default async function MyReservationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ pagar?: string }>;
+}) {
+  const { pagar } = await searchParams;
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin?callbackUrl=/mis-apartados");
+  if (!session?.user?.id) {
+    const back = pagar ? `/mis-apartados?pagar=${encodeURIComponent(pagar)}` : "/mis-apartados";
+    redirect(`/signin?callbackUrl=${encodeURIComponent(back)}`);
+  }
 
   const [orders, customer, t, settings] = await Promise.all([
     prisma.order.findMany({
@@ -73,6 +81,20 @@ export default async function MyReservationsPage() {
   const grandFee = serviceFeeCents(grandSubtotal);
   const grandTotal = grandSubtotal + grandFee;
 
+  // Recién apartado desde el catálogo (?pagar=<id>): ese pedido se muestra
+  // arriba, destacado, para pagarlo ya. Solo si todavía se puede pagar (la
+  // consulta de arriba ya trae únicamente los RESERVED sin vencer).
+  const toPay = pagar
+    ? orders.find(
+        (o) =>
+          o.id === pagar &&
+          o.status === "RESERVED" &&
+          o.paymentStatus !== "PAID" &&
+          o.paymentStatus !== "PENDING",
+      )
+    : undefined;
+  const toPaySubtotal = toPay ? toPay.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0) : 0;
+
   return (
     <div className="relative min-h-dvh w-full">
       <SiteBackground url={backgroundUrl} />
@@ -96,6 +118,32 @@ export default async function MyReservationsPage() {
             {t["nav.ver_catalogo"]}
           </Link>
         </div>
+
+        {toPay && (
+          <section className="mt-8 rounded-lg border-2 border-gold bg-cream p-6">
+            <h2 className="text-lg font-semibold text-olive">{t["pago.ahora.titulo"]}</h2>
+            <p className="mt-1 text-sm text-stone">{t["pago.ahora.texto"]}</p>
+            <p className="mt-3 text-sm text-neutral-900">
+              {toPay.items
+                .map((i) => formatOrderLine(i.quantity, i.product.unit, names.get(i.product.name.trim()) ?? i.product.name, lang))
+                .join(", ")}
+            </p>
+            <p className="mt-1 text-sm text-olive">
+              {t["catalogo.cart.total_prefix"]}{" "}
+              <span className="font-semibold text-gold-text">
+                {colones(toPaySubtotal + serviceFeeCents(toPaySubtotal))}
+              </span>
+            </p>
+            <div className="mt-3">
+              <PayPalButton
+                orderId={toPay.id}
+                amountColonesCents={toPaySubtotal + serviceFeeCents(toPaySubtotal)}
+                usdExchangeRate={settings.usdExchangeRate}
+                texts={t}
+              />
+            </div>
+          </section>
+        )}
 
         <div className="mt-8 rounded-lg bg-cream/95 p-6 backdrop-blur-sm">
           {orders.length === 0 ? (
@@ -149,12 +197,15 @@ export default async function MyReservationsPage() {
                           {order.paymentStatus !== "PAID" && order.paymentStatus !== "PENDING" && (
                             <>
                               <CancelButton orderId={order.id} texts={t} />
-                              <PayPalButton
-                                orderId={order.id}
-                                amountColonesCents={subtotal + serviceFeeCents(subtotal)}
-                                usdExchangeRate={settings.usdExchangeRate}
-                                texts={t}
-                              />
+                              {/* El destacado de arriba ya tiene su botón: no repetirlo. */}
+                              {order.id !== toPay?.id && (
+                                <PayPalButton
+                                  orderId={order.id}
+                                  amountColonesCents={subtotal + serviceFeeCents(subtotal)}
+                                  usdExchangeRate={settings.usdExchangeRate}
+                                  texts={t}
+                                />
+                              )}
                             </>
                           )}
                         </div>

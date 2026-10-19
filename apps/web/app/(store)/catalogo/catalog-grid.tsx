@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { placeOrder, type PlaceOrderResult } from "./actions";
 import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, MIN_ORDER_CENTS, serviceFeeCents, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
@@ -202,14 +203,21 @@ export function CatalogGrid({
   // el carrito está abierto.
   const pickupSlots = useMemo(() => getPickupSlots(pickupDay), [pickupDay]);
 
+  const router = useRouter();
+
   useEffect(() => {
     if (state?.ok) {
       hapticTap("medium");
       schedulePickupReminder(state.orderId, state.pickupBy);
       setCart({});
       setPickupSlot("");
+      // Recién apartado: directo a pagarlo. Sin PayPal configurado no hay
+      // nada que pagar en línea, así que se queda acá con el aviso de éxito.
+      if (process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
+        router.push(`/mis-apartados?pagar=${encodeURIComponent(state.orderId)}`);
+      }
     }
-  }, [state]);
+  }, [state, router]);
 
   function setQuantity(productId: string, quantity: number) {
     setCart((prev) => {

@@ -102,10 +102,24 @@ export async function createPayPalOrder(opts: {
     });
     const data = await res.json();
     if (!res.ok || !data.id) {
-      return { ok: false, error: data?.message ?? `PayPal respondió ${res.status}` };
+      console.error("[paypal] create order falló", {
+        status: res.status,
+        name: data?.name,
+        issue: data?.details?.[0]?.issue,
+        description: data?.details?.[0]?.description,
+        debugId: data?.debug_id,
+        env: isLive() ? "live" : "sandbox",
+      });
+      const issue = data?.details?.[0]?.issue ?? data?.name;
+      return { ok: false, error: issue ? `PayPal: ${issue}` : `PayPal respondió ${res.status}` };
     }
     return { ok: true, paypalOrderId: data.id as string };
   } catch (err) {
+    console.error("[paypal] create order error", { error: err instanceof Error ? err.message : String(err), env: isLive() ? "live" : "sandbox" });
+    // El caso típico: credenciales de sandbox con PAYPAL_ENV=live o al revés.
+    if (err instanceof Error && err.message.startsWith("PayPal OAuth falló")) {
+      return { ok: false, error: "PayPal: credenciales rechazadas (revisar PAYPAL_ENV sandbox/live)" };
+    }
     return { ok: false, error: err instanceof Error ? err.message : "Error de red con PayPal" };
   }
 }
