@@ -69,10 +69,25 @@ export default async function Home() {
   const tr = await translateMany([rawHeadline, rawSubtext], lang);
   const headline = tr.get(rawHeadline.trim()) ?? rawHeadline;
   const subtext = tr.get(rawSubtext.trim()) ?? rawSubtext;
-  const heroImageUrl = settings.heroImageUrl || "/demo/hero-cosecha.svg";
+  // settings.heroImageUrl y los imageUrl de HomeFruit pueden tener pegado
+  // por error un link a una página de resultados de búsqueda (ej. Bing) en
+  // vez del archivo de imagen directo -- eso renderiza como texto
+  // alternativo roto. assertIsDirectImageUrl en admin/settings/actions.ts ya
+  // evita que esto vuelva a pasar al guardar, pero una fila que quedó mal
+  // ANTES de ese chequeo se sigue filtrando acá, a la foto de respaldo
+  // incluida en el repo, para que el home nunca se rompa por un dato viejo.
+  const isBrokenImageUrl = (url: string) => /\/images\/search\?|bing\.com|google\.[a-z.]+\/search/i.test(url);
+  const heroImageUrl =
+    settings.heroImageUrl && !isBrokenImageUrl(settings.heroImageUrl)
+      ? settings.heroImageUrl
+      : "/demo/hero-canasta.jpg";
   const fruits: FruitSlide[] =
     dbFruits.length > 0
-      ? dbFruits.map((f) => ({ name: f.name, img: f.imageUrl, blurb: f.blurb }))
+      ? dbFruits.map((f) => ({
+          name: f.name,
+          img: isBrokenImageUrl(f.imageUrl) ? "/demo/fresas.jpg" : f.imageUrl,
+          blurb: f.blurb,
+        }))
       : DEFAULT_FRUITS.map((f) => ({ ...f, blurb: (lang === "en" && DEFAULT_FRUIT_BLURBS_EN[f.name]) || f.blurb }));
 
   const steps = [
