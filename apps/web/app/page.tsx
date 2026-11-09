@@ -81,9 +81,16 @@ export default async function Home() {
     settings.heroImageUrl && !isBrokenImageUrl(settings.heroImageUrl)
       ? settings.heroImageUrl
       : "/demo/hero-canasta.jpg";
+  // El blurb de cada fruta lo escribe el admin en español (ver
+  // fruits-manager.tsx) -- antes se mostraba tal cual incluso en inglés
+  // porque nunca pasaba por el traductor (a diferencia del titular/subtexto
+  // de arriba, que sí). El nombre se deja igual, como ya hacía
+  // DEFAULT_FRUITS con "Café"/"Piña": son nombres de producto cortos y
+  // reconocibles tal cual.
+  const translatedFruits = await translateFields(dbFruits, ["blurb"], lang);
   const fruits: FruitSlide[] =
     dbFruits.length > 0
-      ? dbFruits.map((f) => ({
+      ? translatedFruits.map((f) => ({
           name: f.name,
           img: isBrokenImageUrl(f.imageUrl) ? "/demo/fresas.jpg" : f.imageUrl,
           blurb: f.blurb,

@@ -44,7 +44,14 @@ export async function translateMany(texts: string[], lang: Lang): Promise<Map<st
     });
     for (const r of rows) {
       const src = byHash.get(r.sourceHash);
-      if (src) out.set(src, r.value);
+      // Si en algún momento quedó guardada una "traducción" idéntica al
+      // original (ej. una respuesta de la IA mal recortada, o un pedido de
+      // varios textos a la vez donde se mezclaron las líneas), confiar en
+      // esa fila para siempre dejaba el texto sin traducir de por vida: acá
+      // nunca se volvía a pedir porque la memoria ya "tenía" una respuesta.
+      // Si coincide con el original, se trata como si no estuviera cacheada
+      // y se reintenta abajo.
+      if (src && r.value.trim() !== src) out.set(src, r.value);
     }
   } catch (err) {
     console.error("[i18n] no se pudo leer la memoria de traducciones:", err);
@@ -58,13 +65,22 @@ export async function translateMany(texts: string[], lang: Lang): Promise<Map<st
   for (const [src, value] of fresh) out.set(src, value);
 
   if (fresh.size) {
-    // createMany + skipDuplicates: dos requests simultáneos pueden traducir lo
-    // mismo a la vez; el unique (lang, sourceHash) lo resuelve sin tirar error.
+    // upsert en vez de createMany+skipDuplicates: si ya había una fila vieja
+    // para este (lang, sourceHash) -- ej. una traducción idéntica al
+    // original que se vuelve a intentar, ver el filtro de arriba -- hay que
+    // PISARLA con la nueva, no dejarla como estaba (skipDuplicates nunca la
+    // hubiera actualizado). Dos requests que traducen lo mismo a la vez
+    // simplemente se pisan entre sí, sin tirar error.
     try {
-      await prisma.translation.createMany({
-        data: [...fresh].map(([source, value]) => ({ lang, source, sourceHash: hashSource(source), value })),
-        skipDuplicates: true,
-      });
+      await prisma.$transaction(
+        [...fresh].map(([source, value]) =>
+          prisma.translation.upsert({
+            where: { lang_sourceHash: { lang, sourceHash: hashSource(source) } },
+            update: { value },
+            create: { lang, source, sourceHash: hashSource(source), value },
+          }),
+        ),
+      );
     } catch (err) {
       console.error("[i18n] no se pudo guardar la traducción:", err);
     }
