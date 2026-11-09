@@ -106,17 +106,58 @@ async function machineTranslate(texts: string[], lang: Lang): Promise<Map<string
   const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
   if (!apiKey) return out; // sin key: se muestra el original, sin romper nada
 
-  const system = `You translate interface text for Crop, a Costa Rican farmers market app, from Spanish into ${LANG_NAME[lang]}.
-Rules:
+  const rules = `Rules:
 - Translate the meaning, not word by word. Use natural, everyday ${LANG_NAME[lang]}.
 - Keep the register friendly and plain, as a neighbourhood market would speak.
 - Keep placeholders, {braces}, HTML/markdown, emoji, URLs, emails and numbers exactly as they are.
 - Keep produce and dish names recognizable; do not invent ingredients.
 - Keep it about the same length: these are buttons and labels in a small layout.
+- If the text is already in ${LANG_NAME[lang]}, or has no translatable words, return it unchanged.`;
+
+  // Un solo texto: se le pide la traducción sola, sin el protocolo de
+  // líneas numeradas de abajo. Se agregó porque un texto de un solo
+  // elemento (ej. el subtítulo del home) a veces hacía que la IA
+  // respondiera con una aclaración o explicación en vez del formato
+  // "1|traducción" esperado, y entonces el parseo de abajo no encontraba
+  // ninguna línea válida y el texto se quedaba sin traducir para siempre.
+  // Acá no hay nada que parsear: toda la respuesta (recortada) ES la
+  // traducción.
+  if (texts.length === 1) {
+    const system = `You translate interface text for Crop, a Costa Rican farmers market app, from Spanish into ${LANG_NAME[lang]}.
+${rules}
+Reply with ONLY the translation. No quotes, no notes, no explanations, no "Translation:" prefix -- just the translated text, nothing else.`;
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+        body: JSON.stringify({
+          model: process.env.AI_MODEL?.trim() || "claude-sonnet-5-5",
+          max_tokens: Math.min(8000, 400 + texts[0].length * 2),
+          system,
+          messages: [{ role: "user", content: texts[0] }],
+        }),
+        signal: AbortSignal.timeout(20_000),
+      });
+      if (!res.ok) {
+        console.error("[i18n] la IA respondió", res.status, (await res.text()).slice(0, 200));
+        return out;
+      }
+      const data = (await res.json()) as { content: { type: string; text?: string }[] };
+      const reply = data.content.filter((c) => c.type === "text").map((c) => c.text ?? "").join("\n").trim();
+      if (reply) out.set(texts[0], reply);
+      else console.error("[i18n] la IA devolvió una respuesta vacía para:", texts[0].slice(0, 80));
+    } catch (err) {
+      console.error("[i18n] falló la traducción automática:", err);
+    }
+    return out;
+  }
+
+  const system = `You translate interface text for Crop, a Costa Rican farmers market app, from Spanish into ${LANG_NAME[lang]}.
+${rules}
 - Do not add quotes, notes or explanations.
 Reply with one line per item, in the SAME order, each line formatted exactly as: <number>|<translation>`;
 
-  const numbered = texts.map((t, i) => `${i + 1}|${t.replace(/\n/g, "\n")}`).join("\n");
+  const numbered = texts.map((t, i) => `${i + 1}|${t.replace(/\n/g, " ")}`).join("\n");
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -140,8 +181,11 @@ Reply with one line per item, in the SAME order, each line formatted exactly as:
       const m = /^\s*(\d+)\s*\|([\s\S]*)$/.exec(line);
       if (!m) continue;
       const src = texts[Number(m[1]) - 1];
-      const value = m[2].trim().replace(/\n/g, "\n");
+      const value = m[2].trim();
       if (src && value) out.set(src, value);
+    }
+    if (out.size === 0) {
+      console.error("[i18n] no se pudo parsear ninguna línea de la respuesta:", reply.slice(0, 300));
     }
   } catch (err) {
     console.error("[i18n] falló la traducción automática:", err);
