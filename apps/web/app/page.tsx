@@ -63,12 +63,21 @@ export default async function Home() {
 
   // El titular y el subtitulo los escribe el admin en espanol: se traducen
   // al idioma elegido y la traduccion queda guardada para la proxima visita.
+  // Van en DOS pedidos separados a propósito -- el admin puso el titular
+  // directo en inglés ("Costa Rican Farmers Market"), y pedirle a la IA que
+  // "traduzca del español" un texto que ya está en inglés, junto con el
+  // subtítulo en el mismo pedido, hacía que la respuesta completa quedara
+  // mal formada y el subtítulo nunca se tradujera. Separados, un texto raro
+  // no puede arruinar al otro.
   const lang = await getLang();
   const rawHeadline = settings.homeHeadline || (lang === "en" ? DEFAULT_HEADLINE_EN : DEFAULT_HEADLINE);
   const rawSubtext = settings.homeSubtext || (lang === "en" ? DEFAULT_SUBTEXT_EN : DEFAULT_SUBTEXT);
-  const tr = await translateMany([rawHeadline, rawSubtext], lang);
-  const headline = tr.get(rawHeadline.trim()) ?? rawHeadline;
-  const subtext = tr.get(rawSubtext.trim()) ?? rawSubtext;
+  const [trHeadline, trSubtext] = await Promise.all([
+    translateMany([rawHeadline], lang),
+    translateMany([rawSubtext], lang),
+  ]);
+  const headline = trHeadline.get(rawHeadline.trim()) ?? rawHeadline;
+  const subtext = trSubtext.get(rawSubtext.trim()) ?? rawSubtext;
   // settings.heroImageUrl y los imageUrl de HomeFruit pueden tener pegado
   // por error un link a una página de resultados de búsqueda (ej. Bing) en
   // vez del archivo de imagen directo -- eso renderiza como texto
