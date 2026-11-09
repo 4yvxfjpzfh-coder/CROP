@@ -4,12 +4,12 @@
  * productos viejos quedan ordenados sin tener que editarlos uno por uno.
  */
 export const CATEGORIES = [
-  { id: "frutas", label: "Frutas", labelEn: "Fruit", image: "/categorias/frutas.svg" },
-  { id: "verduras", label: "Verduras", labelEn: "Vegetables", image: "/categorias/verduras.svg" },
-  { id: "lacteos", label: "Lácteos", labelEn: "Dairy", image: "/categorias/lacteos.svg" },
-  { id: "reposteria", label: "Repostería", labelEn: "Baked goods", image: "/categorias/reposteria.svg" },
-  { id: "manualidades", label: "Manualidades", labelEn: "Crafts", image: "/categorias/manualidades.svg" },
-  { id: "otros", label: "Otros", labelEn: "Other", image: "/categorias/otros.svg" },
+  { id: "frutas", label: "Frutas", labelEn: "Fruit", image: "/categorias/frutas.png" },
+  { id: "verduras", label: "Verduras", labelEn: "Vegetables", image: "/categorias/verduras.png" },
+  { id: "lacteos", label: "Lácteos", labelEn: "Dairy", image: "/categorias/lacteos.png" },
+  { id: "reposteria", label: "Repostería", labelEn: "Baked goods", image: "/categorias/reposteria.png" },
+  { id: "manualidades", label: "Manualidades", labelEn: "Crafts", image: "/categorias/manualidades.png" },
+  { id: "otros", label: "Otros", labelEn: "Other", image: "/categorias/otros.png" },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
