@@ -11,7 +11,7 @@ import { formatOrderLine } from "@/lib/units";
 import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, PaymentBadge, orderCardClass } from "@/components/order-status-badge";
 import { SiteBackground } from "@/components/site-background";
-import { PayPalButton } from "@/components/paypal-button";
+import { SinpePayment } from "@/components/sinpe-payment";
 
 export const dynamic = "force-dynamic";
 
@@ -135,10 +135,8 @@ export default async function MyReservationsPage({
               </span>
             </p>
             <div className="mt-3">
-              <PayPalButton
-                orderId={toPay.id}
+              <SinpePayment
                 amountColonesCents={toPaySubtotal + serviceFeeCents(toPaySubtotal)}
-                usdExchangeRate={settings.usdExchangeRate}
                 texts={t}
               />
             </div>
@@ -197,12 +195,10 @@ export default async function MyReservationsPage({
                           {order.paymentStatus !== "PAID" && order.paymentStatus !== "PENDING" && (
                             <>
                               <CancelButton orderId={order.id} texts={t} />
-                              {/* El destacado de arriba ya tiene su botón: no repetirlo. */}
+                              {/* El destacado de arriba ya tiene su aviso: no repetirlo. */}
                               {order.id !== toPay?.id && (
-                                <PayPalButton
-                                  orderId={order.id}
+                                <SinpePayment
                                   amountColonesCents={subtotal + serviceFeeCents(subtotal)}
-                                  usdExchangeRate={settings.usdExchangeRate}
                                   texts={t}
                                 />
                               )}

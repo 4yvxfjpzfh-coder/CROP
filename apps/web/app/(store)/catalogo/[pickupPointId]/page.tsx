@@ -146,7 +146,6 @@ export default async function CatalogoFeriaPage({
       pickupDay={pickupPoint.pickupDay}
       texts={t}
       lang={lang}
-      usdExchangeRate={settings.usdExchangeRate}
       initialSection={initialSection}
     />
   );

@@ -14,7 +14,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "brand.tagline": "Costa Rican Opportunities for Producers",
   "meta.title": "Crop — Food rescue and surplus farm produce",
   "meta.description":
-    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the farmers market. Pay in cash, SINPE, or online with PayPal.",
+    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the farmers market. Pay by SINPE Móvil, or in cash at pickup.",
 
   // ── Menú y botones comunes ────────────────────────────────────────────
   "nav.catalogo": "Catalog",
@@ -38,7 +38,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "home.how.step1.title": "Browse the catalog",
   "home.how.step1.text": "See the surplus available at the market today: real photos, prices and quantities.",
   "home.how.step2.title": "Reserve in one click",
-  "home.how.step2.text": "Set aside what you need in one click. Pay in cash, SINPE, or online with PayPal.",
+  "home.how.step2.text": "Set aside what you need in one click. Pay by SINPE Móvil, or in cash at pickup.",
   "home.how.step3.title": "Pick it up at the market",
   "home.how.step3.text": "You get a time window to come by the farmer's pickup point and collect it.",
   "home.fruits.heading": "What you'll find today",
@@ -128,7 +128,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
 
   // ── Ingreso y bienvenida ──────────────────────────────────────────────
   "signin.heading_prefix": "Sign in to",
-  "signin.subtext": "Reserve surplus farm produce and pick it up at the farmers market. Pay in cash, SINPE, or online with PayPal.",
+  "signin.subtext": "Reserve surplus farm produce and pick it up at the farmers market. Pay by SINPE Móvil, or in cash at pickup.",
   "signin.info_box":
     "When you create your account with Apple we store your name and email to identify you and manage your reservations. You can delete your account and your data at any time from your profile.",
   "signin.checkbox_label": "I have read and accept the Privacy Policy and the Terms of Service.",
@@ -230,7 +230,7 @@ The service is provided "as is". We may modify or suspend features; material cha
 Write to us at: ldqg33@gmail.com or gboydt@icloud.com. We reply as soon as we can.
 
 2. How do I reserve a product?
-Open your market's catalog, choose how much you want of each product and confirm the order. You can pay right there online with PayPal, or pay in cash or SINPE directly with the farmer at pickup.
+Open your market's catalog, choose how much you want of each product and confirm the order. Pay by SINPE Móvil to the number we show you, or pay in cash directly with the farmer at pickup.
 
 3. How do I cancel a reservation?
 From My reservations you can cancel any active reservation before the pickup deadline.
@@ -409,6 +409,9 @@ The same as for any account: name, email and the reservations made. We do not us
   "baja.sin_token": "This link is incomplete. Use the “Unsubscribe” link at the bottom of the email.",
   "baja.token_invalido": "This link is invalid or has expired. Write to support and we will unsubscribe you by hand.",
 
+  "pago.sinpe.titulo": "Pay by SINPE Móvil",
+  "pago.sinpe.instruccion": "Transfer the total by SINPE Móvil to this number:",
+  "pago.sinpe.o_efectivo": "You can also pay in cash or by SINPE directly to the farmer at pickup.",
   "pago.paypal.explicacion": "Optional: pay now online with PayPal, charged in US dollars:",
   "pago.paypal.o_efectivo": "If you don't pay now, you pay in cash or SINPE at pickup.",
   "pago.paypal.pagado": "Paid! Thank you.",
@@ -417,7 +420,7 @@ The same as for any account: name, email and the reservations made. We do not us
   "pago.paypal.error_generico": "There was a problem with PayPal. You can try again or pay in cash at pickup.",
   "pago.paypal.error_concurrente": "There's already a payment attempt in progress for this order (another tab open?). Wait a moment and try again.",
   "pago.ahora.titulo": "Pay for your reservation",
-  "pago.ahora.texto": "Your reservation is ready. Pay now with PayPal or, if you prefer, pay in cash or SINPE at pickup.",
+  "pago.ahora.texto": "Your reservation is ready. Pay by SINPE Móvil to the number below, or pay in cash at pickup.",
   "pago.estado.pagado_paypal": "Paid with PayPal",
   "pago.estado.pendiente_paypal": "Payment pending",
   "pago.estado.efectivo": "Pay at pickup",

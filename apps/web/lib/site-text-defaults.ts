@@ -39,7 +39,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       {
         key: "meta.description",
         label: "Descripción para buscadores y redes sociales",
-        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Pagás en efectivo, SINPE o en línea con PayPal.",
+        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Pagás por SINPE Móvil o en efectivo al recoger.",
         multiline: true,
       },
     ],
@@ -71,7 +71,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       { key: "home.how.step1.title", label: "Paso 1 — título", default: "Explorá el catálogo" },
       { key: "home.how.step1.text", label: "Paso 1 — texto", default: "Recorré el excedente disponible hoy en la feria: fotos, precios y cantidades reales.", multiline: true },
       { key: "home.how.step2.title", label: "Paso 2 — título", default: "Apartá en un clic" },
-      { key: "home.how.step2.text", label: "Paso 2 — texto", default: "Reservás lo que necesitás con un clic. Pagás en efectivo, SINPE o en línea con PayPal.", multiline: true },
+      { key: "home.how.step2.text", label: "Paso 2 — texto", default: "Reservás lo que necesitás con un clic. Pagás por SINPE Móvil o en efectivo al recoger.", multiline: true },
       { key: "home.how.step3.title", label: "Paso 3 — título", default: "Recogé en la feria" },
       { key: "home.how.step3.text", label: "Paso 3 — texto", default: "Tenés una ventana de tiempo para pasar a buscarlo en el punto de recogida del agricultor.", multiline: true },
       { key: "home.fruits.heading", label: "Título de la sección de frutas", default: "Lo que encontrás hoy" },
@@ -171,7 +171,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
     title: "Ingreso y bienvenida",
     fields: [
       { key: "signin.heading_prefix", label: "Título \"Entrar a Crop\" (antes de la marca)", default: "Entrar a" },
-      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en la feria del agricultor. Pagás en efectivo, SINPE o en línea con PayPal.", multiline: true },
+      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en la feria del agricultor. Pagás por SINPE Móvil o en efectivo al recoger.", multiline: true },
       { key: "signin.info_box", label: "Aviso sobre datos de Apple", default: "Al crear tu cuenta con Apple guardamos tu nombre y correo para identificarte y gestionar tus apartados. Podés eliminar tu cuenta y tus datos en cualquier momento desde tu perfil.", multiline: true },
       { key: "signin.checkbox_label", label: "Texto de la casilla de aceptación", default: "He leído y acepto la Política de Privacidad y los Términos de Servicio.", multiline: true },
       { key: "signin.helper_accept_terms", label: "Aviso si falta aceptar términos", default: "Aceptá los términos para continuar." },
@@ -293,7 +293,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "1. Contacto\n" +
           "Escribinos a: ldqg33@gmail.com o gboydt@icloud.com. Respondemos lo antes posible.\n\n" +
           "2. ¿Cómo aparto un producto?\n" +
-          'Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. Podés pagar ahí mismo en línea con PayPal, o pagar en efectivo o SINPE directo con el agricultor al recoger.\n\n' +
+          'Entrá al catálogo de tu feria, elegí la cantidad que querés de cada producto y confirmá el pedido. Pagá por SINPE Móvil al número que te mostramos, o pagá en efectivo directo con el agricultor al recoger.\n\n' +
           "3. ¿Cómo cancelo un apartado?\n" +
           "Desde Mis apartados podés cancelar cualquier apartado vigente antes de la fecha límite de recogida.\n\n" +
           "4. Problemas con la cuenta\n" +
@@ -525,8 +525,11 @@ Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No us
   },
 
   {
-    title: "Pago con PayPal",
+    title: "Pago",
     fields: [
+      { key: "pago.sinpe.titulo", label: "Título del recuadro de SINPE Móvil", default: "Pagá por SINPE Móvil" },
+      { key: "pago.sinpe.instruccion", label: "Instrucción arriba del número de SINPE", default: "Transferí el total por SINPE Móvil a este número:" },
+      { key: "pago.sinpe.o_efectivo", label: "Aclaración debajo del número de SINPE", default: "También podés pagar en efectivo o por SINPE directo al agricultor al recoger." },
       { key: "pago.paypal.explicacion", label: "Texto antes del botón de PayPal", default: "Opcional: pagá ahora en línea con PayPal, se cobra en dólares:" },
       { key: "pago.paypal.o_efectivo", label: "Aclaración de efectivo/SINPE debajo del botón", default: "Si no pagás ahora, pagás en efectivo o SINPE al recoger." },
       { key: "pago.paypal.pagado", label: "Mensaje cuando el pago se confirma", default: "¡Pagado! Gracias." },
@@ -535,7 +538,7 @@ Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No us
       { key: "pago.paypal.error_generico", label: "Error genérico de PayPal", default: "Hubo un problema con PayPal. Podés intentar de nuevo o pagar en efectivo al recoger." },
       { key: "pago.paypal.error_concurrente", label: "Error: ya hay un pago en curso para este pedido", default: "Ya hay un intento de pago en curso para este pedido (¿otra pestaña abierta?). Esperá un momento y volvé a intentar." },
       { key: "pago.ahora.titulo", label: "Título del recuadro para pagar recién apartado", default: "Pagá tu apartado" },
-      { key: "pago.ahora.texto", label: "Texto del recuadro para pagar recién apartado", default: "Tu apartado quedó listo. Pagalo ahora con PayPal o, si preferís, pagá en efectivo o SINPE al recoger." },
+      { key: "pago.ahora.texto", label: "Texto del recuadro para pagar recién apartado", default: "Tu apartado quedó listo. Pagá por SINPE Móvil al número de abajo, o pagá en efectivo al recoger." },
       { key: "pago.estado.pagado_paypal", label: "Insignia: pagado con PayPal", default: "Pagado con PayPal" },
       { key: "pago.estado.pendiente_paypal", label: "Insignia: pago de PayPal pendiente", default: "Pago pendiente" },
       { key: "pago.estado.efectivo", label: "Insignia: pago en efectivo/SINPE al recoger", default: "Paga al recoger" },

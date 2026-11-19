@@ -2,7 +2,6 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { placeOrder, type PlaceOrderResult } from "./actions";
 import { type CatalogProduct, MAX_QUANTITY_PER_ITEM, MIN_ORDER_CENTS, serviceFeeCents, colones } from "./catalog-types";
 import { formatUnitPrice, QUANTITY_STEP, unitSuffix } from "@/lib/units";
@@ -12,7 +11,7 @@ import { getPickupSlots } from "@/lib/pickup-schedule";
 import { SiteBackground } from "@/components/site-background";
 import { CATEGORIES, type CategoryId } from "@/lib/categories";
 import { CatalogFilters, categoryLabel, matchesSearch } from "./catalog-sections";
-import { PayPalButton } from "@/components/paypal-button";
+import { SinpePayment } from "@/components/sinpe-payment";
 
 function ProductCard({
   product,
@@ -172,7 +171,6 @@ export function CatalogGrid({
   pickupDay,
   texts,
   lang = "es",
-  usdExchangeRate,
   initialSection = null,
 }: {
   products: CatalogProduct[];
@@ -183,7 +181,6 @@ export function CatalogGrid({
   pickupDay: number;
   texts: Record<string, string>;
   lang?: string;
-  usdExchangeRate: number;
   initialSection?: CategoryId | null;
 }) {
   const [query, setQuery] = useState("");
@@ -203,21 +200,16 @@ export function CatalogGrid({
   // el carrito está abierto.
   const pickupSlots = useMemo(() => getPickupSlots(pickupDay), [pickupDay]);
 
-  const router = useRouter();
-
   useEffect(() => {
     if (state?.ok) {
       hapticTap("medium");
       schedulePickupReminder(state.orderId, state.pickupBy);
       setCart({});
       setPickupSlot("");
-      // Recién apartado: directo a pagarlo. Sin PayPal configurado no hay
-      // nada que pagar en línea, así que se queda acá con el aviso de éxito.
-      if (process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
-        router.push(`/mis-apartados?pagar=${encodeURIComponent(state.orderId)}`);
-      }
+      // Recién apartado: se queda acá con el aviso de éxito, que ya muestra
+      // los datos de pago por SINPE Móvil.
     }
-  }, [state, router]);
+  }, [state]);
 
   function setQuantity(productId: string, quantity: number) {
     setCart((prev) => {
@@ -308,15 +300,11 @@ export function CatalogGrid({
                 {texts["catalogo.cart.success_prefix"]} {formatPickupDeadline(state.pickupBy)}
               </p>
               <div className="mt-2">
-                <PayPalButton
-                  orderId={state.orderId}
+                <SinpePayment
                   // state.totalCents es el subtotal nada más (así lo devuelve
                   // placeOrder); acá se le suma el cargo por servicio para
-                  // que el monto mostrado coincida con lo que de verdad se
-                  // va a cobrar (ese mismo cálculo lo repite, server-side,
-                  // /api/paypal/create-order).
+                  // que el monto a transferir por SINPE coincida con el total.
                   amountColonesCents={state.totalCents + serviceFeeCents(state.totalCents)}
-                  usdExchangeRate={usdExchangeRate}
                   texts={texts}
                 />
               </div>
