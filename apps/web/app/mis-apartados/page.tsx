@@ -46,7 +46,16 @@ export default async function MyReservationsPage({
         business: { select: { name: true } },
         items: {
           include: {
-            product: { select: { name: true, unit: true, pickupPoint: { select: { name: true } } } },
+            product: {
+              select: {
+                name: true,
+                unit: true,
+                providerName: true,
+                pickupPoint: { select: { name: true } },
+                // Agricultor dueño, para desglosar cuánto del apartado le toca a cada uno.
+                farmer: { select: { name: true } },
+              },
+            },
           },
         },
       },
@@ -96,6 +105,19 @@ export default async function MyReservationsPage({
     : undefined;
   const toPaySubtotal = toPay ? toPay.items.reduce((s, i) => s + i.unitPriceCents * i.quantity, 0) : 0;
 
+  // Desglose por agricultor de un apartado: cuánto del subtotal le toca a cada
+  // uno (cuenta vinculada o, si no, el nombre escrito a mano). El cliente paga
+  // todo junto por SINPE; esto deja claro y registrado cuánto es de cada uno.
+  const sinAgricultor = t["pago.sinpe.sin_agricultor"] ?? "Sin agricultor";
+  const orderBreakdown = (order: (typeof orders)[number]) => {
+    const map = new Map<string, number>();
+    for (const i of order.items) {
+      const label = i.product.farmer?.name ?? i.product.providerName ?? sinAgricultor;
+      map.set(label, (map.get(label) ?? 0) + Math.round(i.unitPriceCents * i.quantity));
+    }
+    return [...map].map(([label, amountCents]) => ({ label, amountCents }));
+  };
+
   return (
     <div className="relative min-h-dvh w-full">
       <SiteBackground url={backgroundUrl} />
@@ -138,6 +160,8 @@ export default async function MyReservationsPage({
             <div className="mt-3">
               <SinpePayment
                 amountColonesCents={toPaySubtotal + serviceFeeCents(toPaySubtotal)}
+                breakdown={orderBreakdown(toPay)}
+                feeCents={serviceFeeCents(toPaySubtotal)}
                 texts={t}
               />
             </div>
@@ -200,6 +224,8 @@ export default async function MyReservationsPage({
                               {order.id !== toPay?.id && (
                                 <SinpePayment
                                   amountColonesCents={subtotal + serviceFeeCents(subtotal)}
+                                  breakdown={orderBreakdown(order)}
+                                  feeCents={serviceFeeCents(subtotal)}
                                   texts={t}
                                 />
                               )}

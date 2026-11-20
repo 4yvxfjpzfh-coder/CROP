@@ -412,6 +412,8 @@ The same as for any account: name, email and the reservations made. We do not us
   "pago.sinpe.titulo": "Pay by SINPE Móvil",
   "pago.sinpe.instruccion": "Transfer the total by SINPE Móvil to this number:",
   "pago.sinpe.o_efectivo": "You can also pay in cash or by SINPE directly to the farmer at pickup.",
+  "pago.sinpe.desglose": "This is what each farmer receives:",
+  "pago.sinpe.sin_agricultor": "No farmer assigned",
   "pago.paypal.explicacion": "Optional: pay now online with PayPal, charged in US dollars:",
   "pago.paypal.o_efectivo": "If you don't pay now, you pay in cash or SINPE at pickup.",
   "pago.paypal.pagado": "Paid! Thank you.",

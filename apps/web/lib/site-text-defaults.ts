@@ -530,6 +530,8 @@ Los mismos que de cualquier cuenta: nombre, correo y los apartados hechos. No us
       { key: "pago.sinpe.titulo", label: "Título del recuadro de SINPE Móvil", default: "Pagá por SINPE Móvil" },
       { key: "pago.sinpe.instruccion", label: "Instrucción arriba del número de SINPE", default: "Transferí el total por SINPE Móvil a este número:" },
       { key: "pago.sinpe.o_efectivo", label: "Aclaración debajo del número de SINPE", default: "También podés pagar en efectivo o por SINPE directo al agricultor al recoger." },
+      { key: "pago.sinpe.desglose", label: "Título del detalle de cuánto recibe cada agricultor", default: "Esto recibe cada agricultor:" },
+      { key: "pago.sinpe.sin_agricultor", label: "Etiqueta para productos sin agricultor asignado en el detalle", default: "Sin agricultor" },
       { key: "pago.paypal.explicacion", label: "Texto antes del botón de PayPal", default: "Opcional: pagá ahora en línea con PayPal, se cobra en dólares:" },
       { key: "pago.paypal.o_efectivo", label: "Aclaración de efectivo/SINPE debajo del botón", default: "Si no pagás ahora, pagás en efectivo o SINPE al recoger." },
       { key: "pago.paypal.pagado", label: "Mensaje cuando el pago se confirma", default: "¡Pagado! Gracias." },

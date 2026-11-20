@@ -305,6 +305,8 @@ export function CatalogGrid({
                   // placeOrder); acá se le suma el cargo por servicio para
                   // que el monto a transferir por SINPE coincida con el total.
                   amountColonesCents={state.totalCents + serviceFeeCents(state.totalCents)}
+                  breakdown={state.breakdown}
+                  feeCents={serviceFeeCents(state.totalCents)}
                   texts={texts}
                 />
               </div>

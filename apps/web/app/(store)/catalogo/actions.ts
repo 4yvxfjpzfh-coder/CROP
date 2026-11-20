@@ -18,7 +18,16 @@ const MAX_ACTIVE_RESERVATIONS_PER_USER = 3;
 const MAX_DISTINCT_PRODUCTS_PER_ORDER = 10;
 
 export type PlaceOrderResult =
-  | { ok: true; orderId: string; pickupBy: string; totalCents: number }
+  | {
+      ok: true;
+      orderId: string;
+      pickupBy: string;
+      totalCents: number;
+      // Cuánto del pedido le corresponde a cada agricultor (subtotal de sus
+      // productos). El cliente paga todo junto por SINPE; esto deja claro y
+      // registrado cuánto es de cada uno para girárselo después.
+      breakdown: { label: string; amountCents: number }[];
+    }
   | { ok: false; error: string };
 
 type CartItemInput = { productId: string; quantity: number };
@@ -85,7 +94,13 @@ export async function placeOrder(
     prisma.order.count({ where: { userId, status: "RESERVED", pickupBy: { gt: new Date() } } }),
     prisma.product.findMany({
       where: { id: { in: productIds } },
-      include: { pickupPoint: { select: { pickupDay: true } } },
+      include: {
+        pickupPoint: { select: { pickupDay: true } },
+        // Nombre del agricultor dueño (si tiene cuenta vinculada); si no, se
+        // cae a providerName (nombre escrito a mano). Sirve para el desglose
+        // de pago por agricultor que se devuelve más abajo.
+        farmer: { select: { name: true } },
+      },
     }),
   ]);
 
@@ -178,9 +193,21 @@ export async function placeOrder(
       order.items.reduce((sum, it) => sum + it.quantity * it.unitPriceCents, 0),
     );
 
+    // Desglose por agricultor: se agrupa el subtotal de cada producto por su
+    // agricultor (cuenta vinculada o, si no, el nombre escrito a mano), para
+    // mostrar y dejar registrado cuánto le toca a cada uno.
+    const sinAgricultor = t["pago.sinpe.sin_agricultor"] ?? "Sin agricultor";
+    const breakdownMap = new Map<string, number>();
+    for (const [productId, quantity] of byProduct) {
+      const p = productMap.get(productId)!;
+      const label = p.farmer?.name ?? p.providerName ?? sinAgricultor;
+      breakdownMap.set(label, (breakdownMap.get(label) ?? 0) + Math.round(quantity * p.discountPriceCents));
+    }
+    const breakdown = [...breakdownMap].map(([label, amountCents]) => ({ label, amountCents }));
+
     revalidatePath("/catalogo");
     revalidatePath("/mis-apartados");
-    return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString(), totalCents };
+    return { ok: true, orderId: order.id, pickupBy: pickupBy.toISOString(), totalCents, breakdown };
   } catch {
     return { ok: false, error: t["catalogo.error.generic"] };
   }
