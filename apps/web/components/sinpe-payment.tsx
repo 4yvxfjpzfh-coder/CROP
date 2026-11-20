@@ -112,8 +112,7 @@ export function SinpePayment({
       </div>
 
       <p className="mt-2 font-[family-name:var(--font-form)] text-xs text-stone">
-        {t["pago.sinpe.o_efectivo"] ??
-          "También podés pagar en efectivo o por SINPE directo al agricultor al recoger."}
+        {t["pago.sinpe.o_efectivo"] ?? "También podés pagar en efectivo al recoger."}
       </p>
     </div>
   );
