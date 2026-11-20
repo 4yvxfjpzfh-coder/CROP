@@ -1,13 +1,25 @@
+import { prisma } from "@crop/prisma";
 import { requireAdmin } from "@/lib/admin-guard";
-import { getSiteTexts } from "@/lib/site-text";
-import { SITE_TEXT_GROUPS } from "@/lib/site-text-defaults";
+import { SITE_TEXT_GROUPS, SITE_TEXT_DEFAULTS } from "@/lib/site-text-defaults";
 import { TextosForm } from "./textos-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminTextosPage() {
   await requireAdmin("redirect");
-  const texts = await getSiteTexts();
+  // El editor muestra el texto REAL guardado (default en español + lo que el
+  // admin cambió en la base), sin la reescritura de presentación de
+  // getSiteTexts (que, por ejemplo, muestra "Mercado de Abastos Solidario" en
+  // la web aunque en la base siga "feria del agricultor"). Así el admin edita
+  // lo que de verdad está guardado, no la versión ya maquillada.
+  let overrides: Record<string, string> = {};
+  try {
+    const rows = await prisma.siteText.findMany();
+    overrides = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  } catch {
+    overrides = {};
+  }
+  const texts: Record<string, string> = { ...SITE_TEXT_DEFAULTS, ...overrides };
 
   return (
     <section>
