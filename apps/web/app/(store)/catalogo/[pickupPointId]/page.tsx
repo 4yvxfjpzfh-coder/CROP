@@ -88,6 +88,7 @@ export default async function CatalogoFeriaPage({
     name: p.name,
     description: p.description,
     providerName: p.providerName,
+    farmerName: p.farmer?.name ?? p.providerName ?? null,
     photoUrl: hasPhoto.has(p.id) ? `/api/foto/${p.id}?v=${p.updatedAt.getTime()}` : null,
     harvestedAt: p.harvestedAt ? p.harvestedAt.toISOString() : null,
     ripenessNote: p.ripenessNote,

@@ -5,6 +5,9 @@ export type CatalogProduct = {
   name: string;
   description: string | null;
   providerName: string | null;
+  // Nombre del agricultor para filtrar el catálogo por vendedor (cuenta
+  // vinculada o, si no, el nombre escrito a mano). Puede ser null.
+  farmerName: string | null;
   photoUrl: string | null;
   harvestedAt: string | null;
   ripenessNote: string | null;

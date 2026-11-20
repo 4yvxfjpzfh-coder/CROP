@@ -187,6 +187,8 @@ export function CatalogGrid({
   // Viene de un banner de sección del inicio (/catalogo?categoria=...): abre
   // la feria ya filtrada en esa sección en vez de mostrar todo.
   const [section, setSection] = useState<CategoryId | null>(initialSection);
+  // Filtro opcional por agricultor/vendedor (null = todos).
+  const [farmer, setFarmer] = useState<string | null>(null);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [pickupSlot, setPickupSlot] = useState("");
   const [state, formAction, pending] = useActionState<PlaceOrderResult | null, FormData>(
@@ -225,8 +227,19 @@ export function CatalogGrid({
     for (const p of products) c[p.category] = (c[p.category] ?? 0) + 1;
     return c;
   }, [products]);
+  // Lista de agricultores presentes en esta feria, para el filtro por vendedor.
+  const farmers = useMemo(
+    () =>
+      [...new Set(products.map((p) => p.farmerName).filter((n): n is string => Boolean(n)))].sort(
+        (a, b) => a.localeCompare(b, "es"),
+      ),
+    [products],
+  );
   const filtered = products.filter(
-    (p) => (section === null || p.category === section) && matchesSearch(p, query),
+    (p) =>
+      (section === null || p.category === section) &&
+      (farmer === null || p.farmerName === farmer) &&
+      matchesSearch(p, query),
   );
   // Sin filtros se agrupa por sección; con búsqueda o sección elegida, una
   // sola grilla con lo que coincide.
@@ -330,19 +343,50 @@ export function CatalogGrid({
           counts={counts}
           lang={lang}
         />
+        {farmers.length > 1 && (
+          <div className="mx-auto mt-4 flex max-w-6xl flex-wrap items-center gap-2 px-6">
+            <label
+              htmlFor="farmerFilter"
+              className={
+                "font-[family-name:var(--font-form)] text-sm " +
+                (backgroundUrl ? "text-cream" : "text-olive")
+              }
+            >
+              {lang === "en" ? "Farmer" : "Agricultor"}
+            </label>
+            <select
+              id="farmerFilter"
+              value={farmer ?? ""}
+              onChange={(e) => setFarmer(e.target.value || null)}
+              className="border border-cream-200 bg-white px-3 py-1.5 font-[family-name:var(--font-form)] text-sm text-olive outline-none focus:border-olive"
+            >
+              <option value="">{lang === "en" ? "All farmers" : "Todos los agricultores"}</option>
+              {farmers.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <main className="mx-auto max-w-6xl px-6 py-6">
         {filtered.length === 0 && (
           <div className="rounded-2xl bg-white/90 px-6 py-10 text-center">
             <p className="font-[family-name:var(--font-form)] text-sm text-stone">
-              {lang === "en" ? "Nothing matches" : "No encontramos nada con"} “{query}”.
+              {query.trim()
+                ? `${lang === "en" ? "Nothing matches" : "No encontramos nada con"} “${query}”.`
+                : lang === "en"
+                  ? "Nothing to show with these filters."
+                  : "No hay nada con estos filtros."}
             </p>
             <button
               type="button"
               onClick={() => {
                 setQuery("");
                 setSection(null);
+                setFarmer(null);
               }}
               className="mt-3 font-[family-name:var(--font-form)] text-sm text-olive underline underline-offset-2"
             >
