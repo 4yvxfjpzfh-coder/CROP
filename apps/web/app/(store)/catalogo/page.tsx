@@ -7,6 +7,7 @@ import { SiteBackground } from "@/components/site-background";
 import { Press } from "@/components/motion/press";
 import { Reveal } from "@/components/motion/reveal";
 import { CATEGORIES, categoryOf, isCategoryId, type CategoryId } from "@/lib/categories";
+import { displayFeriaName } from "@/lib/feria-name";
 
 export const dynamic = "force-dynamic";
 
@@ -127,7 +128,7 @@ export default async function CatalogoPage({
                     className="block border border-ink-200 bg-ink-200/60 p-6 hover:bg-ink-200"
                   >
                     <h2 className="font-[family-name:var(--font-display)] text-2xl text-paper">
-                      {pp.shortName}
+                      {displayFeriaName(pp.shortName)}
                     </h2>
                     <p className="mt-1 font-[family-name:var(--font-form)] text-sm text-metal">
                       {pp.address}

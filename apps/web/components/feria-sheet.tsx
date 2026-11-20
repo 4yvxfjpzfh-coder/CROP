@@ -1,6 +1,7 @@
 import { prisma } from "@crop/prisma";
 import { colones } from "@/app/(admin)/admin/products/types";
 import { crDayRangeUtc, PICKUP_GRACE_HOURS } from "@/lib/pickup-schedule";
+import { displayFeriaName } from "@/lib/feria-name";
 import { PrintButton } from "./print-button";
 
 type OrderRow = Awaited<ReturnType<typeof loadOrders>>[number];
@@ -109,7 +110,7 @@ export async function FeriaSheet({
             </option>
             {pickupPoints.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.shortName}
+                {displayFeriaName(p.shortName)}
               </option>
             ))}
           </select>
@@ -139,7 +140,7 @@ export async function FeriaSheet({
       {orders && (
         <>
           <h2 className="mb-4 font-[family-name:var(--font-display)] text-xl text-olive">
-            {selectedPoint?.shortName} — semana del {weekRange(date!).mondayIso} al {weekRange(date!).sundayIso}
+            {displayFeriaName(selectedPoint?.shortName)} — semana del {weekRange(date!).mondayIso} al {weekRange(date!).sundayIso}
           </h2>
 
           {orders.length === 0 ? (

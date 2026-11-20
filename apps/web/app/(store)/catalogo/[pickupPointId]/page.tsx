@@ -8,6 +8,7 @@ import { getSiteTexts } from "@/lib/site-text";
 import { getLang, translateFields } from "@/lib/i18n";
 import { productCode } from "@/lib/units";
 import { categoryOf, isCategoryId } from "@/lib/categories";
+import { displayFeriaName } from "@/lib/feria-name";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export async function generateMetadata({
   ]);
   return {
     title: pickupPoint
-      ? `${pickupPoint.shortName} — ${t["nav.catalogo"]} — ${t["brand.name"]}`
+      ? `${displayFeriaName(pickupPoint.shortName)} — ${t["nav.catalogo"]} — ${t["brand.name"]}`
       : `${t["nav.catalogo"]} — ${t["brand.name"]}`,
     description: t["catalogo.feria.meta_description"],
   };
@@ -140,7 +141,7 @@ export default async function CatalogoFeriaPage({
     <CatalogGrid
       products={items}
       backgroundUrl={backgroundUrl}
-      feriaName={pickupPoint.shortName}
+      feriaName={displayFeriaName(pickupPoint.shortName)}
       backHref="/catalogo"
       mapsUrl={mapsUrl}
       pickupDay={pickupPoint.pickupDay}

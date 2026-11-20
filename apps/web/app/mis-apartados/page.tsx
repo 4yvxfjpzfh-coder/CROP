@@ -12,6 +12,7 @@ import { CancelButton } from "./cancel-button";
 import { OrderStatusBadge, PaymentBadge, orderCardClass } from "@/components/order-status-badge";
 import { SiteBackground } from "@/components/site-background";
 import { SinpePayment } from "@/components/sinpe-payment";
+import { displayFeriaName } from "@/lib/feria-name";
 
 export const dynamic = "force-dynamic";
 
@@ -163,7 +164,7 @@ export default async function MyReservationsPage({
               </p>
               <ul className="flex flex-col gap-3">
                 {orders.map((order) => {
-                  const pickup = order.items[0]?.product.pickupPoint?.name ?? null;
+                  const pickup = displayFeriaName(order.items[0]?.product.pickupPoint?.name) || null;
                   const expired =
                     order.status === "RESERVED" && order.pickupBy.getTime() < Date.now();
                   const displayStatus = expired ? "EXPIRED" : order.status;
