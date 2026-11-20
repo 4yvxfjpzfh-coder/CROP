@@ -39,7 +39,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
       {
         key: "meta.description",
         label: "Descripción para buscadores y redes sociales",
-        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en la feria del agricultor. Pagás por SINPE Móvil o en efectivo al recoger.",
+        default: "Aparta productos de excedente agrícola (cacao, café, banano, piña y más) y recógelos en el Mercado de Abastos Solidario. Pagás por SINPE Móvil o en efectivo al recoger.",
         multiline: true,
       },
     ],
@@ -171,7 +171,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
     title: "Ingreso y bienvenida",
     fields: [
       { key: "signin.heading_prefix", label: "Título \"Entrar a Crop\" (antes de la marca)", default: "Entrar a" },
-      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en la feria del agricultor. Pagás por SINPE Móvil o en efectivo al recoger.", multiline: true },
+      { key: "signin.subtext", label: "Subtítulo de la página de ingreso", default: "Apartá productos de excedente agrícola y recogelos en el Mercado de Abastos Solidario. Pagás por SINPE Móvil o en efectivo al recoger.", multiline: true },
       { key: "signin.info_box", label: "Aviso sobre datos de Apple", default: "Al crear tu cuenta con Apple guardamos tu nombre y correo para identificarte y gestionar tus apartados. Podés eliminar tu cuenta y tus datos en cualquier momento desde tu perfil.", multiline: true },
       { key: "signin.checkbox_label", label: "Texto de la casilla de aceptación", default: "He leído y acepto la Política de Privacidad y los Términos de Servicio.", multiline: true },
       { key: "signin.helper_accept_terms", label: "Aviso si falta aceptar términos", default: "Aceptá los términos para continuar." },
@@ -253,7 +253,7 @@ export const SITE_TEXT_GROUPS: SiteTextGroup[] = [
           "1. Datos que recopilamos\n" +
           "Si creás tu cuenta con correo y contraseña, guardamos tu nombre, tu correo y tu contraseña (nunca en texto plano: se guarda cifrada con un algoritmo de un solo sentido, así que ni nosotros podemos leerla). Si entrás con Apple, recibimos tu nombre y tu dirección de correo (o el correo privado de reenvío de Apple, si elegís ocultarlo). Guardamos también los apartados que hacés en la plataforma y, si pagás en línea, si ese apartado está pagado y el monto — nunca los datos de tu tarjeta o cuenta de PayPal, que PayPal no nos comparte. Si sos agricultor o administrador, la app puede acceder a tu cámara o galería para subir fotos de los productos que publicás.\n\n" +
           "2. Uso de los datos\n" +
-          "Usamos estos datos únicamente para identificarte, mostrarte tus apartados y coordinar la recogida en la feria del agricultor. No vendemos ni compartimos tus datos con terceros, y no los usamos para publicidad ni seguimiento.\n\n" +
+          "Usamos estos datos únicamente para identificarte, mostrarte tus apartados y coordinar la recogida en el Mercado de Abastos Solidario. No vendemos ni compartimos tus datos con terceros, y no los usamos para publicidad ni seguimiento.\n\n" +
           "3. Conservación y eliminación\n" +
           "Podés eliminar tu cuenta y tus datos personales en cualquier momento desde tu perfil. Al hacerlo borramos tu nombre, correo y credenciales de acceso de forma permanente.\n\n" +
           "4. Contacto\n" +

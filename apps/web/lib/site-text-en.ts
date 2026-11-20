@@ -14,7 +14,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
   "brand.tagline": "Costa Rican Opportunities for Producers",
   "meta.title": "Crop — Food rescue and surplus farm produce",
   "meta.description":
-    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the farmers market. Pay by SINPE Móvil, or in cash at pickup.",
+    "Reserve surplus farm produce (cacao, coffee, banana, pineapple and more) and pick it up at the Mercado de Abastos Solidario. Pay by SINPE Móvil, or in cash at pickup.",
 
   // ── Menú y botones comunes ────────────────────────────────────────────
   "nav.catalogo": "Catalog",
@@ -128,7 +128,7 @@ export const SITE_TEXT_EN: Record<string, string> = {
 
   // ── Ingreso y bienvenida ──────────────────────────────────────────────
   "signin.heading_prefix": "Sign in to",
-  "signin.subtext": "Reserve surplus farm produce and pick it up at the farmers market. Pay by SINPE Móvil, or in cash at pickup.",
+  "signin.subtext": "Reserve surplus farm produce and pick it up at the Mercado de Abastos Solidario. Pay by SINPE Móvil, or in cash at pickup.",
   "signin.info_box":
     "When you create your account with Apple we store your name and email to identify you and manage your reservations. You can delete your account and your data at any time from your profile.",
   "signin.checkbox_label": "I have read and accept the Privacy Policy and the Terms of Service.",
@@ -200,7 +200,7 @@ Crop is not involved in physical delivery: a complaint about the quality or cond
 If you create your account with an email and password, we store your name, your email and your password (never in plain text: it is stored hashed with a one-way algorithm, so not even we can read it). If you sign in with Apple, we receive your name and your email address (or Apple's private relay address, if you choose to hide it). We also store the reservations you make on the platform, and, if you pay online, whether that reservation is paid and the amount — never your card or PayPal account details, which PayPal does not share with us. If you are a farmer or an administrator, the app may access your camera or photo library to upload pictures of the products you publish.
 
 2. How we use the data
-We use this data only to identify you, show you your reservations and coordinate pickup at the farmers market. We do not sell or share your data with third parties, and we do not use it for advertising or tracking.
+We use this data only to identify you, show you your reservations and coordinate pickup at the Mercado de Abastos Solidario. We do not sell or share your data with third parties, and we do not use it for advertising or tracking.
 
 3. Retention and deletion
 You can delete your account and your personal data at any time from your profile. When you do, we permanently delete your name, email and sign-in credentials.

@@ -11,16 +11,17 @@ import { ParallaxDrift } from "@/components/motion/parallax-drift";
 import { FlipReveal } from "@/components/motion/flip-reveal";
 import { SiteBackground } from "@/components/site-background";
 import { CategoryBanners } from "@/components/category-banners";
+import { renameMarket } from "@/lib/feria-name";
 
 export const dynamic = "force-dynamic";
 
 const DEFAULT_HEADLINE = "El excedente de la feria, antes de que se pierda.";
 const DEFAULT_SUBTEXT =
-  "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en la feria del agricultor. Pagás en efectivo o SINPE al recoger, o en línea con PayPal si preferís.";
+  "Cacao, café, banano, piña y más — directo de agricultores de Costa Rica. Apartás lo que necesitás en línea y lo recogés en el Mercado de Abastos Solidario. Pagás por SINPE Móvil o en efectivo al recoger.";
 
 const DEFAULT_HEADLINE_EN = "The market's surplus, before it goes to waste.";
 const DEFAULT_SUBTEXT_EN =
-  "Cacao, coffee, banana, pineapple and more — straight from Costa Rican farmers. You reserve what you need online and pick it up at the farmers market. Pay in cash or SINPE at pickup, or online with PayPal if you prefer.";
+  "Cacao, coffee, banana, pineapple and more — straight from Costa Rican farmers. You reserve what you need online and pick it up at the Mercado de Abastos Solidario. Pay by SINPE Móvil, or in cash at pickup.";
 
 const DEFAULT_FRUITS: FruitSlide[] = [
   {
@@ -76,8 +77,12 @@ export default async function Home() {
     translateMany([rawHeadline], lang),
     translateMany([rawSubtext], lang),
   ]);
-  const headline = trHeadline.get(rawHeadline.trim()) ?? rawHeadline;
-  const subtext = trSubtext.get(rawSubtext.trim()) ?? rawSubtext;
+  // El admin escribió el titular directo en la base ("Costa Rican Farmers
+  // Market"): renameMarket lo reescribe al vuelo a "Mercado de Abastos
+  // Solidario" (igual que displayFeriaName con el nombre de la feria), después
+  // de traducir, así el nombre propio queda igual en cualquier idioma.
+  const headline = renameMarket(trHeadline.get(rawHeadline.trim()) ?? rawHeadline);
+  const subtext = renameMarket(trSubtext.get(rawSubtext.trim()) ?? rawSubtext);
   // settings.heroImageUrl y los imageUrl de HomeFruit pueden tener pegado
   // por error un link a una página de resultados de búsqueda (ej. Bing) en
   // vez del archivo de imagen directo -- eso renderiza como texto
