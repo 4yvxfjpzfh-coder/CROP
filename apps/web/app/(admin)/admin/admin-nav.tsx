@@ -12,6 +12,7 @@ export function AdminNav({ texts: t }: { texts: Record<string, string> }) {
     { href: "/admin/catalogo", label: t["admin.nav.catalogo"] },
     { href: "/admin/pedidos", label: t["admin.nav.apartados"] },
     { href: "/admin/pedidos/exportar", label: "Hoja de feria" },
+    { href: "/admin/finanzas", label: "Finanzas" },
     { href: "/admin/puntos-recogida", label: t["admin.nav.puntos_recogida"] },
     { href: "/admin/settings", label: t["admin.nav.apariencia"] },
     { href: "/admin/textos", label: t["admin.nav.textos"] },
