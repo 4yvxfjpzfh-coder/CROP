@@ -4,7 +4,7 @@
 const CR_UTC_OFFSET_HOURS = 6;
 
 export const FERIA_OPEN_HOUR = 7; // 7am hora de Costa Rica
-export const FERIA_CLOSE_HOUR = 16; // 4pm hora de Costa Rica
+export const FERIA_CLOSE_HOUR = 13; // 1pm hora de Costa Rica — última hora para pedir y recoger
 export const PICKUP_GRACE_HOURS = 2.5;
 
 // 0=domingo ... 6=sábado, igual que Date#getDay().
@@ -61,7 +61,7 @@ export function crDayRangeUtc(isoDate: string): { start: Date; end: Date } {
   return { start, end };
 }
 
-/** Franjas horarias del próximo día de feria (7am a 4pm, de hora en hora). */
+/** Franjas horarias del próximo día de feria (7am a 1pm, de hora en hora). */
 export function getPickupSlots(pickupDay: number, now: Date = new Date()): PickupSlot[] {
   const { year, month, day } = nextPickupDayCR(now, pickupDay);
   const slots: PickupSlot[] = [];
